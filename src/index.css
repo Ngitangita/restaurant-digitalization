@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+::-webkit-file-upload-button{
+    border: none;
+}
+
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+body{
+    background-color: #ebe9e9;
+    font-family: "Open Sans", sans-serif;
+}
+
+.LoginbgImg{
+    background-image: url(../public/img-1.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.size{
+    font-size: 30px;
+}
