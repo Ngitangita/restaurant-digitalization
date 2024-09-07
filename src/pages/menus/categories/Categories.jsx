@@ -1,29 +1,46 @@
-import { MdAdd } from "react-icons/md";
-import Boutton from '../../components/Boutton/Boutton';
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { useState } from "react";
-import BonDeCommande from "../../components/bonDeCommande/BonDeCommande";
+import CreateCategorie from "../../../components/addCategorie/CreateCategorie";
+import Breadcrumb from "../../../components/Breadcrumbs/Breadcrumb";
+import Boutton from "../../../components/Boutton/Boutton";
+import { MdAdd } from "react-icons/md";
 
-function Commande() {
+export default function Categories() {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
-  const Commands = [
-    { date: "06/09/2024", table: "5", chambre: "102", quantity: "02", designation: "Pizza" },
-    { date: "12/09/2024", table: "2", chambre: "105", quantity: "01", designation: "Akoho gasy rony" },
-    { date: "03/03/2024", table: "8", chambre: "103", quantity: "03", designation: "Pomme frite" },
-  ];
+
+
+  const Foods = [
+    {
+      id: 1,
+      name: "NOS PIZZAS",
+      menus: [
+        { id: 1, name: "Pizza Margherita", prix: "22 000 AR" },
+        { id: 2, name: "Pizza Cremiera", prix: "22 000 AR" },
+        { id: 3, name: "Pizza 4 Fromage", prix: "25 000 AR" },
+      ]
+    },
+    {
+      id: 2,
+      name: "NOS SNACKS",
+      menus: [
+        { id: 1, name: "Pizza Margherita", prix: "22 000 AR" },
+        { id: 2, name: "Pizza Cremiera", prix: "22 000 AR" },
+        { id: 3, name: "Pizza 4 Fromage", prix: "25 000 AR" },
+      ]
+    }
+  ]
 
   return (
     <div className="pl-10 relative w-[970px] left-[250px] top-[100px]">
-      <Breadcrumb pageName="Gestion des commandes" />
+      <Breadcrumb pageName="Categories" />
       <Boutton
         onClick={toggleModal}
         type='button'
-        className="mb-3 rounded p-1 relative left-[720px] text-white flex flex-row items-center gap-2 bg-blue-500">
-        <MdAdd className="size-8" /> Ajoutez le commande
+        className="mb-3 rounded p-1 relative left-[770px] text-white flex flex-row items-center gap-2 bg-blue-500">
+        <MdAdd className="size-8" /> Ajoutez le menu
       </Boutton>
       {isOpen && (
         <div
@@ -59,7 +76,7 @@ function Commande() {
                   <span className="sr-only">Close modal</span>
                 </button>
               </div>
-              <BonDeCommande />
+              <CreateCategorie />
               <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                 <button
                   onClick={toggleModal}
@@ -79,31 +96,28 @@ function Commande() {
         </div>
       )}
       <table className="min-w-full bg-white border border-gray-300">
-        <thead className='text-center'>
-          <tr>
-            <th className="py-2 px-4 border border-black">Date & heure</th>
-            <th className="py-2 px-4 border border-black">N° de table</th>
-            <th className="py-2 px-4 border border-black">Chambre</th>
-            <th className="py-2 px-4 border border-black">Quantités</th>
-            <th className="py-2 px-4 border border-black">Désignation</th>
-          </tr>
-        </thead>
-        <tbody className='text-center'>
-          {Commands.map((Command, i) => (
-            <tr key={i}>
-              <td className="py-2 px-4 border border-black">{Command.date}</td>
-              <td className="py-2 px-4 border border-black">{Command.table}</td>
-              <td className="py-2 px-4 border border-black">{Command.chambre}</td>
-              <td className="py-2 px-4 border border-black">{Command.quantity}</td>
-              <td className="py-2 px-4 border border-black">{Command.designation}</td>
+
+        <tbody className='text-center' >
+          <div>
+            <th className="py-2 px-4 w-[400px]">Nom</th>
+            <th className="py-2 px-4 w-[300px]">Prix</th>
+            <th className="py-2 px-4 w-[200px]">Choix</th>
+          </div>
+          {Foods.map((food, i) => (
+            <tr key={i} className="flex flex-col">
+              <td className="py-2 px-4 flex flex-row justify-between w-[600px] pt-10 pb-5">Categorie <span> {food.name}</span> </td>
+              {food.menus.map((menu) => (
+                <tr key={menu.id}>
+                  <td className="py-2 px-4 w-[400px]">{menu.name} </td>
+                  <td className="py-2 px-4 w-[300px]">{menu.prix} </td>
+                  <td className="py-2 px-4 w-[200px]"><input type="checkbox" name="checkbox" id="checkbox" /> </td>
+                </tr>
+              ))}
             </tr>
           ))}
         </tbody>
       </table>
     </div>
-  );
+  )
 }
-
-export default Commande;
-
 

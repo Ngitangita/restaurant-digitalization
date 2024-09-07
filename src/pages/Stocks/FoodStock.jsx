@@ -1,29 +1,30 @@
-import { MdAdd } from "react-icons/md";
-import Boutton from '../../components/Boutton/Boutton';
+import React, { useState } from 'react';
 import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
-import { useState } from "react";
-import BonDeCommande from "../../components/bonDeCommande/BonDeCommande";
+import Boutton from '../../components/Boutton/Boutton';
+import AddFoodStock from '../../components/addStocks/AddFoodStock';
+import { MdAdd } from "react-icons/md";
 
-function Commande() {
+function FoodStock() {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleModal = () => {
     setIsOpen(!isOpen);
   };
-  const Commands = [
-    { date: "06/09/2024", table: "5", chambre: "102", quantity: "02", designation: "Pizza" },
-    { date: "12/09/2024", table: "2", chambre: "105", quantity: "01", designation: "Akoho gasy rony" },
-    { date: "03/03/2024", table: "8", chambre: "103", quantity: "03", designation: "Pomme frite" },
+
+  const Foods = [
+    { name: "HEVIA KISOA", entrees: "5 kg", stockFinal: "2 kg" },
+    { name: "COTE DE PORC", entrees: "3 pax", stockFinal: "1 pax" },
+    { name: "CUISSE DE POULET", entrees: "12 kg", stockFinal: "4 kg" },
   ];
 
   return (
     <div className="pl-10 relative w-[970px] left-[250px] top-[100px]">
-      <Breadcrumb pageName="Gestion des commandes" />
+      <Breadcrumb pageName="Gestion des Stocks Alimentaires" />
       <Boutton
         onClick={toggleModal}
         type='button'
-        className="mb-3 rounded p-1 relative left-[720px] text-white flex flex-row items-center gap-2 bg-blue-500">
-        <MdAdd className="size-8" /> Ajoutez le commande
+        className="mb-3 rounded p-1 relative left-[750px] text-white flex flex-row items-center gap-2 bg-blue-500">
+        <MdAdd className="size-8" /> Ajoutez la nouriture
       </Boutton>
       {isOpen && (
         <div
@@ -59,7 +60,7 @@ function Commande() {
                   <span className="sr-only">Close modal</span>
                 </button>
               </div>
-              <BonDeCommande />
+              <AddFoodStock />
               <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                 <button
                   onClick={toggleModal}
@@ -81,21 +82,17 @@ function Commande() {
       <table className="min-w-full bg-white border border-gray-300">
         <thead className='text-center'>
           <tr>
-            <th className="py-2 px-4 border border-black">Date & heure</th>
-            <th className="py-2 px-4 border border-black">N° de table</th>
-            <th className="py-2 px-4 border border-black">Chambre</th>
-            <th className="py-2 px-4 border border-black">Quantités</th>
-            <th className="py-2 px-4 border border-black">Désignation</th>
+            <th className="py-2 px-4 border border-black">Nom</th>
+            <th className="py-2 px-4 border border-black">Entrées</th>
+            <th className="py-2 px-4 border border-black">Stock Final</th>
           </tr>
         </thead>
         <tbody className='text-center'>
-          {Commands.map((Command, i) => (
+          {Foods.map((food, i) => (
             <tr key={i}>
-              <td className="py-2 px-4 border border-black">{Command.date}</td>
-              <td className="py-2 px-4 border border-black">{Command.table}</td>
-              <td className="py-2 px-4 border border-black">{Command.chambre}</td>
-              <td className="py-2 px-4 border border-black">{Command.quantity}</td>
-              <td className="py-2 px-4 border border-black">{Command.designation}</td>
+              <td className="py-2 px-4 border border-black">{food.name}</td>
+              <td className="py-2 px-4 border border-black">{food.entrees}</td>
+              <td className="py-2 px-4 border border-black">{food.stockFinal}</td>
             </tr>
           ))}
         </tbody>
@@ -104,6 +101,4 @@ function Commande() {
   );
 }
 
-export default Commande;
-
-
+export default FoodStock;
