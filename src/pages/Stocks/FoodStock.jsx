@@ -15,6 +15,36 @@ function FoodStock() {
     { name: "HEVIA KISOA", entrees: "5 kg", stockFinal: "2 kg" },
     { name: "COTE DE PORC", entrees: "3 pax", stockFinal: "1 pax" },
     { name: "CUISSE DE POULET", entrees: "12 kg", stockFinal: "4 kg" },
+    { name: "HEVIA KISOA", entrees: "5 kg", stockFinal: "2 kg" },
+    { name: "COTE DE PORC", entrees: "3 pax", stockFinal: "1 pax" },
+    { name: "CUISSE DE POULET", entrees: "12 kg", stockFinal: "4 kg" },
+    { name: "HEVIA KISOA", entrees: "5 kg", stockFinal: "2 kg" },
+    { name: "COTE DE PORC", entrees: "3 pax", stockFinal: "1 pax" },
+    { name: "CUISSE DE POULET", entrees: "12 kg", stockFinal: "4 kg" },
+    { name: "HEVIA KISOA", entrees: "5 kg", stockFinal: "2 kg" },
+    { name: "COTE DE PORC", entrees: "3 pax", stockFinal: "1 pax" },
+    { name: "CUISSE DE POULET", entrees: "12 kg", stockFinal: "4 kg" },
+    { name: "HEVIA KISOA", entrees: "5 kg", stockFinal: "2 kg" },
+    { name: "COTE DE PORC", entrees: "3 pax", stockFinal: "1 pax" },
+    { name: "CUISSE DE POULET", entrees: "12 kg", stockFinal: "4 kg" },
+    { name: "HEVIA KISOA", entrees: "5 kg", stockFinal: "2 kg" },
+    { name: "COTE DE PORC", entrees: "3 pax", stockFinal: "1 pax" },
+    { name: "CUISSE DE POULET", entrees: "12 kg", stockFinal: "4 kg" },
+    { name: "HEVIA KISOA", entrees: "5 kg", stockFinal: "2 kg" },
+    { name: "COTE DE PORC", entrees: "3 pax", stockFinal: "1 pax" },
+    { name: "CUISSE DE POULET", entrees: "12 kg", stockFinal: "4 kg" },
+    { name: "HEVIA KISOA", entrees: "5 kg", stockFinal: "2 kg" },
+    { name: "COTE DE PORC", entrees: "3 pax", stockFinal: "1 pax" },
+    { name: "CUISSE DE POULET", entrees: "12 kg", stockFinal: "4 kg" },
+    { name: "HEVIA KISOA", entrees: "5 kg", stockFinal: "2 kg" },
+    { name: "COTE DE PORC", entrees: "3 pax", stockFinal: "1 pax" },
+    { name: "CUISSE DE POULET", entrees: "12 kg", stockFinal: "4 kg" },
+    { name: "HEVIA KISOA", entrees: "5 kg", stockFinal: "2 kg" },
+    { name: "COTE DE PORC", entrees: "3 pax", stockFinal: "1 pax" },
+    { name: "CUISSE DE POULET", entrees: "12 kg", stockFinal: "4 kg" },
+    { name: "HEVIA KISOA", entrees: "5 kg", stockFinal: "2 kg" },
+    { name: "COTE DE PORC", entrees: "3 pax", stockFinal: "1 pax" },
+    { name: "CUISSE DE POULET", entrees: "12 kg", stockFinal: "4 kg" },
   ];
 
   return (
@@ -34,7 +64,7 @@ function FoodStock() {
           <div className="relative p-4 w-full max-w-2xl max-h-full">
             <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                <h3 className="text-xl font-semibold text-gray-500 dark:text-white">
                   Close modal
                 </h3>
                 <button
@@ -79,20 +109,21 @@ function FoodStock() {
           </div>
         </div>
       )}
-      <table className="min-w-full bg-white border border-gray-300">
+      <table className="min-w-full bg-white text-gray-500">
         <thead className='text-center'>
-          <tr>
-            <th className="py-2 px-4 border border-black">Nom</th>
-            <th className="py-2 px-4 border border-black">Entrées</th>
-            <th className="py-2 px-4 border border-black">Stock Final</th>
+          <tr className='bg-slate-300'>
+            <th className="py-2 px-4 w-[350px]">Nom</th>
+            <th className="py-2 px-4">Entrées</th>
+            <th className="py-2 px-4">Stock Final</th>
           </tr>
         </thead>
-        <tbody className='text-center'>
+        <tbody className='text-center w-[930px] bg-white max-h-[calc(100%-80px)] fixed
+        overflow-y-scroll overflow-x-hidden scrollbar-custom'>
           {Foods.map((food, i) => (
-            <tr key={i}>
-              <td className="py-2 px-4 border border-black">{food.name}</td>
-              <td className="py-2 px-4 border border-black">{food.entrees}</td>
-              <td className="py-2 px-4 border border-black">{food.stockFinal}</td>
+            <tr key={i} className='border border-x'>
+              <td className="py-2 px-4 w-[350px]">{food.name}</td>
+              <td className="py-2 px-4 w-[350px]">{food.entrees}</td>
+              <td className="py-2 px-4 w-[350px]">{food.stockFinal}</td>
             </tr>
           ))}
         </tbody>

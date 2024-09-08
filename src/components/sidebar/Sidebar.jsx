@@ -25,8 +25,8 @@ export default function Sidebar() {
     return (
         <div className="fixed top-[80px] pb-4 left-0 w-64 h-screen max-h-[calc(100%-80px)] bg-white shadow-md 
         flex flex-col overflow-y-scroll overflow-x-hidden scrollbar-custom"> 
-            <span className="p-4 text-2xl font-bold">Tableau de bord</span>
-            <ul className="space-y-2 p-4">
+            <span className="p-4 text-2xl font-bold text-gray-500">Tableau de bord</span>
+            <ul className="space-y-2 p-4 text-gray-500">
                 <li>
                     <Link
                         to="/"
@@ -159,7 +159,7 @@ export default function Sidebar() {
                     </Link>
                 </li>
             </ul>
-            <Link to="/authentification" className={`w-44 z-50 flex flex-row gap-3 relative left-4 items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/authentication' ? 'bg-gray-200' : ''}`}>
+            <Link to="/authentification" className={`w-44 z-50 text-gray-500 flex flex-row gap-3 relative left-4 items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/authentication' ? 'bg-gray-200' : ''}`}>
                 <button className="flex flex-row gap-3 items-center">
                     <MdOutlineLogin /> <span>Authentication</span>
                 </button>

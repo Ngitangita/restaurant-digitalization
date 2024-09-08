@@ -4,12 +4,3 @@ export default {
     autoprefixer: {},
   },
 }
-
-module.exports = {
-  theme: {
-    extend: {},
-  },
-  plugins: [
-    require('tailwind-scrollbar'),
-  ],
-};

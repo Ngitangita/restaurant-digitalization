@@ -3,7 +3,7 @@
 export default function CreateFacture() {
     return (
         <div className="flex justify-center items-center">
-            <div className="flex justify-center items-center flex-col bg-white rounded p-5 pt-5 pb-16">
+            <div className="flex justify-center text-gray-500 items-center flex-col bg-white rounded p-5 pt-5 pb-16">
                 <div className="flex flex-col gap-4 items-center">
                     <div className="flex flex-row gap-3 items-center">
                         <img src="../public/UTOPIA-B.png" alt="UTOPIA-B" className="w-16 h-16 rounded-full" />

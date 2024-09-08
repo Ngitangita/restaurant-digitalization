@@ -3,7 +3,7 @@
 export default function AddFoodStock() {
     return (
       <div className="flex justify-center items-center">
-        <div className="flex justify-center items-center flex-col bg-white rounded p-5">
+        <div className="flex justify-center items-center flex-col bg-white rounded p-5 text-gray-500">
           <div className="flex flex-col gap-4 items-center">
             <div className="flex flex-row gap-3 items-center">
               <img src="../public/UTOPIA-B.png" alt="UTOPIA-B" className="w-16 h-16 rounded-full" />

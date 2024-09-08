@@ -14,6 +14,34 @@ function DrinkStock() {
     const drinks = [
         { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
         { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
     ];
 
     return (
@@ -33,7 +61,7 @@ function DrinkStock() {
                     <div className="relative p-4 w-full max-w-2xl max-h-full">
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
-                                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                                <h3 className="text-xl font-semibold text-gray-500 dark:text-white">
                                     Close modal
                                 </h3>
                                 <button
@@ -80,20 +108,22 @@ function DrinkStock() {
             )}
             <table className="min-w-full bg-white border border-gray-300">
                 <thead className='text-center'>
-                    <tr>
-                        <th className="py-2 px-4 border border-black">Nom</th>
-                        <th className="py-2 px-4 border border-black">Stock Initial</th>
-                        <th className="py-2 px-4 border border-black">Entrées</th>
-                        <th className="py-2 px-4 border border-black">Stock Final</th>
+                    <tr className='bg-slate-300 text-gray-500'>
+                        <th className="py-2 px-4 w-[350px]">Nom</th>
+                        <th className="py-2 px-4 ">Stock Initial</th>
+                        <th className="py-2 px-4 ">Entrées</th>
+                        <th className="py-2 px-4 ">Stock Final</th>
                     </tr>
                 </thead>
-                <tbody className='text-center'>
+                <tbody className='text-center 
+                w-[930px] bg-white max-h-[calc(100%-80px)] fixed
+        overflow-y-scroll overflow-x-hidden scrollbar-custom'>
                     {drinks.map((drink, index) => (
-                        <tr key={index}>
-                            <td className="py-2 px-4 border border-black">{drink.name}</td>
-                            <td className="py-2 px-4 border border-black">{drink.stockInitial}</td>
-                            <td className="py-2 px-4 border border-black">{drink.entrees}</td>
-                            <td className="py-2 px-4 border border-black">{drink.stockFinal}</td>
+                        <tr key={index} className='border border-x text-gray-500'>
+                            <td className="py-2 px-4 w-[350px]">{drink.name}</td>
+                            <td className="py-2 px-4 w-[200px]">{drink.stockInitial}</td>
+                            <td className="py-2 px-4 w-[200px]">{drink.entrees}</td>
+                            <td className="py-2 px-4 w-[200px]">{drink.stockFinal}</td>
                         </tr>
                     ))}
                 </tbody>

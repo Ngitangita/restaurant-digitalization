@@ -10,7 +10,7 @@ export default function AccountDetails() {
   return (
     <form
       onSubmit={(e) => e.preventDefault()}
-      className="bg-white p-6 rounded-lg shadow-md space-y-6"
+      className="bg-white p-6 rounded-lg shadow-md space-y-6 text-gray-500"
     >
       <div>
         <h3 className="text-lg font-semibold">Profile</h3>

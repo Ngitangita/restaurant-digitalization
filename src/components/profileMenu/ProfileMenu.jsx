@@ -36,7 +36,7 @@ export default function ProfileMenu() {
                 {anchorEl && (
                     <div
                         id="account-menu"
-                        className="absolute right-0 mt-3 w-48 bg-white border border-gray-200 rounded-lg shadow-lg"
+                        className="absolute text-gray-500 right-0 mt-3 w-48 bg-white border border-gray-200 rounded-lg shadow-lg"
                         onClick={handleClose}
                     >
                         <div className="p-2 px-4 flex items-center cursor-pointer hover:bg-gray-100">

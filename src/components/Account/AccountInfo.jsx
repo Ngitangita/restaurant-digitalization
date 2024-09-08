@@ -18,10 +18,10 @@ export default function AccountInfo() {
                     <img src={profileImage} alt="Profile" className="w-full h-full object-cover rounded-full" />
                     <label
                         htmlFor="profile"
-                        className="absolute bottom-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white hover:bg-opacity-90 sm:bottom-2 sm:right-2"
+                        className="absolute bg-gray-400  bottom-0 right-0 flex h-8 w-8 cursor-pointer items-center justify-center rounded-full bg-primary text-white hover:bg-opacity-90 sm:bottom-2 sm:right-2"
                     >
                         <svg
-                            className="w-4 h-4 fill-current bg-gray-400 rounded"
+                            className="w-4 h-4 fill-current"
                             width="14"
                             height="14"
                             viewBox="0 0 14 14"
@@ -51,7 +51,7 @@ export default function AccountInfo() {
                     </label>
                 </div>
             </div>
-            <div className="text-center">
+            <div className="text-center text-gray-500">
                 <h3 className="text-lg font-semibold">Florentino Elisé</h3>
                 <p className="text-sm text-gray-500">
                     Soavimasoandro, Madagascar
