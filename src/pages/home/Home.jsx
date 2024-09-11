@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 
 export default function Home() {
@@ -5,14 +6,214 @@ export default function Home() {
     <div className="pl-10 relative w-[970px] left-[250px] top-[100px]">
       <Breadcrumb pageName="Home" />
 
-      <div className="overflow-y-scroll w-96 h-96 scrollbar-thin car scrollbar-thumb-gray-400 scrollbar-track-gray-200">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Voluptatibus consequatur voluptates eos iusto debitis in sed illo amet? Officiis atque illum voluptatibus odio exercitationem quo commodi, culpa fuga. Ex, sequi?
-Lorem ipsum, dolor sit amet consectetur adipisicing elit. Inventore, unde laborum ab ex expedita iusto praesentium esse error reiciendis atque, nobis aliquam officiis ipsum laboriosam autem dicta? Architecto, sed nisi.
-Lorem ipsum dolor sit amet consectetur adipisicing elit. Minus sunt exercitationem natus, temporibus distinctio atque quibusdam! Nemo totam corporis necessitatibus. Neque soluta aliquid non perspiciatis nesciunt, enim quos pariatur reiciendis.
-Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nostrum, autem? Error ab aut libero nihil, nostrum unde consequuntur repellat saepe dolore neque necessitatibus, asperiores deserunt, perspiciatis numquam? Incidunt, repudiandae ipsam!
-Molestias explicabo, magnam facere, excepturi iure architecto error totam vitae autem voluptas quidem, esse voluptate. Consequuntur ducimus, beatae, perspiciatis itaque laboriosam sit error tempora quibusdam distinctio mollitia, odit nulla nisi.
+      <div className="w-[930px] h-full flex flex-row flex-wrap gap-7
+        max-h-[calc(100%-80px)] fixed
+        overflow-y-scroll overflow-x-hidden scrollbar-custom text-gray-500">
+        <div className="w-52 p-3 rounded bg-white">
+          <div>
+            <img src="../public/img-3.jpg" alt="img3" className="w-full h-full rounded" />
+          </div>
+          <h2 className="font-bold">Salade Fraicheur</h2>
+          <h4>8.000 Ar</h4>
+          <div className="flex flex-row justify-between text-white">
+            <Link to="/categories">
+              <button className="bg-blue-500 rounded p-1">
+                Achetez
+              </button>
+            </Link>
+            <button className="bg-green-500 rounded p-1">
+              Voir plus
+            </button>
+          </div>
+        </div>
+        <div className="w-52 p-3 rounded bg-white">
+          <div>
+            <img src="../public/img-3.jpg" alt="img3" className="w-full h-full rounded" />
+          </div>
+          <h2 className="font-bold">Salade Fraicheur</h2>
+          <h4>8.000 Ar</h4>
+          <div className="flex flex-row justify-between text-white">
+            <Link to="/categories">
+              <button className="bg-blue-500 rounded p-1">
+                Achetez
+              </button>
+            </Link>
+            <button className="bg-green-500 rounded p-1">
+              Voir plus
+            </button>
+          </div>
+        </div>
+        <div className="w-52 p-3 rounded bg-white">
+          <div>
+            <img src="../public/img-3.jpg" alt="img3" className="w-full h-full rounded" />
+          </div>
+          <h2 className="font-bold">Salade Fraicheur</h2>
+          <h4>8.000 Ar</h4>
+          <div className="flex flex-row justify-between text-white">
+            <Link to="/categories">
+              <button className="bg-blue-500 rounded p-1">
+                Achetez
+              </button>
+            </Link>
+            <button className="bg-green-500 rounded p-1">
+              Voir plus
+            </button>
+          </div>
+        </div>
+        <div className="w-52 p-3 rounded bg-white">
+          <div>
+            <img src="../public/img-3.jpg" alt="img3" className="w-full h-full rounded" />
+          </div>
+          <h2 className="font-bold">Salade Fraicheur</h2>
+          <h4>8.000 Ar</h4>
+          <div className="flex flex-row justify-between text-white">
+            <Link to="/categories">
+              <button className="bg-blue-500 rounded p-1">
+                Achetez
+              </button>
+            </Link>
+            <button className="bg-green-500 rounded p-1">
+              Voir plus
+            </button>
+          </div>
+        </div>
+        <div className="w-52 p-3 rounded bg-white">
+          <div>
+            <img src="../public/img-3.jpg" alt="img3" className="w-full h-full rounded" />
+          </div>
+          <h2 className="font-bold">Salade Fraicheur</h2>
+          <h4>8.000 Ar</h4>
+          <div className="flex flex-row justify-between text-white">
+            <Link to="/categories">
+              <button className="bg-blue-500 rounded p-1">
+                Achetez
+              </button>
+            </Link>
+            <button className="bg-green-500 rounded p-1">
+              Voir plus
+            </button>
+          </div>
+        </div>
+        <div className="w-52 p-3 rounded bg-white">
+          <div>
+            <img src="../public/img-3.jpg" alt="img3" className="w-full h-full rounded" />
+          </div>
+          <h2 className="font-bold">Salade Fraicheur</h2>
+          <h4>8.000 Ar</h4>
+          <div className="flex flex-row justify-between text-white">
+            <Link to="/categories">
+              <button className="bg-blue-500 rounded p-1">
+                Achetez
+              </button>
+            </Link>
+            <button className="bg-green-500 rounded p-1">
+              Voir plus
+            </button>
+          </div>
+        </div>
+        <div className="w-52 p-3 rounded bg-white">
+          <div>
+            <img src="../public/img-3.jpg" alt="img3" className="w-full h-full rounded" />
+          </div>
+          <h2 className="font-bold">Salade Fraicheur</h2>
+          <h4>8.000 Ar</h4>
+          <div className="flex flex-row justify-between text-white">
+            <Link to="/categories">
+              <button className="bg-blue-500 rounded p-1">
+                Achetez
+              </button>
+            </Link>
+            <button className="bg-green-500 rounded p-1">
+              Voir plus
+            </button>
+          </div>
+        </div>
+        <div className="w-52 p-3 rounded bg-white">
+          <div>
+            <img src="../public/img-3.jpg" alt="img3" className="w-full h-full rounded" />
+          </div>
+          <h2 className="font-bold">Salade Fraicheur</h2>
+          <h4>8.000 Ar</h4>
+          <div className="flex flex-row justify-between text-white">
+            <Link to="/categories">
+              <button className="bg-blue-500 rounded p-1">
+                Achetez
+              </button>
+            </Link>
+            <button className="bg-green-500 rounded p-1">
+              Voir plus
+            </button>
+          </div>
+        </div>
+        <div className="w-52 p-3 rounded bg-white">
+          <div>
+            <img src="../public/img-3.jpg" alt="img3" className="w-full h-full rounded" />
+          </div>
+          <h2 className="font-bold">Salade Fraicheur</h2>
+          <h4>8.000 Ar</h4>
+          <div className="flex flex-row justify-between text-white">
+            <Link to="/categories">
+              <button className="bg-blue-500 rounded p-1">
+                Achetez
+              </button>
+            </Link>
+            <button className="bg-green-500 rounded p-1">
+              Voir plus
+            </button>
+          </div>
+        </div>
+        <div className="w-52 p-3 rounded bg-white">
+          <div>
+            <img src="../public/img-3.jpg" alt="img3" className="w-full h-full rounded" />
+          </div>
+          <h2 className="font-bold">Salade Fraicheur</h2>
+          <h4>8.000 Ar</h4>
+          <div className="flex flex-row justify-between text-white">
+            <Link to="/categories">
+              <button className="bg-blue-500 rounded p-1">
+                Achetez
+              </button>
+            </Link>
+            <button className="bg-green-500 rounded p-1">
+              Voir plus
+            </button>
+          </div>
+        </div>
+        <div className="w-52 p-3 rounded bg-white">
+          <div>
+            <img src="../public/img-3.jpg" alt="img3" className="w-full h-full rounded" />
+          </div>
+          <h2 className="font-bold">Salade Fraicheur</h2>
+          <h4>8.000 Ar</h4>
+          <div className="flex flex-row justify-between text-white">
+            <Link to="/categories">
+              <button className="bg-blue-500 rounded p-1">
+                Achetez
+              </button>
+            </Link>
+            <button className="bg-green-500 rounded p-1">
+              Voir plus
+            </button>
+          </div>
+        </div>
+        <div className="w-52 p-3 rounded bg-white">
+          <div>
+            <img src="../public/img-3.jpg" alt="img3" className="w-full h-full rounded" />
+          </div>
+          <h2 className="font-bold">Salade Fraicheur</h2>
+          <h4>8.000 Ar</h4>
+          <div className="flex flex-row justify-between text-white">
+            <Link to="/categories">
+              <button className="bg-blue-500 rounded p-1">
+                Achetez
+              </button>
+            </Link>
+            <button className="bg-green-500 rounded p-1">
+              Voir plus
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   )
 }
- 

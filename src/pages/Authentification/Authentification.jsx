@@ -42,13 +42,13 @@ export default function Authentification({ onAuth }) {
         <div className="overflow-hidden LoginbgImg h-screen">
             <div className="bg-black/80 h-screen flex flex-row justify-around items-center">
                 <div className="w-1/2">
-                    <h1 className="text-5xl text-gray-300/80 text-center italic font-bold">
+                    <h1 className="text-5xl text-gray-500 text-center italic font-bold">
                         Bienvenue au restaurant «Utopia bye Sooatel»
                     </h1>
                 </div>
 
                 <div className="h-auto p-5 bg-gradient-to-l from-black/80 to-gray-300/80 rounded">
-                    <div className="text-center py-2">
+                    <div className="text-center py-2 text-gray-900">
                         <div className="mb-4">
                             <div className="flex flex-col justify-center items-center py-2">
                                 <img src="../public/UTOPIA-B.png" alt="UTOPIA-B" className="w-20 h-20 rounded-full" />
@@ -79,7 +79,7 @@ export default function Authentification({ onAuth }) {
                                 Sign Up
                             </button>
                         </div>
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+                        <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-gray-500">
                             {type === "userIconSingin" ? (
                                 <>
                                     <div className="flex flex-col gap-3">
