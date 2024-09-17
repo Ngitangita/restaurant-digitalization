@@ -1,9 +1,8 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { RiMenuUnfold4Line } from "react-icons/ri";
 import SearchBox from '../searchBox/SearchBox';
 import { MdOutlineLightMode } from "react-icons/md";
-import ProfileMenu from '../profileMenu/ProfileMenu';
 
 export default function Header() {
 
@@ -16,7 +15,7 @@ export default function Header() {
                             <img src="../public/UTOPIA-B.png" alt="UTOPIA-B" className="w-16 h-16 rounded-full" />
                             <div className='flex flex-col'>
                                 <span className='text-2xl font-bold text-gray-500'>By Sooatel</span>
-                                <span className='text-xs text-gray-500'>Ankasina Antananarivo <br /> Tel: 038 96 373 43</span>
+                                <span className='text-xs text-gray-500'>Ankasina Antananarivo <br /> Tél : 038 96 373 43</span>
                             </div>
                         </Link>
 
@@ -24,22 +23,15 @@ export default function Header() {
                             <button className="rounded-full p-3 bg-slate-100 text-2xl flex items-center justify-center hover:bg-slate-200">
                                 <RiMenuUnfold4Line />
                             </button>
-                            <SearchBox />
                         </div>
                     </div>
                     <div className='flex flex-row gap-3 items-center'>
                         <button className="rounded-full p-3 bg-slate-100 text-2xl flex items-center justify-center hover:bg-slate-200">
                             <MdOutlineLightMode />
                         </button>
-                        <button className="rounded-full p-3 bg-slate-100 text-2xl flex items-center justify-center hover:bg-slate-200">
-                            <Link to="/"><MdOutlineLightMode /></Link>
-                        </button>
-                        <div className='flex flex-row items-end'>
-                            <ProfileMenu />
-                        </div>
                     </div>
                 </div>
             </header>
         </>
-    )
+    );
 }

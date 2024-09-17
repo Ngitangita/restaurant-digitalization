@@ -11,7 +11,6 @@ import {
 import { useState } from "react";
 import { FaRegUser } from "react-icons/fa6";
 
-
 export default function Sidebar() {
     const location = useLocation();
     const [activeTab, setActiveTab] = useState(0);
@@ -24,7 +23,7 @@ export default function Sidebar() {
 
     return (
         <div className="fixed top-[80px] pb-4 left-0 w-64 h-screen max-h-[calc(100%-80px)] bg-white shadow-md 
-        flex flex-col overflow-y-scroll overflow-x-hidden scrollbar-custom"> 
+        flex flex-col overflow-y-scroll overflow-x-hidden scrollbar-custom">
             <span className="p-4 text-2xl font-bold text-gray-500">Tableau de bord</span>
             <ul className="space-y-2 p-4 text-gray-500">
                 <li>
@@ -44,8 +43,8 @@ export default function Sidebar() {
                         className={`w-full flex items-center p-2 rounded-lg hover:bg-gray-100 ${activeTab === 1 && isToggleSubmenu ? 'bg-gray-200' : ''}`}
                     >
                         <div className="flex items-center gap-3">
-                            <MdMenuBook />
-                            <span className="text-gray-700">List des menus</span>
+                            <MdKeyboardCommandKey />
+                            <span className="text-gray-700">Commandes</span>
                         </div>
                         <FaAngleRight className={`ml-auto text-gray-500 transition-transform duration-300 ease-in-out ${activeTab === 1 && isToggleSubmenu ? 'rotate-90' : ''}`} />
                     </button>
@@ -53,12 +52,23 @@ export default function Sidebar() {
                         <ul className={`transition-opacity duration-300 ease-in-out ${activeTab === 1 && isToggleSubmenu ? 'opacity-100' : 'opacity-0'}`}>
                             <li>
                                 <Link
-                                    to="/categories"
-                                    className={`flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/categories' ? 'bg-gray-200' : ''}`}
+                                    to="/bonDeCommandes"
+                                    className={`flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/bonDeCommandes' ? 'bg-gray-200' : ''}`}
                                 >
                                     <div className="flex items-center gap-3">
                                         <MdCategory />
-                                        <span className="text-gray-700">Categorie</span>
+                                        <span className="text-gray-700">Bon de commande</span>
+                                    </div>
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    to="/commandes"
+                                    className={`flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/commandes' ? 'bg-gray-200' : ''}`}
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <MdMenuBook />
+                                        <span className="text-gray-700">Liste des commandes</span>
                                     </div>
                                 </Link>
                             </li>
@@ -74,26 +84,6 @@ export default function Sidebar() {
                         <div className="flex items-center gap-3">
                             <MdOutlineCalendarMonth />
                             <span className="text-gray-700">Calendrier</span>
-                        </div>
-                    </Link>
-                </li>
-                <li>
-                    <Link
-                        to="/profile"
-                        className={`flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/profile' ? 'bg-gray-200' : ''}`}
-                    >
-                     <span><FaRegUser /></span>
-                     <span>My Profile</span>
-                     </Link>
-                </li>
-                <li>
-                    <Link
-                        to="/commandes"
-                        className={`flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/commandes' ? 'bg-gray-200' : ''}`}
-                    >
-                        <div className="flex items-center gap-3">
-                            <MdKeyboardCommandKey />
-                            <span className="text-gray-700">Commandes</span>
                         </div>
                     </Link>
                 </li>
@@ -141,27 +131,27 @@ export default function Sidebar() {
                 <li>
                     <Link
                         to="/reservations"
-                        className={`flex items-center p-2 rounded-lg hover:bg-gray-100  ${location.pathname === '/reservations' ? 'bg-gray-200' : ''}`}
+                        className={`flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/reservations' ? 'bg-gray-200' : ''}`}
                     >
                         <div className="flex items-center gap-3">
                             <RiReservedLine />
-                            <span className="text-gray-700">Reservations</span>
+                            <span className="text-gray-700">Réservations</span>
                         </div>
                     </Link>
                 </li>
                 <li>
                     <Link
                         to="/settings"
-                        className={`flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100  ${location.pathname === '/settings' ? 'bg-gray-200' : ''}`}
+                        className={`flex items-center gap-3 p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/settings' ? 'bg-gray-200' : ''}`}
                     >
                         <span><MdOutlineSettings /></span>
-                        <span className="text-gray-700">Settings</span>
+                        <span className="text-gray-700">Paramètres</span>
                     </Link>
                 </li>
             </ul>
-            <Link to="/authentification" className={`w-44 z-50 text-gray-500 flex flex-row gap-3 relative left-4 items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/authentication' ? 'bg-gray-200' : ''}`}>
+            <Link to="/authentification" className={`w-44 z-50 text-gray-500 flex flex-row gap-3 relative left-4 items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/authentification' ? 'bg-gray-200' : ''}`}>
                 <button className="flex flex-row gap-3 items-center">
-                    <MdOutlineLogin /> <span>Authentication</span>
+                    <MdOutlineLogin /> <span>Authentification</span>
                 </button>
             </Link>
         </div>

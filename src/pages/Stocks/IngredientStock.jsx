@@ -3,6 +3,7 @@ import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import Boutton from '../../components/Boutton/Boutton';
 import AddIngredientStock from '../../components/addStocks/AddIngredientStock';
 import { MdAdd } from "react-icons/md";
+import SearchBox from '../../components/searchBox/SearchBox';
 
 function IngredientStock() {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,7 +13,7 @@ function IngredientStock() {
   };
 
   const ingredients = [
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
+    { date: "02/12/2024", name: "MAYO", stockInitial: '10', entrees: "5", sortie: "3", stockFinal: "12" },
     { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
     { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
     { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
@@ -49,12 +50,15 @@ function IngredientStock() {
   return (
     <div className="pl-10 relative w-[970px] left-[250px] top-[100px]">
       <Breadcrumb pageName="Gestion des ingrédients" />
-      <Boutton
-        onClick={toggleModal}
-        type='button'
-        className="mb-3 rounded p-1 relative left-[750px] text-white flex flex-row items-center gap-2 bg-blue-500">
-        <MdAdd className="size-8" /> Ajoutez l'ingredient
-      </Boutton>
+      <div className='flex flex-row w-full justify-between'>
+        <SearchBox />
+        <Boutton
+          onClick={toggleModal}
+          type='button'
+          className="mb-3 rounded p-1 text-white flex flex-row items-center gap-2 bg-blue-500">
+          <MdAdd className="size-8" /> Ajoutez l'ingredient
+        </Boutton>
+      </div>
       {isOpen && (
         <div
           id="static-modal"
@@ -110,23 +114,41 @@ function IngredientStock() {
       )}
       <table className="min-w-full bg-white text-gray-500">
         <thead className='text-center'>
-          <tr className='bg-slate-300'>
+          <tr className='bg-slate-300 text-gray-500'>
+            <th className="py-2 px-4  border border-y">
+              <input type="checkbox" name="checkbox" id="checkbox" />
+            </th>
             <th className="py-2 px-4 w-[200px]">Date</th>
-            <th className="py-2 px-4 w-[200px]">Nom</th>
+            <th className="py-2 px-4 w-[350px]">Nom</th>
+            <th className="py-2 px-4 w-[200px]">Stock Initial</th>
             <th className="py-2 px-4 w-[200px]">Entrées</th>
-            <th className="py-2 px-4 w-[200px]">Sortie</th>
+            <th className='py-2 px-4 w-[200px]'>Sortie</th>
             <th className="py-2 px-4 w-[200px]">Stock Final</th>
+            <th className='py-2 px-4 w-[170px]'>Action</th>
           </tr>
         </thead>
         <tbody className='text-center  w-[930px] bg-white max-h-[calc(100%-80px)] fixed
         overflow-y-scroll overflow-x-hidden scrollbar-custom'>
-          {ingredients.map((ingredient, index) => (
-            <tr key={index} className='border border-x'>
-              <td className="py-2 px-4 w-[200px]">{ingredient.date}</td>
-              <td className="py-2 px-4 w-[200px]">{ingredient.name}</td>
-              <td className="py-2 px-4 w-[200px]">{ingredient.enter}</td>
-              <td className="py-2 px-4 w-[200px]">{ingredient.sortie}</td>
-              <td className="py-2 px-4 w-[200px]">{ingredient.stockFinal}</td>
+          {ingredients.map((ingredient, i) => (
+            <tr key={i} className='border border-x text-gray-500
+            hover:bg-slate-100'>
+              <td className="py-2 px-4  border border-y">
+                <input type="checkbox" name="checkbox" id="checkbox" />
+              </td>
+              <td className="py-2 px-4 w-[127px] border border-y">{ingredient.date}</td>
+              <td className="py-2 px-4 w-[245px] text-wrap border border-y">{ingredient.name}</td>
+              <td className="py-2 px-4 w-[200px] border border-y">{ingredient.stockInitial}</td>
+              <td className="py-2 px-4 w-[200px] border border-y">{ingredient.entrees}</td>
+              <td className="py-2 px-4 w-[200px] border border-y">{ingredient.sortie}</td>
+              <td className="py-2 px-4 w-[200px] border border-y">{ingredient.stockFinal}</td>
+              <td className="py-2 px-4 w-[120px] flex flex-row gap-2 justify-end ">
+                <Boutton className="bg-green-500 rounded p-1">
+                  édite
+                </Boutton>
+                <Boutton className="bg-red-500 rounded p-1">
+                  supr
+                </Boutton>
+              </td>
             </tr>
           ))}
         </tbody>

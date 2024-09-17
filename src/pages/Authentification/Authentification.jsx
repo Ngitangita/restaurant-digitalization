@@ -1,186 +1,266 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { setUp } from "../../axios/axios";
+import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+
+const LoginSchema = z.object({
+  email: z.string().email({ message: "Adresse e-mail invalide" }),
+  password: z.string().min(8, { message: "Le mot de passe doit comporter au moins 8 caractères" }),
+});
+
+const SignupSchema = z.object({
+  name: z.string().min(2, { message: "Le nom doit comporter au moins 2 caractères" }),
+  email: z.string().email({ message: "Adresse e-mail invalide" }),
+  password: z.string().min(8, { message: "Le mot de passe doit comporter au moins 8 caractères" }),
+  confirmePassword: z.string().min(8, { message: "Le mot de passe doit comporter au moins 8 caractères" }),
+}).refine((data) => data.password === data.confirmePassword, {
+  message: "Les mots de passe ne correspondent pas",
+  path: ["confirmePassword"],
+});
 
 export default function Authentification({ onAuth }) {
-    const [type, setType] = useState("userIconSingin");
-    const [users, setUsers] = useState({
-        name: "",
-        email: "",
-        password: "",
-        confirmePassword: ""
-    });
+  const [type, setType] = useState("userIconSingin");
+  const [signupError, setSignupError] = useState("");
+  const [isLoading, setIsLoading] = useState(false); // État pour le loader
+  const [showLoginPassword, setShowLoginPassword] = useState(false);
+  const [showSignupPassword, setShowSignupPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
+  const {
+    register: loginRegister,
+    handleSubmit: loginSubmit,
+    formState: { errors: loginErrors },
+    reset: resetLogin,
+  } = useForm({
+    resolver: zodResolver(LoginSchema),
+    mode: "onSubmit",
+  });
 
-    const onChangeData = (e) => {
-        const { name, value } = e.target;
-        setUsers((prev) => ({
-            ...prev,
-            [name]: value,
-        }));
-    };
+  const {
+    register: signupRegister,
+    handleSubmit: signupSubmit,
+    formState: { errors: signupErrors },
+    reset: resetSignup,
+  } = useForm({
+    resolver: zodResolver(SignupSchema),
+    mode: "onSubmit",
+  });
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        if (type === "userIconSingin") {
-            onAuth();
-            navigate("/");
-        } else if (type === "userIconSingUp") {
-            // Replace this with your actual sign-up logic
-            if (users.password !== users.confirmePassword) {
-                alert("Passwords do not match!");
-                return;
-            }
-            console.log("User registered:", users);
-            // Simulate successful registration and redirect to home
-            onAuth();
-            navigate("/");
+  const handleLogin = async (data) => {
+    setIsLoading(true); // Affiche le loader
+    try {
+      const response = await setUp().post("/sign-in", {
+        email: data.email,
+        password: data.password,
+      });
+      onAuth(response.data);
+      navigate("/"); // Redirection après succès
+    } catch (error) {
+      console.error("Échec de la connexion :", error);
+    }
+    setIsLoading(false); // Masque le loader
+    resetLogin();
+  };
+
+  const handleSignup = async (data) => {
+    setIsLoading(true); // Affiche le loader
+    try {
+      const response = await setUp().post("/sign-up", {
+        username: data.name,
+        email: data.email,
+        password: data.password,
+      });
+      onAuth(response.data);
+      navigate("/"); // Redirection après succès
+    } catch (error) {
+      if (error.response && error.response.status === 409) {
+        if (error.response.data.message.includes("email")) {
+          setSignupError("Cet e-mail est déjà utilisé. Veuillez utiliser un e-mail différent.");
+        } else if (error.response.data.message.includes("username")) {
+          setSignupError("Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre.");
         }
-    };
+      } else {
+        console.error("Échec de l'inscription :", error);
+      }
+    }
+    setIsLoading(false); // Masque le loader
+    resetSignup();
+  };
 
-    return (
-        <div className="overflow-hidden LoginbgImg h-screen">
-            <div className="bg-black/80 h-screen flex flex-row justify-around items-center">
-                <div className="w-1/2">
-                    <h1 className="text-5xl text-gray-500 text-center italic font-bold">
-                        Bienvenue au restaurant «Utopia bye Sooatel»
-                    </h1>
-                </div>
-
-                <div className="h-auto p-5 bg-gradient-to-l from-black/80 to-gray-300/80 rounded">
-                    <div className="text-center py-2 text-gray-900">
-                        <div className="mb-4">
-                            <div className="flex flex-col justify-center items-center py-2">
-                                <img src="../public/UTOPIA-B.png" alt="UTOPIA-B" className="w-20 h-20 rounded-full" />
-                            </div>
-                            {type === "userIconSingin" ? (
-                                <span className="text-2xl font-bold">
-                                    Login to SOOATEL
-                                </span>
-                            ) : (
-                                <span className="text-2xl font-bold">
-                                    Register a new account
-                                </span>
-                            )}
-                        </div>
-                    </div>
-                    <div>
-                        <div className="flex justify-around mb-4">
-                            <button
-                                className={`px-4 py-2 rounded-lg 
-                                    ${type === "userIconSingin" ? "bg-gradient-to-r from-gray-800 to-gray-300/80 text-white" : "bg-gray-200"}`}
-                                onClick={() => setType("userIconSingin")}>
-                                Sign In
-                            </button>
-                            <button
-                                className={`px-4 py-2 rounded-lg 
-                                    ${type === "userIconSingUp" ? "bg-gradient-to-l from-gray-800 to-gray-300/80 text-white" : "bg-gray-200"}`}
-                                onClick={() => setType("userIconSingUp")}>
-                                Sign Up
-                            </button>
-                        </div>
-                        <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-gray-500">
-                            {type === "userIconSingin" ? (
-                                <>
-                                    <div className="flex flex-col gap-3">
-                                        <div className="w-92 flex flex-row gap-2 items-center justify-between">
-                                            <label className="text-gray-700">Your Email</label>
-                                            <input
-                                                name="email"
-                                                type="email"
-                                                placeholder="name@mail.com"
-                                                className="w-72 px-4 py-2 border rounded-lg bg-white/10 outline-none"
-                                                onChange={onChangeData}
-                                                value={users.email}
-                                            />
-                                        </div>
-                                        <div className="w-92 flex flex-col gap-2 items-center justify-between">
-                                            <div className="flex flex-row gap-2 items-center justify-between">
-                                                <label className="text-gray-700">Password</label>
-                                                <input
-                                                    name="password"
-                                                    type="password"
-                                                    placeholder="********"
-                                                    className="w-72 px-4 py-2 border rounded-lg bg-white/10 outline-none"
-                                                    onChange={onChangeData}
-                                                    value={users.password}
-                                                />
-                                            </div>
-                                            <p className="text-red-500 text-xs italic">Please choose a password.</p>
-                                        </div>
-                                    </div>
-                                    <button type="submit" className="mt-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-gray-300/80 text-white rounded-lg">
-                                        Sign In
-                                    </button>
-                                </>
-                            ) : (
-                                <>
-                                    <div className="flex flex-col gap-4">
-                                        <div className="w-92 flex flex-row gap-2 items-center justify-between">
-                                            <label className="text-gray-700">Your Name</label>
-                                            <input
-                                                name="name"
-                                                type="text"
-                                                placeholder="your name"
-                                                className="w-72 bg-white/10 px-4 py-2 border rounded-lg outline-none"
-                                                onChange={onChangeData}
-                                                value={users.name}
-                                            />
-                                        </div>
-                                        <div className="w-92 flex flex-row gap-2 items-center justify-between">
-                                            <label className="text-gray-700">Your Email</label>
-                                            <input
-                                                name="email"
-                                                type="email"
-                                                placeholder="name@mail.com"
-                                                className="w-72 bg-white/10 px-4 py-2 border rounded-lg outline-none"
-                                                onChange={onChangeData}
-                                                value={users.email}
-                                            />
-                                        </div>
-                                        <div className="w-92 flex flex-col gap-2 items-center">
-                                            <div className="w-full flex flex-row gap-2 items-center justify-between">
-                                                <label className="text-gray-700">Password</label>
-                                                <input
-                                                    name="password"
-                                                    type="password"
-                                                    placeholder="********"
-                                                    className="w-72 bg-white/10 px-4 py-2 border rounded-lg outline-none"
-                                                    onChange={onChangeData}
-                                                    value={users.password}
-                                                />
-                                            </div>
-                                            <p className="text-red-500 text-xs italic">Please choose a password.</p>
-                                        </div>
-                                        <div className="w-92 flex flex-col gap-2 items-center">
-                                            <div className="flex flex-row gap-2 items-center justify-between ">
-                                                <label className="text-gray-700">Confirm Password</label>
-                                                <input
-                                                    name="confirmePassword"
-                                                    type="password"
-                                                    placeholder="********"
-                                                    className="w-72 bg-white/10 px-4 py-2 border rounded-lg outline-none"
-                                                    onChange={onChangeData}
-                                                    value={users.confirmePassword}
-                                                />
-                                            </div>
-                                            <p className="text-red-500 text-xs italic">Please confirm your password.</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex justify-around items-center">
-                                        <button type="submit" className="mt-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-gray-300/80 text-white rounded-lg">
-                                            Sign Up
-                                        </button>
-                                        <a className="inline-block align-baseline font-bold text-sm text-blue-500 hover:text-blue-800" href="#">
-                                            Forgot Password?
-                                        </a>
-                                    </div>
-                                </>
-                            )}
-                        </form>
-                    </div>
-                </div>
+  return (
+    <div className="overflow-hidden LoginbgImg h-screen">
+      <div className="bg-black/80 h-screen flex flex-col justify-center items-center p-4 md:p-8 lg:p-16">
+        <div className="w-full max-w-md p-5 bg-gradient-to-l from-black/85 to-gray-300/20 rounded-lg">
+          <div className="text-center py-2 text-gray-900">
+            <div className="mb-4 flex flex-col justify-center items-center py-2">
+              <img src="../public/UTOPIA-B.png" alt="UTOPIA-B" className="w-20 h-20 rounded-full" />
+              {type === "userIconSingin" ? (
+                <span className="text-2xl font-bold text-white">Connectez-vous à SOOATEL</span>
+              ) : (
+                <span className="text-2xl font-bold text-white">Créez un nouveau compte</span>
+              )}
             </div>
+          </div>
+
+          <div className="flex justify-around mb-4">
+            <button
+              className={`px-4 py-2 rounded-lg ${type === "userIconSingin" ? "bg-gradient-to-r from-gray-800 to-gray-300/80 text-white" : "bg-gray-200"}`}
+              onClick={() => setType("userIconSingin")}
+            >
+              Connexion
+            </button>
+            <button
+              className={`px-4 py-2 rounded-lg ${type === "userIconSingUp" ? "bg-gradient-to-l from-gray-800 to-gray-300/80 text-white" : "bg-gray-200"}`}
+              onClick={() => setType("userIconSingUp")}
+            >
+              Inscription
+            </button>
+          </div>
+
+          {isLoading ? ( // Affiche le loader pendant le traitement
+            <div className="flex justify-center">
+              <div
+                className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-middle"
+                role="status"
+              >
+                <span className="sr-only">Chargement...</span>
+              </div>
+            </div>
+          ) : (
+            <>
+              {type === "userIconSingin" ? (
+                <form onSubmit={loginSubmit(handleLogin)} className="flex flex-col gap-4 text-white">
+                  <div className="w-full flex flex-col gap-2 items-start">
+                    <label className="text-[13px] w-40">Votre e-mail</label>
+                    <input
+                      type="email"
+                      placeholder="nom@mail.com"
+                      className="w-full px-4 py-2 border border-black/25 rounded-lg bg-white/5 outline-none text-white"
+                      {...loginRegister("email")}
+                    />
+                    {loginErrors.email && <span className="text-red-500 text-[13px]">{loginErrors.email.message}</span>}
+                  </div>
+
+                  <div className="w-full flex flex-col gap-2 items-start relative">
+                    <label className="text-[13px] w-40">Mot de passe</label>
+                    <input
+                      type={showLoginPassword ? "text" : "password"}
+                      placeholder="********"
+                      className="w-full px-4 py-2 border border-black/25 rounded-lg bg-white/5 text-white outline-none"
+                      {...loginRegister("password")}
+                    />
+                    {loginErrors.password && <span className="text-red-500 text-[13px]">{loginErrors.password.message}</span>}
+
+                    <button
+                      type="button"
+                      className="absolute right-2 top-10 text-white"
+                      onClick={() => setShowLoginPassword((prev) => !prev)}
+                    >
+                      {showLoginPassword ? (
+                        <FaRegEyeSlash />
+                      ) : (
+                        <FaRegEye />
+                      )}
+                    </button>
+                  </div>
+
+                  <button type="submit" className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-gray-300/80 text-white rounded-lg">
+                    Connexion
+                  </button>
+                </form>
+              ) : (
+                <form onSubmit={signupSubmit(handleSignup)} className="flex flex-col gap-4 text-white">
+                  <div className="flex flex-row gap-2 items-start">
+                    <label className="text-[13px] w-40">Votre nom</label>
+                    <div className="w-full flex flex-col gap-2 items-start">
+                      <input
+                        type="text"
+                        placeholder="votre nom"
+                        className="w-full bg-white/10 px-4 py-2 border border-black/25 rounded-lg outline-none text-white"
+                        {...signupRegister("name")}
+                      />
+                      {signupErrors.name && <span className="text-red-500 text-[13px]">{signupErrors.name.message}</span>}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-row gap-2 items-start">
+                    <label className="text-[13px] w-40">Votre e-mail</label>
+                    <div className="w-full flex flex-col gap-2 items-start">
+                      <input
+                        type="email"
+                        placeholder="nom@mail.com"
+                        className="w-full bg-white/10 px-4 py-2 border border-black/25 rounded-lg outline-none text-white"
+                        {...signupRegister("email")}
+                      />
+                      {signupErrors.email && <span className="text-red-500 text-[13px]">{signupErrors.email.message}</span>}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-row gap-2 items-start relative">
+                    <label className="text-[13px] w-40">Mot de passe</label>
+                    <div className="w-full flex flex-col gap-2 items-start relative">
+                      <input
+                        type={showSignupPassword ? "text" : "password"}
+                        placeholder="********"
+                        className="w-full bg-white/10 px-4 py-2 border border-black/25 rounded-lg outline-none text-white"
+                        {...signupRegister("password")}
+                      />
+                      {signupErrors.password && <span className="text-red-500 text-[13px]">{signupErrors.password.message}</span>}
+
+                      <button
+                        type="button"
+                        className="absolute right-2 top-4 text-white"
+                        onClick={() => setShowSignupPassword((prev) => !prev)}
+                      >
+                        {showSignupPassword ? (
+                          <FaRegEyeSlash />
+                        ) : (
+                          <FaRegEye />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-row gap-2 items-start relative">
+                    <label className="text-[13px] w-40">Confirmer le mot de passe</label>
+                    <div className="w-full flex flex-col gap-2 items-start relative">
+                      <input
+                        type={showConfirmPassword ? "text" : "password"}
+                        placeholder="********"
+                        className="w-full bg-white/10 px-4 py-2 border border-black/25 rounded-lg outline-none text-white"
+                        {...signupRegister("confirmePassword")}
+                      />
+                      {signupErrors.confirmePassword && <span className="text-red-500 text-[13px]">{signupErrors.confirmePassword.message}</span>}
+
+                      <button
+                        type="button"
+                        className="absolute right-2 top-4 text-white"
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                      >
+                        {showConfirmPassword ? (
+                          <FaRegEyeSlash />
+                        ) : (
+                          <FaRegEye />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+
+                  {signupError && <span className="text-red-500 text-[13px]">{signupError}</span>}
+
+                  <button type="submit" className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-gray-300/80 text-white rounded-lg">
+                    Inscription
+                  </button>
+                </form>
+              )}
+            </>
+          )}
         </div>
-    );
+      </div>
+    </div>
+  );
 }
