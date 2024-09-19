@@ -171,6 +171,12 @@ export default function Authentification({ onAuth }) {
                   <button type="submit" className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-gray-300/80 text-white rounded-lg">
                     Connexion
                   </button>
+                  <span className="text-white w-36 hover:text-blue-500">
+                    <a href="#" className="text-sm font-medium">
+                      Mot de passe oublié ?
+                    </a>
+                  </span>
+
                 </form>
               ) : (
                 <form onSubmit={signupSubmit(handleSignup)} className="flex flex-col gap-4 text-white">

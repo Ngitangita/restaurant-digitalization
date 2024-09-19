@@ -10,7 +10,7 @@ export default function BonDeCommandes() {
     <div className="pl-10 relative w-[970px] left-[250px] top-[100px] pb-5">
       <Breadcrumb pageName="Bon De Commande"/>
 
-      <div className='bg-white p-5 pb-10'>
+      <div className='bg-white p-5 pb-10 BonDeCommandes'>
         <BonDeCommande />
       </div>
     </div>

@@ -4,6 +4,8 @@ import Boutton from '../../components/Boutton/Boutton';
 import AddIngredientStock from '../../components/addStocks/AddIngredientStock';
 import { MdAdd } from "react-icons/md";
 import SearchBox from '../../components/searchBox/SearchBox';
+import { FaRegEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 function IngredientStock() {
   const [isOpen, setIsOpen] = useState(false);
@@ -13,38 +15,11 @@ function IngredientStock() {
   };
 
   const ingredients = [
-    { date: "02/12/2024", name: "MAYO", stockInitial: '10', entrees: "5", sortie: "3", stockFinal: "12" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
-    { date: "02/12/2024", name: "MAYO", enter: "5", sortie: "3", stockFinal: "2" },
-    { date: "02/18/2024", name: "SAUCE PIMENT", enter: "12", sortie: "4", stockFinal: "8" },
+    { date: "02/12/2024", nom: "MAYO", stockInitial: '10', entrees: "5", sortie: "3", stockFinal: "12" },
+    { date: "02/18/2024", nom: "SAUCE PIMENT", entrees: "12", sortie: "4", stockFinal: "8" },
+    { date: "02/12/2024", nom: "MAYO", entrees: "5", sortie: "3", stockFinal: "2" },
+    { date: "02/18/2024", nom: "SAUCE PIMENT", entrees: "12", sortie: "4", stockFinal: "8" },
+    // (Répétez les éléments comme nécessaire)
   ];
 
   return (
@@ -56,7 +31,7 @@ function IngredientStock() {
           onClick={toggleModal}
           type='button'
           className="mb-3 rounded p-1 text-white flex flex-row items-center gap-2 bg-blue-500">
-          <MdAdd className="size-8" /> Ajoutez l'ingredient
+          <MdAdd className="size-8" /> Ajouter l'ingrédient
         </Boutton>
       </div>
       {isOpen && (
@@ -68,7 +43,7 @@ function IngredientStock() {
             <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                 <h3 className="text-xl font-semibold text-gray-500 dark:text-white">
-                  Close modal
+                  Fermer le modal
                 </h3>
                 <button
                   type="button"
@@ -90,7 +65,7 @@ function IngredientStock() {
                       d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
                     />
                   </svg>
-                  <span className="sr-only">Close modal</span>
+                  <span className="sr-only">Fermer le modal</span>
                 </button>
               </div>
               <AddIngredientStock />
@@ -99,13 +74,13 @@ function IngredientStock() {
                   onClick={toggleModal}
                   className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                 >
-                  I accept
+                  Accepter
                 </button>
                 <button
                   onClick={toggleModal}
                   className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                 >
-                  Decline
+                  Refuser
                 </button>
               </div>
             </div>
@@ -120,14 +95,14 @@ function IngredientStock() {
             </th>
             <th className="py-2 px-4 w-[200px]">Date</th>
             <th className="py-2 px-4 w-[350px]">Nom</th>
-            <th className="py-2 px-4 w-[200px]">Stock Initial</th>
+            <th className="py-2 px-4 w-[220px]">Stock Initial</th>
             <th className="py-2 px-4 w-[200px]">Entrées</th>
             <th className='py-2 px-4 w-[200px]'>Sortie</th>
             <th className="py-2 px-4 w-[200px]">Stock Final</th>
             <th className='py-2 px-4 w-[170px]'>Action</th>
           </tr>
         </thead>
-        <tbody className='text-center  w-[930px] bg-white max-h-[calc(100%-80px)] fixed
+        <tbody className='IngredientStock text-center  w-[930px] bg-white max-h-[calc(100%-80px)] fixed
         overflow-y-scroll overflow-x-hidden scrollbar-custom'>
           {ingredients.map((ingredient, i) => (
             <tr key={i} className='border border-x text-gray-500
@@ -136,18 +111,18 @@ function IngredientStock() {
                 <input type="checkbox" name="checkbox" id="checkbox" />
               </td>
               <td className="py-2 px-4 w-[127px] border border-y">{ingredient.date}</td>
-              <td className="py-2 px-4 w-[245px] text-wrap border border-y">{ingredient.name}</td>
+              <td className="py-2 px-4 w-[245px] text-wrap border border-y">{ingredient.nom}</td>
               <td className="py-2 px-4 w-[200px] border border-y">{ingredient.stockInitial}</td>
               <td className="py-2 px-4 w-[200px] border border-y">{ingredient.entrees}</td>
               <td className="py-2 px-4 w-[200px] border border-y">{ingredient.sortie}</td>
               <td className="py-2 px-4 w-[200px] border border-y">{ingredient.stockFinal}</td>
               <td className="py-2 px-4 w-[120px] flex flex-row gap-2 justify-end ">
-                <Boutton className="bg-green-500 rounded p-1">
-                  édite
-                </Boutton>
-                <Boutton className="bg-red-500 rounded p-1">
-                  supr
-                </Boutton>
+                <button className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600">
+                  <FaRegEdit />
+                </button>
+                <button className="bg-red-500 text-white rounded p-2 hover:bg-red-600">
+                  <MdDelete />
+                </button>
               </td>
             </tr>
           ))}

@@ -1,4 +1,3 @@
-
 export function UpdatePassword() {
   return (
     <form
@@ -6,13 +5,13 @@ export function UpdatePassword() {
       className="bg-white p-6 rounded-lg shadow-md space-y-6 text-gray-500"
     >
       <div>
-        <h3 className="text-lg font-semibold">Password</h3>
-        <p className="text-sm text-gray-500">Update password</p>
+        <h3 className="text-lg font-semibold">Mot de passe</h3>
+        <p className="text-sm text-gray-500">Mettre à jour le mot de passe</p>
       </div>
 
       <div className="space-y-4 max-w-md">
         <div>
-          <label className="block text-sm font-medium">Password</label>
+          <label className="block text-sm font-medium">Mot de passe</label>
           <input
             type="password"
             name="password"
@@ -21,7 +20,7 @@ export function UpdatePassword() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium">Confirm Password</label>
+          <label className="block text-sm font-medium">Confirmer le mot de passe</label>
           <input
             type="password"
             name="confirmPassword"
@@ -35,13 +34,13 @@ export function UpdatePassword() {
           type="submit"
           className="px-4 py-2 border border-gray-500 text-gray-500 rounded-md hover:bg-gray-100"
         >
-           Cancel
+          Annuler
         </button>
         <button
           type="submit"
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
         >
-          Update
+          Mettre à jour
         </button>
       </div>
     </form>

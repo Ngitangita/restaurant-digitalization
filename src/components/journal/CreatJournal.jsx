@@ -1,5 +1,3 @@
-
-
 export default function CreateJournal() {
     return (
         <div className="flex justify-center items-center">
@@ -13,40 +11,40 @@ export default function CreateJournal() {
                         </div>
                     </div>
                     <h1 className="text-2xl font-bold underline">Journal</h1>
-                    <p>pour enregistrer les entretients et sortie</p>
+                    <p>Pour enregistrer les entretiens et les sorties</p>
                 </div>
                 <form className="flex flex-col justify-center gap-4 p-4 text-gray-700 rounded bg-white">
                     <div className="flex flex-row justify-between items-center">
-                        <label htmlFor="date">Date:</label>
+                        <label htmlFor="date">Date :</label>
                         <input type="datetime-local" id="date"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <div className="flex flex-row justify-between items-center gap-2">
-                        <label htmlFor='libelle'>Libelle:</label>
+                        <label htmlFor='libelle'>Libellé :</label>
                         <input type="text" id='libelle'
-                            placeholder="libelle"
+                            placeholder="libellé"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <div className="flex flex-row justify-between items-center gap-2">
-                        <label htmlFor="recette">Recette:</label>
+                        <label htmlFor="recette">Recette :</label>
                         <input type="text" id="recette"
                             placeholder="recette"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <div className="flex flex-row justify-between items-center gap-2">
-                        <label htmlFor="depense">Depense:</label>
+                        <label htmlFor="depense">Dépense :</label>
                         <input type="text" id="depense"
-                            placeholder="depense"
+                            placeholder="dépense"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <div className="flex flex-row justify-between items-center gap-2">
-                        <label htmlFor="montant">Montant:</label>
+                        <label htmlFor="montant">Montant :</label>
                         <input type="text" id="montant"
                             placeholder="montant"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <button type="submit" className="mt-4 px-4 py-2 bg-blue-800 text-white rounded-lg">
-                        Envoyez
+                        Envoyer
                     </button>
                 </form>
             </div>

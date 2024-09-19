@@ -4,6 +4,8 @@ import { MdAdd } from "react-icons/md";
 import AddDrinkStock from '../../components/addStocks/AddDrinkStock';
 import Boutton from '../../components/Boutton/Boutton';
 import SearchBox from '../../components/searchBox/SearchBox';
+import { FaRegEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 function DrinkStock() {
     const [isOpen, setIsOpen] = useState(false);
@@ -13,11 +15,7 @@ function DrinkStock() {
     };
 
     const drinks = [
-        { date: "01/01/2000", name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", sortie: "20l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
+        { date: "01/01/2000", name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", sortie: "20 l", stockFinal: "10 l" },
         { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
         { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
         { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
@@ -54,7 +52,7 @@ function DrinkStock() {
                     onClick={toggleModal}
                     type='button'
                     className="mb-3 rounded p-1 text-white flex flex-row items-center gap-2 bg-blue-500">
-                    <MdAdd className="size-8" /> Ajoutez le boisson
+                    <MdAdd className="size-8" /> Ajouter une boisson
                 </Boutton>
             </div>
             {isOpen && (
@@ -66,7 +64,7 @@ function DrinkStock() {
                         <div className="relative bg-white rounded-lg shadow dark:bg-gray-700">
                             <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600">
                                 <h3 className="text-xl font-semibold text-gray-500 dark:text-white">
-                                    Close modal
+                                    Fermer le modal
                                 </h3>
                                 <button
                                     type="button"
@@ -82,13 +80,13 @@ function DrinkStock() {
                                     >
                                         <path
                                             stroke="currentColor"
-                                            stroke-linecap="round"
-                                            stroke-linejoin="round"
-                                            stroke-width="2"
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
                                             d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
                                         />
                                     </svg>
-                                    <span className="sr-only">Close modal</span>
+                                    <span className="sr-only">Fermer le modal</span>
                                 </button>
                             </div>
                             <AddDrinkStock />
@@ -97,13 +95,13 @@ function DrinkStock() {
                                     onClick={toggleModal}
                                     className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
                                 >
-                                    I accept
+                                    Accepter
                                 </button>
                                 <button
                                     onClick={toggleModal}
                                     className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
                                 >
-                                    Decline
+                                    Refuser
                                 </button>
                             </div>
                         </div>
@@ -113,25 +111,22 @@ function DrinkStock() {
             <table className="min-w-full bg-white border border-gray-300">
                 <thead className='text-center'>
                     <tr className='bg-slate-300 text-gray-500'>
-                        <th className="py-2 px-4  border border-y">
+                        <th className="py-2 px-4 border border-y">
                             <input type="checkbox" name="checkbox" id="checkbox" />
                         </th>
                         <th className="py-2 px-4 w-[200px]">Date</th>
                         <th className="py-2 px-4 w-[350px]">Nom</th>
-                        <th className="py-2 px-4 w-[200px]">Stock Initial</th>
+                        <th className="py-2 px-4 w-[220px]">Stock Initial</th>
                         <th className="py-2 px-4 w-[200px]">Entrées</th>
                         <th className='py-2 px-4 w-[200px]'>Sortie</th>
                         <th className="py-2 px-4 w-[200px]">Stock Final</th>
                         <th className='py-2 px-4 w-[170px]'>Action</th>
                     </tr>
                 </thead>
-                <tbody className='text-center 
-                w-[930px] bg-white max-h-[calc(100%-80px)] fixed
-                overflow-y-scroll overflow-x-hidden scrollbar-custom'>
+                <tbody className='DrinkStock text-center w-[930px] bg-white max-h-[calc(100%-80px)] fixed overflow-y-scroll overflow-x-hidden scrollbar-custom'>
                     {drinks.map((drink, i) => (
-                        <tr key={i} className='border border-x text-gray-500
-                        hover:bg-slate-100'>
-                            <td className="py-2 px-4  border border-y">
+                        <tr key={i} className='border border-x text-gray-500 hover:bg-slate-100'>
+                            <td className="py-2 px-4 border border-y">
                                 <input type="checkbox" name="checkbox" id="checkbox" />
                             </td>
                             <td className="py-2 px-4 w-[127px] border border-y">{drink.date}</td>
@@ -140,13 +135,13 @@ function DrinkStock() {
                             <td className="py-2 px-4 w-[200px] border border-y">{drink.entrees}</td>
                             <td className="py-2 px-4 w-[200px] border border-y">{drink.sortie}</td>
                             <td className="py-2 px-4 w-[200px] border border-y">{drink.stockFinal}</td>
-                            <td className="py-2 px-4 w-[120px] flex flex-row gap-2 justify-end ">
-                                <Boutton className="bg-green-500 rounded p-1">
-                                    édite
-                                </Boutton>
-                                <Boutton className="bg-red-500 rounded p-1">
-                                    supr
-                                </Boutton>
+                            <td className="py-2 px-4 w-[120px] flex flex-row gap-2 justify-end">
+                                <button className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600">
+                                    <FaRegEdit />
+                                </button>
+                                <button className="bg-red-500 text-white rounded p-2 hover:bg-red-600">
+                                    <MdDelete />
+                                </button>
                             </td>
                         </tr>
                     ))}

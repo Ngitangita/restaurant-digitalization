@@ -1,4 +1,4 @@
-
+import { Link } from 'react-router-dom';
 
 export default function CreateFacture() {
     return (
@@ -16,64 +16,64 @@ export default function CreateFacture() {
                 </div>
                 <form className="flex flex-col justify-center gap-4 p-4 text-gray-700 rounded bg-white">
                     <div className="flex flex-row justify-between items-center">
-                        <label htmlFor="date">Date:</label>
+                        <label htmlFor="date">Date :</label>
                         <input type="datetime-local" id="date"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <div className="flex flex-row justify-between items-center gap-2">
-                        <label htmlFor="Droit">Droit:</label>
-                        <input type="number" id="Droit"
+                        <label htmlFor="droit">Droit :</label>
+                        <input type="number" id="droit"
                             placeholder="droit"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <div className="flex flex-row justify-between items-center gap-2">
-                        <label htmlFor="table">N° de table:</label>
+                        <label htmlFor="table">N° de table :</label>
                         <input type="number" id="table"
-                            placeholder="numero de table"
+                            placeholder="numéro de table"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <div className="flex flex-row justify-between items-center gap-2">
-                        <label htmlFor="chambre">Chambre:</label>
+                        <label htmlFor="chambre">Chambre :</label>
                         <input type="number" id="chambre"
-                            placeholder="numero du chambre"
+                            placeholder="numéro de chambre"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <div className="flex flex-row justify-between items-center gap-2">
-                        <label htmlFor="quantity">Quantités:</label>
+                        <label htmlFor="quantity">Quantités :</label>
                         <input type="number" id="quantity"
-                            placeholder="quantités de la désignation"
+                            placeholder="quantités"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <div className="flex flex-row justify-between items-center gap-2">
-                        <label htmlFor="designation">Désignation:</label>
+                        <label htmlFor="designation">Désignation :</label>
                         <input type="text" id="designation"
                             placeholder="désignation"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <div className="flex flex-row justify-between items-center gap-2">
-                        <label htmlFor="prix">Prix Uniter:</label>
+                        <label htmlFor="prix">Prix unitaire :</label>
                         <input type="text" id="prix"
-                            placeholder="prix uniter"
+                            placeholder="prix unitaire"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <div className="flex flex-row justify-between items-center gap-2">
-                        <label htmlFor="montant">Montant:</label>
+                        <label htmlFor="montant">Montant :</label>
                         <input type="text" id="montant"
                             placeholder="montant"
                             className="w-72 pl-4 pr-2 py-1 bg-slate-300 size-10 bg-opacity-15 rounded outline-none " />
                     </div>
                     <div className="flex flex-col gap-6">
                         <div className="flex flex-col gap-2">
-                            <span>Montant total: ................</span>
+                            <span>Montant total : ................</span>
                             <p>Somme arrêtée à la présente liste de ................</p>
                         </div>
                         <div className="flex flex-row gap-40">
-                            <span className="underline">Lersponsable</span>
+                            <span className="underline">Responsable</span>
                             <span className="underline">Client</span>
                         </div>
                     </div>
                     <button type="submit" className="mt-4 px-4 py-2 bg-blue-800 text-white rounded-lg">
-                        Envoyez
+                        Envoyer
                     </button>
                 </form>
             </div>

@@ -21,8 +21,8 @@ export default function PaymentForm() {
     return (
         <div className="overflow-hidden bg-gray-100 h-screen">
             <div className="bg-black/80 h-screen flex flex-row justify-around items-center">
-                <div className="border border-white w-1/2">
-                    Welcome to the payment section. Please fill in the details to complete your payment.
+                <div className="border border-white w-1/2 p-4">
+                    <p className="text-white">Welcome to the payment section. Please fill in the details to complete your payment.</p>
                 </div>
                 <div className="h-auto p-5 bg-gradient-to-l from-black/80 to-gray-300/80 rounded">
                     <div className="text-center py-2">
@@ -38,14 +38,14 @@ export default function PaymentForm() {
                     <div>
                         <div className="flex justify-around mb-4">
                             <button
-                                className={`px-4 py-2 rounded-lg 
-                                    ${type === "creditCard" ? "bg-gradient-to-r from-gray-800 to-gray-300/80 text-white" : "bg-gray-200"}`}
+                                aria-label="Select Credit Card Payment"
+                                className={`px-4 py-2 rounded-lg ${type === "creditCard" ? "bg-gradient-to-r from-gray-800 to-gray-300/80 text-white" : "bg-gray-200"}`}
                                 onClick={() => setType("creditCard")}>
                                 Credit Card
                             </button>
                             <button
-                                className={`px-4 py-2 rounded-lg 
-                                    ${type === "paypal" ? "bg-gradient-to-l from-gray-800 to-gray-300/80 text-white" : "bg-gray-200"}`}
+                                aria-label="Select PayPal Payment"
+                                className={`px-4 py-2 rounded-lg ${type === "paypal" ? "bg-gradient-to-l from-gray-800 to-gray-300/80 text-white" : "bg-gray-200"}`}
                                 onClick={() => setType("paypal")}>
                                 PayPal
                             </button>
@@ -55,9 +55,10 @@ export default function PaymentForm() {
                             <form className="flex flex-col gap-4">
                                 <div className="flex flex-col gap-3">
                                     <div className="w-92 flex flex-row gap-2 items-center justify-between">
-                                        <label className="text-gray-700">Name on Card</label>
+                                        <label htmlFor="name" className="text-gray-700">Name on Card</label>
                                         <input
                                             name="name"
+                                            id="name"
                                             type="text"
                                             placeholder="John Doe"
                                             className="w-72 px-4 py-2 border rounded-lg bg-white/10 outline-none"
@@ -66,9 +67,10 @@ export default function PaymentForm() {
                                         />
                                     </div>
                                     <div className="w-92 flex flex-row gap-2 items-center justify-between">
-                                        <label className="text-gray-700">Card Number</label>
+                                        <label htmlFor="cardNumber" className="text-gray-700">Card Number</label>
                                         <input
                                             name="cardNumber"
+                                            id="cardNumber"
                                             type="text"
                                             placeholder="1234 5678 9123 4567"
                                             className="w-72 px-4 py-2 border rounded-lg bg-white/10 outline-none"
@@ -77,9 +79,10 @@ export default function PaymentForm() {
                                         />
                                     </div>
                                     <div className="w-92 flex flex-row gap-2 items-center justify-between">
-                                        <label className="text-gray-700">Expiration Date</label>
+                                        <label htmlFor="expirationDate" className="text-gray-700">Expiration Date</label>
                                         <input
                                             name="expirationDate"
+                                            id="expirationDate"
                                             type="text"
                                             placeholder="MM/YY"
                                             className="w-72 px-4 py-2 border rounded-lg bg-white/10 outline-none"
@@ -88,9 +91,10 @@ export default function PaymentForm() {
                                         />
                                     </div>
                                     <div className="w-92 flex flex-row gap-2 items-center justify-between">
-                                        <label className="text-gray-700">CVV</label>
+                                        <label htmlFor="cvv" className="text-gray-700">CVV</label>
                                         <input
                                             name="cvv"
+                                            id="cvv"
                                             type="password"
                                             placeholder="***"
                                             className="w-72 px-4 py-2 border rounded-lg bg-white/10 outline-none"
@@ -99,9 +103,10 @@ export default function PaymentForm() {
                                         />
                                     </div>
                                     <div className="w-92 flex flex-row gap-2 items-center justify-between">
-                                        <label className="text-gray-700">Amount</label>
+                                        <label htmlFor="amount" className="text-gray-700">Amount</label>
                                         <input
                                             name="amount"
+                                            id="amount"
                                             type="text"
                                             placeholder="$100.00"
                                             className="w-72 px-4 py-2 border rounded-lg bg-white/10 outline-none"

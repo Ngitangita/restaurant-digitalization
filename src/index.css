@@ -14,25 +14,47 @@
     box-sizing: border-box;
 }
 
-body {
-    background-color: #ebe9e9;
-    font-family: "Open Sans", sans-serif;
-}
+body {font-family: "Open Sans", sans-serif;background-color: #ebe9e9;}
 
-.LoginbgImg {
-    background-image: url(../public/img-3.jpg);
-    background-repeat: no-repeat;
-    background-size: cover;
-}
+body.dark{background: #0b1a3a;}
+  
+body.dark header, body.dark .Sidebar,  body.dark .BonDeCommandes{
+    background: #112143;
+    color: #fff !important;
+  }
 
-.size {
-    font-size: 30px;
-}
+  body.dark .Breadcrumb{background: #112143; }
+  
+  body.dark span{color: #fff !important; opacity: 0.9;}
 
-.lineHeigth {
-    line-height: 0.0cm;
-}
+  body.dark .LightMode{background: #12254e; color: #fff !important;}
 
-.scrollbar-custom {
-    scrollbar-width: none;
-}
+  body.dark .Sidebar .button:hover{background: rgba(255, 255, 255, 0.1); color: #fff !important; }
+
+  body.dark .ListeDesMenu{background: #0b1a3a; color: #fff !important; border: 1px solid #12254e;}
+  body.dark .ListeDesMenu .FoodName {background: #112143; color: #fff !important;}
+  body.dark .ListeDesMenu .designation{background: #112143; color: #fff !important; border: none;}
+
+  body.dark .SearchBox{ background: #112143; color: #fff; border: none;}
+
+  body.dark table{ border: none;}
+  body.dark .TableListeCommandes,  body.dark .DrinkStock,
+  body.dark .FoodStock, body.dark .IngredientStock{ background: #112143; color: #fff;}
+  body.dark tr{ border: none;}
+  body.dark .TableListeCommandes tr:hover, body.dark .FoodStock tr:hover,
+  body.dark .DrinkStock tr:hover, body.dark .IngredientStock tr:hover
+  { background: rgba(255, 255, 255, 0.1); color: #fff !important; }
+  body.dark th{background: #0b1a3a; border: none;}
+  body.dark .TableListeCommandes td, body.dark .TableListeCommandes td button,
+  body.dark .DrinkStock td, body.dark .DrinkStock td button,
+  body.dark .IngredientStock td, body.dark .IngredientStock td button,
+  body.dark .FoodStock td, body.dark .FoodStock td button
+  { color: #fff; border: 1px solid rgba(255, 255, 255, 0.1);}
+
+  body.dark .CalendarHead{background: #0b1a3a;}
+  body.dark .CalendarHead button{background: #112143; color: #ababab;}
+  body.dark .Calendar{background: #112143;  border: 1px solid rgba(255, 255, 255, 0.1); color: #ababab;}
+
+  .LoginbgImg { background-image: url(../public/img-3.jpg); background-repeat: no-repeat; background-size: cover;}
+
+.scrollbar-custom {scrollbar-width: none;}

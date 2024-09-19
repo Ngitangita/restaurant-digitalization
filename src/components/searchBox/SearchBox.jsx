@@ -13,7 +13,7 @@ export default function SearchBox() {
           placeholder="Search…"
           aria-label="search"
           id='search'
-          className="w-[200px] pl-10 pr-2 py-1 size-10 bg-opacity-15 rounded outline-none hover:bg-slate-200"
+          className="SearchBox w-[200px] pl-10 pr-2 py-1 size-10 bg-opacity-15 rounded outline-none hover:bg-slate-200"
         />
       </div>
     </div>

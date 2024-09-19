@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 
 const Breadcrumb = ({ pageName }) => {
   return (
-    <div className="mb-6 bg-white p-3 rounded flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-      <h2 className="text-title-md2 font-semibold text-black dark:text-white">
+    <div className="Breadcrumb z-10 lg:z-10 mb-6 bg-white p-3 rounded flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <h2 className="text-title-md2 font-semibold text-gray-500 dark:text-white">
         {pageName}
       </h2>
 
@@ -11,7 +11,7 @@ const Breadcrumb = ({ pageName }) => {
         <ol className="flex items-center gap-2">
           <li>
             <Link className="font-medium text-gray-500" to="/">
-              Home /
+              Accueil /
             </Link>
           </li>
           <li className="font-medium text-primary text-gray-500">{pageName}</li>
