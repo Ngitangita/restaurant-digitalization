@@ -1,7 +1,9 @@
+
+
 export default function CreateJournal() {
     return (
         <div className="flex justify-center items-center">
-            <div className="flex justify-center text-gray-500 items-center flex-col bg-white rounded p-5 pt-5 pb-16">
+            <div className="Journal flex justify-center text-gray-500 items-center flex-col bg-white rounded p-5 pt-5 pb-16">
                 <div className="flex flex-col gap-4 items-center">
                     <div className="flex flex-row gap-3 items-center">
                         <img src="../public/UTOPIA-B.png" alt="UTOPIA-B" className="w-16 h-16 rounded-full" />
@@ -13,7 +15,7 @@ export default function CreateJournal() {
                     <h1 className="text-2xl font-bold underline">Journal</h1>
                     <p>Pour enregistrer les entretiens et les sorties</p>
                 </div>
-                <form className="flex flex-col justify-center gap-4 p-4 text-gray-700 rounded bg-white">
+                <form className="Journal flex flex-col justify-center gap-4 p-4 text-gray-700 rounded bg-white">
                     <div className="flex flex-row justify-between items-center">
                         <label htmlFor="date">Date :</label>
                         <input type="datetime-local" id="date"

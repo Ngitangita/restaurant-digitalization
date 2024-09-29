@@ -1,85 +1,135 @@
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
-import SearchBox from '../../components/searchBox/SearchBox';
-import { FaRegEdit } from "react-icons/fa";
-import { MdDelete } from "react-icons/md";
+import React, { useEffect, useState } from 'react';
+import { FaSearch } from "react-icons/fa";
+import { MdClose } from "react-icons/md";
+import { apiUrl, fetchJson } from '../../services/api';
+import BonDeCommande from '../../components/bonDeCommande/BonDeCommande';
 
-function Commande() {
+export default function Commande() {
+    const [menus, setMenus] = useState([]);
+    const [selectedMenus, setSelectedMenus] = useState([]);
+    const [quantities, setQuantities] = useState({});
+    const [searchTerm, setSearchTerm] = useState('');
+    const [error, setError] = useState(null);
+    const [commandes, setCommandes] = useState([]);
+    const [isModalOpen, setIsModalOpen] = useState(false); // État pour la modale
 
-  const Commandes = [
-    { date: "06/09/2024", table: "", chambre: "102", designation: "Pizza" },
-    { date: "12/09/2024", table: "2", chambre: "", designation: "Akoho gasy rony" },
-    { date: "03/03/2024", table: "", chambre: "103", designation: "Pomme frite" },
-    { date: "06/09/2024", table: "5", chambre: "", designation: "Pizza" },
-    { date: "12/09/2024", table: "", chambre: "105", designation: "Akoho gasy rony" },
-    { date: "03/03/2024", table: "8", chambre: "", designation: "Pomme frite" },
-    { date: "06/09/2024", table: "", chambre: "102", designation: "Pizza" },
-    { date: "12/09/2024", table: "2", chambre: "", designation: "Akoho gasy rony" },
-    { date: "03/03/2024", table: "", chambre: "103", designation: "Pomme frite" },
-    { date: "06/09/2024", table: "5", chambre: "", designation: "Pizza" },
-    { date: "12/09/2024", table: "", chambre: "105", designation: "Akoho gasy rony" },
-    { date: "03/03/2024", table: "8", chambre: "", designation: "Pomme frite" },
-    { date: "06/09/2024", table: "", chambre: "102", designation: "Pizza" },
-    { date: "12/09/2024", table: "2", chambre: "", designation: "Akoho gasy rony" },
-    { date: "03/03/2024", table: "", chambre: "103", designation: "Pomme frite" },
-    { date: "06/09/2024", table: "5", chambre: "", designation: "Pizza" },
-    { date: "12/09/2024", table: "", chambre: "200", designation: "Akoho gasy rony" },
-    { date: "03/03/2024", table: "", chambre: "103", designation: "Pomme frite" },
-    { date: "06/09/2024", table: "5", chambre: "", designation: "Pizza" },
-    { date: "12/09/2024", table: "", chambre: "105", designation: "Akoho gasy rony" },
-    { date: "03/03/2024", table: "8", chambre: "", designation: "Pomme frite" },
-  ];
+    useEffect(() => {
+        (async () => {
+            try {
+                const data = await fetchJson(apiUrl("/menus"));
+                setMenus(data || []);
+            } catch (err) {
+                setError('Erreur lors de la récupération des menus');
+            }
+        })();
+    }, []);
 
-  return (
-    <div className="w-full flex justify-end relative top-28 ">
-      <div className="  px-4 md:px-10 lg:px-10 lg:pl-20 lg:top-[100px]">
-        <div className="hidden xl:block">
-          <Breadcrumb pageName="Liste des commandes reçues" />
+    const toggleMenuSelection = (menuName) => {
+        setSelectedMenus((prevSelectedMenus) => {
+            if (prevSelectedMenus.includes(menuName)) {
+                return prevSelectedMenus.filter((name) => name !== menuName);
+            } else {
+                return [...prevSelectedMenus, menuName];
+            }
+        });
+    };
+
+    const handleQuantityChange = (menuName, event) => {
+        const value = Math.max(0, parseInt(event.target.value, 10) || 0);
+        setQuantities({
+            ...quantities,
+            [menuName]: value,
+        });
+    };
+
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const clearSearch = () => {
+        setSearchTerm('');
+    };
+
+    const addCommande = () => {
+        const newCommandes = selectedMenus.map((menuName) => {
+            const menu = menus.find((m) => m.name === menuName);
+            const quantity = quantities[menuName] || 0;
+            const price = menu?.price || 0;
+            return {
+                name: menuName,
+                quantity,
+                price,
+                total: quantity * price,
+            };
+        });
+        setCommandes([...commandes, ...newCommandes]);
+        setSelectedMenus([]);
+        setQuantities({});
+        setIsModalOpen(true); // Ouvre la modale
+    };
+
+    const filteredMenus = (menus || []).filter((menu) =>
+        menu.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const generateDesignation = () => {
+        return selectedMenus
+            .map((menuName) => {
+                const menu = menus.find((m) => m.name === menuName);
+                const price = menu?.price || '';
+                const quantity = quantities[menuName] || 0;
+                return `${menuName} (${quantity}) - ${price}`;
+            })
+            .join(', ');
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
+
+    return (
+        <div className="ListeDesMenu mt-3 w-full flex flex-col border border-gray-300 rounded-md shadow-sm">
+            {error && <p className="text-red-500">{error}</p>}
+            <div className="Commandes mt-5">
+                <h2 className="text-xl font-bold mb-4">Liste des Commandes</h2>
+                <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                    <thead>
+                        <tr className="bg-gray-200">
+                            <th className="py-2 px-4">Nom</th>
+                            <th className="py-2 px-4">Quantité</th>
+                            <th className="py-2 px-4">Prix unitaire (€)</th>
+                            <th className="py-2 px-4">Total (€)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {commandes.map((commande, index) => (
+                            <tr key={index} className="hover:bg-gray-100">
+                                <td className="py-2 px-4">{commande.name}</td>
+                                <td className="py-2 px-4">{commande.quantity}</td>
+                                <td className="py-2 px-4">{commande.price}</td>
+                                <td className="py-2 px-4">{commande.total}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+                <button onClick={addCommande} className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">
+                    Ajouter Commande
+                </button>
+            </div>
+
+            {/* Modale pour afficher la commande */}
+            {isModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg">
+                        <h2 className="text-xl font-bold mb-4">Bon de Commande</h2>
+                        <BonDeCommande commandes={commandes} />
+                        <button onClick={closeModal} className="mt-4 bg-red-500 text-white py-2 px-4 rounded">
+                            Fermer
+                        </button>
+                    </div>
+                    <div className="fixed inset-0 bg-black opacity-50" onClick={closeModal}></div>
+                </div>
+            )}
         </div>
-        <SearchBox />
-
-        <div className="overflow-x-auto">
-          <table className="min-w-full">
-            <thead className='text-center text-gray-500 '>
-              <tr className="bg-gray-300">
-                <th className="py-2 px-2 sm:px-4 border border-y">
-                  <input type="checkbox" name="checkbox" id="checkbox" />
-                </th>
-                <th className="py-2 px-2 sm:px-4 w-[100px] sm:w-[150px]">Date & heure</th>
-                <th className="py-2 px-2 sm:px-4 w-[100px] sm:w-[150px]">N° de table</th>
-                <th className="py-2 px-2 sm:px-4 w-[100px] sm:w-[150px]">Chambre</th>
-                <th className="py-2 px-2 sm:px-4 w-[200px] sm:w-[350px]  border border-y">Désignation</th>
-                <th className="py-2 px-2 sm:px-4 w-[100px] sm:w-[120px]">Action</th>
-              </tr>
-            </thead>
-            <tbody className="text-center text-gray-500  scrollbar-custom
-              xl:w-[965px] xl:max-h-[calc(100%-80px)]
-              className='DrinkStock w-[930px] bg-white max-h-[calc(100%-80px)] 
-              fixed overflow-y-scroll overflow-x-hidden scrollbar-custom'">
-              {Commandes.map((commande, i) => (
-                <tr key={i} className=" text-gray-500 hover:bg-slate-100 ">
-                  <td className="py-2 px-2 sm:px-4 border border-y">
-                    <input type="checkbox" name="checkbox" id="checkbox" />
-                  </td>
-                  <td className="py-2 px-2 sm:px-4 w-[100px] sm:w-[160px] border border-y">{commande.date}</td>
-                  <td className="py-2 px-2 sm:px-4 w-[100px] sm:w-[150px] border border-y">{commande.table}</td>
-                  <td className="py-2 px-2 sm:px-4 w-[100px] sm:w-[150px] border border-y">{commande.chambre}</td>
-                  <td className="py-2 px-2 sm:px-4 w-[300px] sm:w-[360px] border border-y">{commande.designation}</td>
-                  <td className="py-2 px-2 sm:px-4 w-[100px] sm:w-[120px] border border-y flex flex-row gap-2 justify-end">
-                    <button className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600">
-                      <FaRegEdit />
-                    </button>
-                    <button className="bg-red-500 text-white rounded p-2 hover:bg-red-600">
-                      <MdDelete />
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-  );
+    );
 }
-
-export default Commande;

@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { setUp } from "../../axios/axios";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
+import { axiosConf } from "../../services/api";
 
 const LoginSchema = z.object({
   email: z.string().email({ message: "Adresse e-mail invalide" }),
@@ -51,14 +51,14 @@ export default function Authentification({ onAuth }) {
   });
 
   const handleLogin = async (data) => {
-    setIsLoading(true); // Affiche le loader
+    setIsLoading(true); 
     try {
-      const response = await setUp().post("/sign-in", {
+      const response = await axiosConf.post("/sign-in", {
         email: data.email,
         password: data.password,
       });
       onAuth(response.data);
-      navigate("/"); // Redirection après succès
+      navigate("/"); 
     } catch (error) {
       console.error("Échec de la connexion :", error);
     }
@@ -69,13 +69,13 @@ export default function Authentification({ onAuth }) {
   const handleSignup = async (data) => {
     setIsLoading(true); // Affiche le loader
     try {
-      const response = await setUp().post("/sign-up", {
+      const response = await axiosConf.post("/sign-up", {
         username: data.name,
         email: data.email,
         password: data.password,
       });
       onAuth(response.data);
-      navigate("/"); // Redirection après succès
+      navigate("/"); 
     } catch (error) {
       if (error.response && error.response.status === 409) {
         if (error.response.data.message.includes("email")) {
@@ -87,12 +87,12 @@ export default function Authentification({ onAuth }) {
         console.error("Échec de l'inscription :", error);
       }
     }
-    setIsLoading(false); // Masque le loader
+    setIsLoading(false);
     resetSignup();
   };
 
   return (
-    <div className="overflow-hidden LoginbgImg h-screen">
+    <div className="overflow-hidden LoginbgImg h-screen w-screen">
       <div className="bg-black/80 h-screen flex flex-col justify-center items-center p-4 md:p-8 lg:p-16">
         <div className="w-full max-w-md p-5 bg-gradient-to-l from-black/85 to-gray-300/20 rounded-lg">
           <div className="text-center py-2 text-gray-900">

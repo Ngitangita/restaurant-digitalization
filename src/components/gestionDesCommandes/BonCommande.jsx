@@ -3,8 +3,8 @@ import { FaSearch } from "react-icons/fa";
 import { MdClose } from "react-icons/md";
 import { apiUrl, fetchJson } from '../../services/api';
 
-export default function ListeDesMenu() {
-    const [menus, setMenus] = useState([]); // Initialise menus à un tableau vide
+export default function BonCommande({ onAjouterCommande }) {
+    const [menus, setMenus] = useState([]);
     const [selectedMenus, setSelectedMenus] = useState([]);
     const [quantities, setQuantities] = useState({});
     const [searchTerm, setSearchTerm] = useState('');
@@ -15,7 +15,7 @@ export default function ListeDesMenu() {
         (async () => {
             try {
                 const data = await fetchJson(apiUrl("/menus"));
-                setMenus(data || []);  // Assurez-vous que `data` est bien un tableau
+                setMenus(data || []);
             } catch (err) {
                 setError('Erreur lors de la récupération des menus');
             }
@@ -48,27 +48,36 @@ export default function ListeDesMenu() {
         setSearchTerm('');
     };
 
+    const addCommande = () => {
+        const newCommandes = selectedMenus.map((menuName) => {
+            const menu = menus.find((m) => m.name === menuName);
+            const quantity = quantities[menuName] || 0;
+            const price = menu?.price || 0;
+            return {
+                name: menuName,
+                quantity,
+                price,
+                total: quantity * price, // Calculer le total pour chaque commande
+            };
+        }).filter(commande => commande.quantity > 0); // Filtrer les commandes avec quantité > 0
+
+        onAjouterCommande(newCommandes); // Appeler la fonction pour ajouter les commandes
+        // Vider les sélections après ajout à la commande
+        setSelectedMenus([]);
+        setQuantities({});
+    };
+
     // Filtrer les menus en fonction du terme de recherche
     const filteredMenus = (menus || []).filter((menu) =>
         menu.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const generateDesignation = () => {
-        return selectedMenus
-            .map((menuName) => {
-                const menu = menus.find((m) => m.name === menuName);
-                const price = menu?.price || '';
-                const quantity = quantities[menuName] || 0;
-                return `${menuName} (${quantity}) - ${price}`;
-            })
-            .join(', ');
-    };
-
     return (
-        <div className="ListeDesMenu mt-3 w-full flex flex-row justify-between border border-gray-300 rounded-md shadow-sm">
-            <div className="ListeDesMenu relative inline-block w-80 p-2 border border-gray-300 rounded-md">
+        <div className="BonCommande mt-3 w-full flex flex-col justify-between border border-gray-300 rounded-md shadow-sm">
+            {error && <p className="text-red-500">{error}</p>}
+            <div className="relative inline-block w-80 p-2 border border-gray-300 rounded-md">
                 <span className='pl-4 text-gray-500'>Sélectionnez vos désignations ici</span>
-                <div className="SearchBox flex items-center mb-3 bg-white border border-gray-300 rounded-md">
+                <div className="flex items-center mb-3 bg-white border border-gray-300 rounded-md">
                     <label htmlFor="search" className='cursor-pointer'><FaSearch className="text-gray-500 ml-2" /></label>
                     <input
                         type="text"
@@ -76,7 +85,7 @@ export default function ListeDesMenu() {
                         value={searchTerm}
                         onChange={handleSearchChange}
                         id='search'
-                        className="SearchBox w-full px-3 py-2 text-gray-700 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        className="w-full px-3 py-2 text-gray-700 shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                     />
                     {searchTerm && (
                         <MdClose
@@ -85,11 +94,11 @@ export default function ListeDesMenu() {
                         />
                     )}
                 </div>
-                <div className=" ListeDesMenu max-h-40 overflow-y-scroll overflow-x-hidden scrollbar-custom bg-white">
+                <div className="max-h-40 overflow-y-scroll bg-white">
                     {filteredMenus.map((menu) => (
                         <div key={menu.id} className="mb-2">
                             <ul>
-                                <li key={menu.id} className="flex items-center p-2">
+                                <li className="flex items-center p-2">
                                     <input
                                         type="checkbox"
                                         checked={selectedMenus.includes(menu.name)}
@@ -112,19 +121,12 @@ export default function ListeDesMenu() {
                         </div>
                     ))}
                 </div>
-                {error && <p className="text-red-500">{error}</p>}
-            </div>
-            <div className="w-[450px] flex flex-col justify-between items-center text-gray-500">
-                <label htmlFor="designation">Désignation:</label>
-                <textarea
-                    name="designation"
-                    id="designation"
-                    placeholder="Les désignations"
-                    className="designation w-[430px] h-52 pl-4 pr-2 py-1 size-10 outline-none 
-                    bg-gray-100 border border-gray-300 rounded-md"
-                    value={generateDesignation()}
-                    readOnly
-                />
+                <button 
+                    className="mt-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                    onClick={addCommande}
+                >
+                    Ajouter au bon de commande
+                </button>
             </div>
         </div>
     );

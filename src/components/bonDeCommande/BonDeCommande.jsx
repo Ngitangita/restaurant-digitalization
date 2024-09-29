@@ -1,27 +1,7 @@
+import React, { useState } from 'react';
 import ListeDesMenu from "./ListeDesMenu";
 
 export default function BonDeCommande() {
-
-    const Foods = [
-        {
-            id: 1,
-            name: "NOS PIZZAS",
-            menus: [
-                { id: 1, name: "Pizza Margherita", prix: "22 000 AR" },
-                { id: 2, name: "Pizza Cremiera", prix: "22 000 AR" },
-                { id: 3, name: "Pizza 4 Fromage", prix: "25 000 AR" },
-            ]
-        },
-        {
-            id: 2,
-            name: "NOS SNACKS",
-            menus: [
-                { id: 1, name: "Sandwich", prix: "12 000 AR" },
-                { id: 2, name: "Frites", prix: "8 000 AR" },
-            ]
-        }
-    ];
-
     return (
         <div className="flex justify-center items-center">
             <div className="BonDeCommandes flex justify-center items-center flex-col bg-white rounded text-gray-500">
@@ -50,20 +30,13 @@ export default function BonDeCommande() {
                                 className="w-40 pl-4 pr-2 py-1 bg-slate-300 bg-opacity-15 rounded outline-none" />
                         </div>
                     </div>
+                    
+                    <ListeDesMenu />
 
-                    {/* <div className="flex flex-col justify-between items-center gap-2">
-                        <label htmlFor="designation">Commande prise par:</label>
-                        <select className="w-52 pl-4 pr-2 py-1 bg-slate-300 bg-opacity-15 rounded outline-none">
-                            <option value='aucune'>aucune</option>
-                            <option value="fitahina">Fitahina</option>
-                            <option value="elise">Elisé</option>
-                            <option value="tantely">Tantely</option>
-                        </select>
-                    </div> */}
-                    <ListeDesMenu Foods={Foods} />
                     <div className="w-full flex gap-4 items-center justify-end p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                         <button
-                            className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
+                            className="py-2.5 px-5 ms-3 text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 
+                            dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700">
                             Refuser
                         </button>
                         <button

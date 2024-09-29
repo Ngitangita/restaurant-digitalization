@@ -1,36 +1,33 @@
-import React, { useContext, useState, useEffect } from 'react'; 
+import React from 'react';
 import { Link } from 'react-router-dom';
-import { MdOutlineLightMode, MdOutlineNightlightRound} from "react-icons/md";
-import { MyContext } from '../../App';
+import { MdOutlineLightMode, MdNightlightRound } from "react-icons/md";
+import Breadcrumb from '../Breadcrumbs/Breadcrumb';
+import { useThemeStore } from '../../stores/useThemeStore';
 
 export default function Header() {
-    const context = useContext(MyContext);
-    const [lightMode, setLightMode] = useState(context.themeMode);
-
-    useEffect(() => {
-        setLightMode(context.themeMode);
-    }, [context.themeMode]);
-
+    const isDark = useThemeStore(state => state.isDark);
+    const toggleTheme = useThemeStore(state => state.toggleTheme);
     return (
-        <header className='fixed top-0 left-0 w-full h-20 bg-white p-4 shadow-md z-50 flex items-center justify-between lg:p-6'>
-            <div className='flex items-center gap-4'>
+        <header className={`fixed top-0 left-0 w-full h-20 ${isDark ? 'bg-gray-800' : 'bg-white'} p-4 shadow-md z-50 flex items-center justify-between lg:p-6`}>
+            <div className='flex items-center gap-14 '>
                 <Link to="/" className='flex items-center gap-2'>
                     <img src="/UTOPIA-B.png" alt="UTOPIA-B" className="w-12 h-12 lg:w-16 lg:h-16 rounded-full" />
                     <div className='hidden lg:flex flex-col'>
-                        <span className='text-xl font-bold text-gray-500'>By Sooatel</span>
-                        <span className='text-xs text-gray-500'>Ankasina Antananarivo <br /> Tél : 038 96 373 43</span>
+                        <span className={`text-xl font-bold ${isDark ? 'text-white' : 'text-gray-500'}`}>By Sooatel</span>
+                        <span className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>Ankasina Antananarivo <br /> Tél : 038 96 373 43</span>
                     </div>
                 </Link>
+                <Breadcrumb />
             </div>
             <div className='flex items-center gap-3'>
-                <button 
-                    className="rounded-full p-3 bg-slate-100 text-2xl flex items-center justify-center hover:bg-slate-200"
-                    onClick={() => context.setThemeMode(!context.themeMode)}
+                <button
+                    className="LightMode rounded-full p-3 bg-slate-100 text-2xl flex items-center justify-center hover:bg-slate-200"
+                    onClick={toggleTheme}
                 >
-                    {lightMode ? (
-                        <MdOutlineLightMode />
+                    {isDark ? (
+                        <MdNightlightRound className='Nightlight' />
                     ) : (
-                        <MdOutlineNightlightRound />
+                        <MdOutlineLightMode />
                     )}
                 </button>
             </div>

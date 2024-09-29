@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import Breadcrumb from '../../components/Breadcrumbs/Breadcrumb';
 import { MdAdd } from "react-icons/md";
-import AddDrinkStock from '../../components/addStocks/AddDrinkStock';
 import Boutton from '../../components/Boutton/Boutton';
 import SearchBox from '../../components/searchBox/SearchBox';
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
-function DrinkStock() {
+function Operation() {
     const [isOpen, setIsOpen] = useState(false);
 
     const toggleModal = () => {
@@ -16,37 +14,12 @@ function DrinkStock() {
 
     const drinks = [
         { date: "01/01/2000", name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", sortie: "20 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
-        { name: "GOLD [B]", stockInitial: "20 l", entrees: "10 l", stockFinal: "10 l" },
-        { name: "DYNAMO", stockInitial: "15 l", entrees: "5 l", stockFinal: "10 l" },
+       
     ];
 
     return (
-        <div className="pl-10 relative w-[970px] left-[250px] top-[100px]">
-            <Breadcrumb pageName="Gestion des Boissons" />
-            <div className='w-full flex flex-row justify-between'>
+        <div>
+            <div className='flex flex-row justify-between'>
                 <SearchBox />
                 <Boutton
                     onClick={toggleModal}
@@ -89,7 +62,6 @@ function DrinkStock() {
                                     <span className="sr-only">Fermer le modal</span>
                                 </button>
                             </div>
-                            <AddDrinkStock />
                             <div className="flex items-center p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
                                 <button
                                     onClick={toggleModal}
@@ -123,7 +95,8 @@ function DrinkStock() {
                         <th className='py-2 px-4 w-[170px]'>Action</th>
                     </tr>
                 </thead>
-                <tbody className='DrinkStock text-center w-[930px] bg-white max-h-[calc(100%-80px)] fixed overflow-y-scroll overflow-x-hidden scrollbar-custom'>
+                <tbody className='DrinkStock text-center bg-white max-w-[980px]
+                max-h-[calc(100%-80px)] fixed overflow-y-scroll overflow-x-hidden scrollbar-custom'>
                     {drinks.map((drink, i) => (
                         <tr key={i} className='border border-x text-gray-500 hover:bg-slate-100'>
                             <td className="py-2 px-4 border border-y">
@@ -151,4 +124,4 @@ function DrinkStock() {
     );
 }
 
-export default DrinkStock;
+export default Operation;

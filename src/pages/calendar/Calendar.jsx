@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
-import Breadcrumb from "../../components/Breadcrumbs/Breadcrumb";
 
 const localizer = momentLocalizer(moment);
 
@@ -130,8 +129,7 @@ const TheCalendar = () => {
   };
 
   return (
-    <div className=" pl-10 relative w-[970px] left-[250px] top-[100px]">
-      <Breadcrumb pageName="Calendrier" />
+    <div className="w-[970px]">
       <div className="Calendar w-full max-w-full rounded-sm border border-stroke bg-white shadow-default dark:border-strokedark dark:bg-boxdark p-4">
         <Calendar
           localizer={localizer}
