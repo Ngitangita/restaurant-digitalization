@@ -55,10 +55,10 @@ const TheCalendar = () => {
     const isActive = (button) => activeButton === button;
 
     return (
-      <div className="CalendarHead bg-blue-100 text-gray-500 p-4 flex justify-between items-center">
+      <div className="CalendarHead bg-blue-100 dark:bg-gray-800 text-gray-500 dark:text-gray-300 p-4 flex justify-between items-center">
         <div className="flex space-x-4">
           <button 
-            className={`${isActive('today') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500'} py-2 px-4 rounded`} 
+            className={`${isActive('today') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white'} py-2 px-4 rounded`} 
             onClick={() => {
               toolbar.onNavigate('TODAY');
               setActiveButton('today');
@@ -67,7 +67,7 @@ const TheCalendar = () => {
             Aujourd'hui
           </button>
           <button 
-            className={`${isActive('prev') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500'} py-2 px-4 rounded`} 
+            className={`${isActive('prev') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white'} py-2 px-4 rounded`} 
             onClick={() => {
               toolbar.onNavigate('PREV');
               setActiveButton('prev');
@@ -76,7 +76,7 @@ const TheCalendar = () => {
             Précédent
           </button>
           <button 
-            className={`${isActive('next') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500'} py-2 px-4 rounded`} 
+            className={`${isActive('next') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white'} py-2 px-4 rounded`} 
             onClick={() => {
               toolbar.onNavigate('NEXT');
               setActiveButton('next');
@@ -85,10 +85,10 @@ const TheCalendar = () => {
             Suivant
           </button>
         </div>
-        <span className="text-lg font-semibold">{moment(toolbar.date).format('MMMM YYYY')}</span>
+        <span className="text-lg font-semibold dark:text-white">{moment(toolbar.date).format('MMMM YYYY')}</span>
         <div className="flex space-x-4">
           <button 
-            className={`${isActive('month') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500'} py-2 px-4 rounded`} 
+            className={`${isActive('month') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white'} py-2 px-4 rounded`} 
             onClick={() => {
               toolbar.onView('month');
               setActiveButton('month');
@@ -97,7 +97,7 @@ const TheCalendar = () => {
             Mois
           </button>
           <button 
-            className={`${isActive('week') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500'} py-2 px-4 rounded`} 
+            className={`${isActive('week') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white'} py-2 px-4 rounded`} 
             onClick={() => {
               toolbar.onView('week');
               setActiveButton('week');
@@ -106,7 +106,7 @@ const TheCalendar = () => {
             Semaine
           </button>
           <button 
-            className={`${isActive('day') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500'} py-2 px-4 rounded`} 
+            className={`${isActive('day') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white'} py-2 px-4 rounded`} 
             onClick={() => {
               toolbar.onView('day');
               setActiveButton('day');
@@ -115,7 +115,7 @@ const TheCalendar = () => {
             Jour
           </button>
           <button 
-            className={`${isActive('agenda') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500'} py-2 px-4 rounded`} 
+            className={`${isActive('agenda') ? 'bg-black/35 text-white' : 'bg-blue-200 hover:bg-blue-100 text-gray-500 dark:bg-gray-700 dark:hover:bg-gray-600 dark:text-white'} py-2 px-4 rounded`} 
             onClick={() => {
               toolbar.onView('agenda');
               setActiveButton('agenda');
@@ -148,6 +148,7 @@ const TheCalendar = () => {
           components={{
             toolbar: CustomToolbar,
           }}
+          className="dark:bg-gray-800 dark:text-white"
         />
       </div>
     </div>

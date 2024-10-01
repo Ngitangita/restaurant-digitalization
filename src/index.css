@@ -27,45 +27,67 @@
 }
 
 
-body {font-family: "Open Sans", sans-serif;background-color: #ebe9e9;}
+body.dark {
+    background: #0e1c36;
+}
 
-body.dark{background: #0b1a3a;}
-  
-body.dark header, body.dark .Sidebar,  body.dark .BonDeCommandes, body.dark .Journal, 
-body.dark .Categorie{
-    background: #112143;
-    color: #fff !important;
-  }
+body.dark header, body.dark .Sidebar, body.dark .BonDeCommandes, body.dark .ingredient, body.dark .ingredientTBody,
+body.dark .Breadcrumb, body.dark .StockList, body.dark .StockListTBody, body.dark .Notifications,
+body.dark .UpdatePassword {
+    background: #1a2b52;color: #e5e5e5 !important;}
 
-  body.dark .Breadcrumb{background: #112143; }
-  
-  body.dark span{color: #fff !important; opacity: 0.9;}
+body.dark span {
+    color: #e5e5e5 !important; opacity: 0.85;}
 
-  body.dark .LightMode{background: #12254e; color: rgba(0, 162, 255, 0.908) !important;}
+body.dark .LightMode {
+    background: #1d3162; color: rgba(0, 162, 255, 0.9) !important;}
 
-  body.dark .Sidebar .button:hover{background: rgba(255, 255, 255, 0.1); color: #fff !important; }
-  body.dark .Sidebar .Authentification{background: #112143; color: #fff !important; }
-  
-  body.dark .ListeDesMenu{background: #0b1a3a; color: #fff !important; border: 1px solid #12254e;}
-  body.dark .ListeDesMenu .FoodName {background: #112143; color: #fff !important;}
-  body.dark .ListeDesMenu .designation{background: #112143; color: #fff !important; border: none;}
+body.dark .Sidebar .button:hover {
+    background: rgba(255, 255, 255, 0.1); color: #e5e5e5 !important;}
 
-  body.dark .SearchBox{ background: #112143; color: #fff; border: none;}
+body.dark .Sidebar .Authentification {
+    background: #1a2b52; color: #e5e5e5 !important;}
 
-  body.dark table{ border: none;}
-  body.dark .Commande,  body.dark .DrinkStock,
-  body.dark .FoodStock, body.dark .IngredientStock{ background: #112143; color: #fff;}
-  body.dark tr{ border: none;}
-  body.dark .Commande tr:hover, body.dark .FoodStock tr:hover,
-  body.dark .DrinkStock tr:hover, body.dark .IngredientStock tr:hover
-  { background: rgba(255, 255, 255, 0.1); color: #fff !important; }
-  body.dark th{background: #0b1a3a; border: none;}
-  body.dark .Commande td, body.dark .Commande td button,
-  body.dark .DrinkStock td, body.dark .DrinkStock td button,
-  body.dark .IngredientStock td, body.dark .IngredientStock td button,
-  body.dark .FoodStock td, body.dark .FoodStock td button
-  { color: #fff; border: 1px solid rgba(255, 255, 255, 0.1);}
+body.dark .CreateIngredientModal, body.dark .DeleteModal, body.dark .creatUnitModal, body.dark .ModalListeUnit,
+body.dark .EditModal, body.dark .createStockModale, body.dark .CreateMenuModal 
+{background: #0e1c36; color: #e5e5e5 !important;}
 
-  body.dark .CalendarHead{background: #0b1a3a;}
-  body.dark .CalendarHead button{background: #112143; color: #ababab;}
-  body.dark .Calendar{background: #112143;  border: 1px solid rgba(255, 255, 255, 0.1); color: #ababab;}
+body.dark .CreateIngredient label,
+body.dark .creatUnitModal label, body.dark .createStockModale label,
+body.dark .CreateMenuModal label {
+    color: rgba(255, 255, 255, 0.6) !important;
+}
+
+body.dark .CreateIngredient .Input, body.dark .creatUnitModal input, body.dark .CreateMenuModal input,
+ body.dark .createStockModale input, body.dark .UpdatePassword input {
+    background: #1a2b52; color: #e5e5e5 !important;}
+
+body.dark .ListeDesMenu { background: #0e1c36; color: #e5e5e5 !important; border: 1px solid #1d3162;}
+
+body.dark .ListeDesMenu .FoodName {background: #1a2b52; color: #e5e5e5 !important;}
+
+body.dark .ListeDesMenu .designation {background: #1a2b52; color: #e5e5e5 !important; border: none;}
+
+body.dark .SearchBox {background: #1a2b52; color: #e5e5e5; border: none;}
+
+body.dark table {border: none;}
+
+body.dark .Commande, body.dark .DrinkStock, body.dark .FoodStock, body.dark .IngredientStock {
+    background: #1a2b52; color: #e5e5e5;}
+
+body.dark tr {border: none;}
+
+body.dark .Commande tr:hover, body.dark .FoodStock tr:hover, body.dark .DrinkStock tr:hover, body.dark .IngredientStock tr:hover {
+    background: rgba(255, 255, 255, 0.1); color: #e5e5e5 !important;}
+
+body.dark th {background: #0e1c36; border: none;}
+
+body.dark .Commande td, body.dark .Commande td button, body.dark .DrinkStock td, body.dark .DrinkStock td button,
+body.dark .IngredientStock td, body.dark .IngredientStock td button, body.dark .FoodStock td,
+body.dark .FoodStock td button {color: #e5e5e5; border: 1px solid rgba(255, 255, 255, 0.1);}
+
+body.dark .CalendarHead { background: #0e1c36;}
+
+body.dark .CalendarHead button {background: #1a2b52; color: #e5e5e5;}
+
+body.dark .Calendar { background: #1a2b52; border: 1px solid rgba(255, 255, 255, 0.1); color: #e5e5e5;}

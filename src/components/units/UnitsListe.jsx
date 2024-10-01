@@ -13,8 +13,8 @@ function UnitsListe() {
     
     const fetchUnits = async () => {
         try {
-            const data = await fetchJson(apiUrl("/units"));
-            setUnits(data.items);
+            const data = await fetchJson(apiUrl("/units/all"));
+            setUnits(data);
         } catch (error) {
             console.error('Erreur lors de la récupération des unités:', error);
         }
@@ -71,7 +71,7 @@ function UnitsListe() {
 
     return (
         <div className="container mx-auto p-4">
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+            <table className="min-w-full shadow-md rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-200">
                         <th className="py-2 px-4">Nom</th>
@@ -79,7 +79,7 @@ function UnitsListe() {
                         <th className="py-2 px-4">Action</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody className='ModalListeUnit'>
                     {units.length === 0 ? (
                         <tr className="text-center">
                             <td colSpan="3" className="py-4 text-gray-500">
@@ -117,7 +117,7 @@ function UnitsListe() {
             {/* Modal de confirmation de suppression */}
             {showDeleteModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
+                    <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
                         <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
                         <p className="mb-6">Êtes-vous sûr de vouloir supprimer cette unité ?</p>
                         <div className="flex justify-around">
@@ -141,7 +141,7 @@ function UnitsListe() {
             {/* Modal d'édition d'unité */}
             {showEditModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
+                    <div className="EditModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
                         <h2 className="text-lg font-semibold mb-4">Modifier l'unité</h2>
                         <input
                             type="text"

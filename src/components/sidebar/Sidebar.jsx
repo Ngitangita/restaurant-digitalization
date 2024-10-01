@@ -99,15 +99,24 @@ export default function Sidebar() {
     setTitle(title);
   };
 
+  const handleCloseSidebar = () => {
+    if (window.innerWidth < 1024) {
+      setOpenSidebar(false);
+    }
+  };
+
   return (
     <>
       <SidebarToggleButton handleSidebarToggle={handleSidebarToggle} openSidebar={openSidebar} />
-      <div className={`Sidebar fixed top-20 left-0 w-64 h-screen bg-white shadow-md flex flex-col overflow-y-scroll overflow-x-hidden scrollbar-custom transition-transform duration-300 ease-in-out z-40 ${openSidebar ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:block`}>
+      <div className={`Sidebar fixed top-20 left-0 w-64 h-screen bg-white shadow-md flex flex-col 
+        overflow-y-scroll overflow-x-hidden scrollbar-custom
+        max-h-[calc(100%-80px)] transition-transform duration-300 
+        ease-in-out z-40 ${openSidebar ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:block`}>
         <div className="flex items-center justify-between p-4 text-2xl font-bold text-gray-500">
           <span>Tableau de bord</span>
         </div>
 
-        <ul className="space-y-2 p-4 text-gray-500">
+        <ul className="space-y-2 p-4 text-gray-500 ">
           {menuItems.map((item, index) => (
             <li key={index} className="space-y-2">
               {item.subItems.length > 0 ? (
@@ -125,7 +134,7 @@ export default function Sidebar() {
                   <div className={`pl-4 transition-all duration-300 ease-in-out ${activeTab === index && isToggleSubmenu[index] ? 'h-auto' : 'h-0 overflow-hidden'}`}>
                     <ul className={`transition-opacity duration-300 ease-in-out ${activeTab === index && isToggleSubmenu[index] ? 'opacity-100' : 'opacity-0'}`}>
                       {item.subItems.map((subItem, subIndex) => (
-                        <li key={subIndex} onClick={() => handleChangeTitle(subItem.title)}>
+                        <li key={subIndex} onClick={() => { handleChangeTitle(subItem.title); handleCloseSidebar(); }}>
                           <Link
                             to={subItem.path}
                             className={`button flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === subItem.path ? 'bg-gray-200 dark:bg-gray-500' : ''}`}
@@ -144,7 +153,7 @@ export default function Sidebar() {
                 <Link
                   to={item.path}
                   className={`button flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === item.path ? 'bg-gray-200 dark:bg-gray-500' : ''}`}
-                  onClick={() => handleChangeTitle(item.title)}
+                  onClick={() => { handleChangeTitle(item.title); handleCloseSidebar(); }}
                 >
                   <div className="flex items-center gap-3">
                     {item.icon}
@@ -160,6 +169,7 @@ export default function Sidebar() {
           <Link
             to="/authentification"
             className={`button flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/authentification' ? '' : ''}`}
+            onClick={handleCloseSidebar}
           >
             <MdOutlineLogin className="text-gray-500 text-xl" />
             <span className="ml-2 text-gray-700">Authentification</span>

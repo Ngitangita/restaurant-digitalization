@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const CreateMenu = ({ onCreate }) => {
+const CreateMenu = ({ onCreate, createMenuModal }) => {
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
 
@@ -23,7 +23,7 @@ const CreateMenu = ({ onCreate }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className='CreateMenuModal'>
             <div>
                 <label htmlFor="name">Nom du Menu:</label>
                 <input
@@ -44,12 +44,19 @@ const CreateMenu = ({ onCreate }) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none"
                 />
             </div>
-            <div className="mt-4">
-                <button 
-                    type="submit" 
+            <div className="mt-4 flex flex-row gap-48">
+                <button
+                    type="submit"
                     className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
                 >
                     Ajouter
+                </button>
+                <button
+                    type="button"
+                    onClick={createMenuModal}
+                    className="mr-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400"
+                >
+                    Annuler
                 </button>
             </div>
         </form>

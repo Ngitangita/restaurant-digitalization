@@ -25,19 +25,9 @@ const MenuList = ({ menus = [], ajouterMenu }) => {
             </button>
             {isModalOpen && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                    <div className="CreateMenuModal bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
                         <h2 className="text-lg font-bold mb-4">Ajouter un nouveau menu</h2>
-                        <CreateMenu onCreate={handleCreateMenu} />
-
-                        <div className="flex justify-end mt-4">
-                            <button 
-                                type="button" 
-                                onClick={toggleModal} 
-                                className="mr-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400"
-                            >
-                                Annuler
-                            </button>
-                        </div>
+                        <CreateMenu onCreate={handleCreateMenu} createMenuModal={toggleModal}/>
                     </div>
                 </div>
             )}
