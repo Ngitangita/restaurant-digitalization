@@ -1,118 +1,167 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { apiUrl, fetchJson } from '../../services/api';
 import CreateStock from '../../components/addStocks/CreateStock';
 
 const StockList = () => {
-    // Stock simulé, géré localement sans backend
-    const [stocks, setStocks] = useState([
-        { id: 1, ingredientId: 101, quantity: 20, cost: 50, description: 'Farine de blé' },
-        { id: 2, ingredientId: 102, quantity: 10, cost: 30, description: 'Sucre blanc' },
-        { id: 3, ingredientId: 103, quantity: 15, cost: 40, description: 'Lait en poudre' }
-    ]);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [currentPage, setCurrentPage] = useState(1);
-    const itemsPerPage = 2;
+  const [stocks, setStocks] = useState([]);
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchName, setSearchName] = useState('');
+  const [quantityMin, setQuantityMin] = useState('');
+  const [quantityMax, setQuantityMax] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
 
-    // Pagination: calculer les éléments affichés
-    const indexOfLastItem = currentPage * itemsPerPage;
-    const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-    const currentStocks = stocks.slice(indexOfFirstItem, indexOfLastItem);
+  useEffect(() => {
+    const fetchStocks = async () => {
+      try {
+        const searchParams = {
+          ingredientName: searchName || "",
+          quantityMin: quantityMin ? parseFloat(quantityMin) : null,
+          quantityMax: quantityMax ? parseFloat(quantityMax) : null,
+          startDate: startDate || null,
+          startEnd: endDate || null,
+        };
 
-    // Pagination: changer de page
-    const paginate = (pageNumber) => setCurrentPage(pageNumber);
-    const totalPages = Math.ceil(stocks.length / itemsPerPage);
+        const res = await fetch(apiUrl(`/stocks?page=${currentPage}&size=10`), {
+          method: "POST",
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(searchParams)
+        });
 
-    const toggleModal = () => {
-        setIsModalOpen(!isModalOpen);
+        if (!res.ok) {
+          throw new Error('Erreur lors de la récupération des stocks');
+        }
+
+        const data = await res.json();
+        setStocks(data.items || []);
+        setTotalPages(data.totalPages || 0);
+        setSuccessMessage(null);
+      } catch (err) {
+        setError('Erreur lors de la récupération des stocks');
+        console.error(err);
+      }
     };
 
-    const addStock = (newStock) => {
-        setStocks([...stocks, { id: stocks.length + 1, ...newStock }]);
-    };
+    fetchStocks();
+  }, [searchName, quantityMin, quantityMax, startDate, endDate, currentPage]);
 
-    return (
-        <div className="StockList container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Liste des Stocks</h1>
-            
-            <button 
-                className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-                onClick={toggleModal}
-            >
-                Créer un stock
-            </button>
+  const toggleModal = () => {
+    setIsModalOpen(!isModalOpen);
+  };
 
-            {/* Modale pour ajouter un stock */}
-            {isModalOpen && 
-                <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="createStockModale bg-white p-8 rounded-lg shadow-lg w-full max-w-md mt-16">
-                        <h2 className="text-lg font-bold mb-4">Ajouter un nouveau stock</h2>
-                        
-                        {/* Formulaire d'ajout de stock */}
-                        <CreateStock onAddStock={addStock} createStockModale={toggleModal}/>
-                    </div>
-                </div>
-            }
+  const handleStockCreated = () => {
+    setSuccessMessage("Stock créé avec succès!");
+    setIsModalOpen(false);
+  };
 
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-                <thead>
-                    <tr className="bg-gray-200">
-                        <th className="py-2 px-4">ID</th>
-                        <th className="py-2 px-4">ID Ingrédient</th>
-                        <th className="py-2 px-4">Quantité</th>
-                        <th className="py-2 px-4">Coût</th>
-                        <th className="py-2 px-4">Description</th>
-                    </tr>
-                </thead>
-                <tbody className='StockListTBody'>
-                    {currentStocks.length === 0 ? (
-                        <tr className="text-center">
-                            <td colSpan="5" className="py-4 text-gray-500">
-                                Aucun stock disponible
-                            </td>
-                        </tr>
-                    ) : (
-                        currentStocks.map(stock => (
-                            <tr key={stock.id} className="hover:bg-gray-100 dark:hover:bg-slate-700">
-                                <td className="py-2 px-4">{stock.id}</td>
-                                <td className="py-2 px-4">{stock.ingredientId}</td>
-                                <td className="py-2 px-4">{stock.quantity}</td>
-                                <td className="py-2 px-4">{stock.cost}</td>
-                                <td className="py-2 px-4">{stock.description || 'Aucune description'}</td>
-                            </tr>
-                        ))
-                    )}
-                </tbody>
-            </table>
+  return (
+    <div className="StockList container mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">Liste des Stocks</h1>
+      {error && <p className="text-red-500">{error}</p>}
+      {successMessage && <p className="text-green-500">{successMessage}</p>}
 
-            {/* Pagination */}
-            {stocks.length > 0 && (
-                <div className="pagination flex justify-center items-center mt-4">
-                    <button
-                        className={`py-2 px-4 mx-1 ${currentPage === 1 ? 'bg-gray-300' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-md`}
-                        onClick={() => paginate(currentPage - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        Précédent
-                    </button>
-                    {[...Array(totalPages)].map((_, index) => (
-                        <button
-                            key={index + 1}
-                            className={`py-2 px-4 mx-1 ${currentPage === index + 1 ? 'bg-blue-600' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-md`}
-                            onClick={() => paginate(index + 1)}
-                        >
-                            {index + 1}
-                        </button>
-                    ))}
-                    <button
-                        className={`py-2 px-4 mx-1 ${currentPage === totalPages ? 'bg-gray-300' : 'bg-blue-500 hover:bg-blue-600'} text-white rounded-md`}
-                        onClick={() => paginate(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                    >
-                        Suivant
-                    </button>
-                </div>
-            )}
+      <div className="flex mb-4">
+        <input 
+          type="text" 
+          placeholder="Rechercher par nom" 
+          value={searchName}
+          onChange={(e) => setSearchName(e.target.value)}
+          className="border border-gray-300 p-2 rounded-md mr-2 outline-none"
+        />
+        <input 
+          type="number"
+          placeholder="Quantité Min"
+          value={quantityMin}
+          onChange={(e) => setQuantityMin(e.target.value)}
+          className="w-36 border border-gray-300 p-2 rounded-md mr-2 outline-none"
+        />
+        <input 
+          type="number"
+          placeholder="Quantité Max"
+          value={quantityMax}
+          onChange={(e) => setQuantityMax(e.target.value)}
+          className="w-36 border border-gray-300 p-2 rounded-md mr-2 outline-none"
+        />
+        <input 
+          type="datetime-local"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          className="border border-gray-300 p-2 rounded-md mr-2 outline-none"
+        />
+        <input 
+          type="datetime-local"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          className="border border-gray-300 p-2 rounded-md outline-none"
+        />
+      </div>
+
+      <button 
+        className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+        onClick={toggleModal}
+      >
+        Créer un stock
+      </button>
+
+      {isModalOpen && (
+        <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-lg font-bold mb-4">Ajouter un nouveau stock</h2>
+            <CreateStock onStockCreated={handleStockCreated} createStockModale={toggleModal}/>
+          </div>
         </div>
-    );
+      )}
+
+      <table className="min-w-full border border-gray-300">
+        <thead>
+          <tr>
+            <th className="border-b p-2">Ingrédient</th>
+            <th className="border-b p-2">Quantité</th>
+            <th className="border-b p-2">Coût</th>
+            <th className="border-b p-2">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {stocks.length > 0 ? stocks.map((stock) => (
+            <tr key={stock.id}>
+              <td className="border-b p-2">{stock.ingredientName}</td>
+              <td className="border-b p-2">{stock.quantity}</td>
+              <td className="border-b p-2">{stock.cost}</td>
+              <td className="border-b p-2">{stock.description}</td>
+            </tr>
+          )) : (
+            <tr>
+              <td colSpan="4" className="border-b p-2 text-center">Aucun stock trouvé</td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+
+      <div className="flex justify-between mt-4">
+        <button 
+          className="bg-gray-300 text-black py-2 px-4 rounded-md disabled:opacity-50" 
+          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 0))}
+          disabled={currentPage === 0}
+        >
+          Précédent
+        </button>
+        <span>Page {currentPage + 1} sur {totalPages}</span>
+        <button 
+          className="bg-gray-300 text-black py-2 px-4 rounded-md disabled:opacity-50" 
+          onClick={() => setCurrentPage(prev => (prev < totalPages - 1 ? prev + 1 : prev))}
+          disabled={currentPage >= totalPages - 1}
+        >
+          Suivant
+        </button>
+      </div>
+    </div>
+  );
 };
 
 export default StockList;
