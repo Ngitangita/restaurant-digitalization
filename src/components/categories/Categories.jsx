@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
-import CreateCategories from './CreateCategories'; 
-import { MdDelete } from 'react-icons/md'; 
+import CreateCategories from './CreateCategories';
+import { MdDelete, MdClear } from 'react-icons/md';
 
-// Composant Modal pour confirmer la suppression
 const DeleteModal = ({ onDelete, onCancel }) => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
@@ -31,8 +30,9 @@ const CategoriesList = () => {
     const [categories, setCategories] = useState([]);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [showDeleteModal, setShowDeleteModal] = useState(false); 
-    const [categoryToDelete, setCategoryToDelete] = useState(null); 
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [categoryToDelete, setCategoryToDelete] = useState(null);
+    const [searchTerm, setSearchTerm] = useState(''); // État pour la barre de recherche
 
     // Pagination states
     const [currentPage, setCurrentPage] = useState(1);
@@ -44,8 +44,8 @@ const CategoriesList = () => {
 
     const fetchCategories = async () => {
         try {
-            const data = await fetchJson(apiUrl("/categories/all")); 
-            setCategories(data); 
+            const data = await fetchJson(apiUrl("/categories/all"));
+            setCategories(data);
         } catch (err) {
             const errorMsg = err.message || 'Erreur lors de la récupération des catégories';
             setError(errorMsg);
@@ -55,39 +55,48 @@ const CategoriesList = () => {
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
-    
+
     const handleCategoryCreated = () => {
-        fetchCategories(); 
-        setIsModalOpen(false); 
+        fetchCategories();
+        setIsModalOpen(false);
     };
 
     const confirmDelete = (id) => {
-        setCategoryToDelete(id); 
-        setShowDeleteModal(true); 
+        setCategoryToDelete(id);
+        setShowDeleteModal(true);
     };
 
     const handleDelete = async () => {
         try {
-            await fetchJson(apiUrl(`/categories/${categoryToDelete}`), 'DELETE'); 
-            fetchCategories(); 
+            await fetchJson(apiUrl(`/categories/${categoryToDelete}`), 'DELETE');
+            fetchCategories();
         } catch (err) {
             const errorMsg = err.message || 'Erreur lors de la suppression de la catégorie';
             setError(errorMsg);
         } finally {
-            setShowDeleteModal(false); 
+            setShowDeleteModal(false);
         }
     };
 
     const cancelDelete = () => {
-        setShowDeleteModal(false); 
+        setShowDeleteModal(false);
     };
+
+    const handleClearSearch = () => {
+        setSearchTerm('');
+    };
+
+    // Filtrage des catégories en fonction du terme de recherche
+    const filteredCategories = categories.filter(categorie =>
+        categorie.name.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     // Pagination logic
     const indexOfLastCategory = currentPage * itemsPerPage;
     const indexOfFirstCategory = indexOfLastCategory - itemsPerPage;
-    const currentCategories = categories.slice(indexOfFirstCategory, indexOfLastCategory);
+    const currentCategories = filteredCategories.slice(indexOfFirstCategory, indexOfLastCategory);
 
-    const totalPages = Math.ceil(categories.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
 
     const handleNextPage = () => {
         if (currentPage < totalPages) setCurrentPage(prevPage => prevPage + 1);
@@ -101,13 +110,30 @@ const CategoriesList = () => {
         <div className="container mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Liste des catégories</h1>
             {error && <p className="text-red-500">{error}</p>}
-            
-            <button
-                onClick={toggleModal}
-                className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-            >
-                Créer une catégorie
-            </button>
+
+            <div className='flex flex-row gap-4'>
+                <div className="w-64 relative flex items-center mb-4">
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Rechercher une catégorie"
+                        className="p-2 pr-8 border border-gray-300 rounded-md outline-none"
+                    />
+                    {searchTerm && (
+                        <button className="relative right-5" onClick={handleClearSearch}>
+                            <MdClear />
+                        </button>
+                    )}
+                </div>
+
+                <button
+                    onClick={toggleModal}
+                    className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                >
+                    Créer une catégorie
+                </button>
+            </div>
 
             {isModalOpen && (
                 <CreateCategories onClose={toggleModal} onCategoryCreated={handleCategoryCreated} />
@@ -117,7 +143,7 @@ const CategoriesList = () => {
                 <thead>
                     <tr className="bg-gray-200">
                         <th className="py-2 px-4">Nom</th>
-                        <th className="py-2 px-4">Actions</th> 
+                        <th className="py-2 px-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -141,11 +167,11 @@ const CategoriesList = () => {
                 </tbody>
             </table>
 
-            {showDeleteModal && ( 
+            {showDeleteModal && (
                 <DeleteModal onDelete={handleDelete} onCancel={cancelDelete} />
             )}
 
-         
+            {/* Pagination */}
             <div className="flex justify-between mt-4">
                 <button
                     className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
