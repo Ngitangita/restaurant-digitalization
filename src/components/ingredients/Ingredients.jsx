@@ -6,7 +6,7 @@ import { MdDelete, MdInfoOutline } from "react-icons/md";
 
 const IngredientList = () => {
     const [ingredients, setIngredients] = useState([]);
-    const [units, setUnits] = useState([]);  // État pour stocker les unités
+    const [units, setUnits] = useState([]);  
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
@@ -14,8 +14,11 @@ const IngredientList = () => {
     const [ingredientName, setIngredientName] = useState('');
     const [unitId, setUnitId] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
+    
+    // Pagination states
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5); // Nombre d'éléments par page
 
-    // Fonction pour récupérer la liste des ingrédients
     const fetchIngredients = async () => {
         try {
             const data = await fetchJson(apiUrl("/ingredients/all"));
@@ -27,7 +30,7 @@ const IngredientList = () => {
 
     const fetchUnits = async () => {
         try {
-            const data = await fetchJson(apiUrl("/units/all"));  // Supposons que cette route retourne les unités
+            const data = await fetchJson(apiUrl("/units/all"));  
             setUnits(data);
         } catch (err) {
             setError('Erreur lors de la récupération des unités');
@@ -36,17 +39,16 @@ const IngredientList = () => {
 
     useEffect(() => {
         fetchIngredients();
+        fetchUnits();
     }, []);
 
-    useEffect(() => {
-        fetchUnits(); 
-    }, []);
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
 
     const handleModalOpen = useCallback((data) => {
         setIsModalOpen(data);
+        fetchIngredients();  // Actualiser la liste des ingrédients après ajout
     }, []);
 
     const confirmDelete = (id) => {
@@ -73,7 +75,7 @@ const IngredientList = () => {
     const handleEdit = (ingredient) => {
         setSelectedIngredient(ingredient.id);
         setIngredientName(ingredient.name);
-        setUnitId(ingredient.unitId);  // Assurez-vous que unitId est défini sur l'objet ingrédient
+        setUnitId(ingredient.unitId); 
         setShowEditModal(true);
     };
 
@@ -84,13 +86,10 @@ const IngredientList = () => {
         }
 
         try {
-            console.log('Mise à jour de l\'ingrédient:', selectedIngredient, { name: ingredientName, unitId });
-
-            // Vérifiez que l'API attend ce format (id, name, unitId)
             await fetchJson(apiUrl(`/ingredients`), 'PUT', {
                 id: selectedIngredient,
                 name: ingredientName,
-                unitId: unitId  // Assurez-vous que unitId est envoyé
+                unitId: unitId  
             });
             setShowEditModal(false);
             setSelectedIngredient(null);
@@ -100,10 +99,25 @@ const IngredientList = () => {
         }
     };
 
-    // Fonction pour afficher le nom de l'unité en fonction de son ID
     const getUnitName = (id) => {
         const unit = units.find(u => u.id === id);
         return unit ? unit.abbreviation : 'N/A';
+    };
+
+    // Pagination logic
+    const indexOfLastIngredient = currentPage * itemsPerPage;
+    const indexOfFirstIngredient = indexOfLastIngredient - itemsPerPage;
+    const currentIngredients = ingredients.slice(indexOfFirstIngredient, indexOfLastIngredient);
+
+    const totalPages = Math.ceil(ingredients.length / itemsPerPage);
+
+    // Pagination controls
+    const handleNextPage = () => {
+        if (currentPage < totalPages) setCurrentPage(prevPage => prevPage + 1);
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) setCurrentPage(prevPage => prevPage - 1);
     };
 
     return (
@@ -117,7 +131,7 @@ const IngredientList = () => {
                 Créer un ingrédient
             </button>
             {isModalOpen && (
-                <div className=" bg-black/50 fixed inset-0 z-50 flex justify-center items-center top-7">
+                <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center top-7">
                     <div className="CreateIngredientModal bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
                         <h2 className="text-lg font-bold mb-4">Ajouter un nouvel ingrédient</h2>
                         <CreateIngredient onModalOpen={handleModalOpen} onToggle={toggleModal} />
@@ -134,7 +148,7 @@ const IngredientList = () => {
                     </tr>
                 </thead>
                 <tbody className='ingredientTBody'>
-                    {ingredients.length === 0 ? (
+                    {currentIngredients.length === 0 ? (
                         <tr className="text-center">
                             <td colSpan="3" className="py-4 text-gray-500">
                                 <div className="flex flex-col items-center justify-center">
@@ -144,11 +158,10 @@ const IngredientList = () => {
                             </td>
                         </tr>
                     ) : (
-                        ingredients.map(ingredient => (
-                            <tr key={ingredient.id} className="hover:bg-gray-100 text-center">
+                        currentIngredients.map(ingredient => (
+                            <tr key={ingredient.id} className="hover:bg-gray-100 text-center border-y border-collapse">
                                 <td className="py-2 px-4">{ingredient.name}</td>
                                 <td className="py-2 px-4">{getUnitName(ingredient.unitId)}</td>  
-
                                 <td className="py-2 px-4 flex flex-row gap-2 justify-center">
                                     <button
                                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
@@ -210,9 +223,7 @@ const IngredientList = () => {
                         >
                             <option value="">Sélectionnez une unité</option>
                             {units.map(unit => (
-                                <option key={unit.id} value={unit.id}>
-                                    {unit.name} ({unit.abbreviation})
-                                </option>
+                                <option key={unit.id} value={unit.id}>{unit.abbreviation}</option>
                             ))}
                         </select>
                         <div className="flex justify-around">
@@ -220,7 +231,7 @@ const IngredientList = () => {
                                 className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                                 onClick={handleUpdateIngredient}
                             >
-                                Enregistrer
+                                Mettre à jour
                             </button>
                             <button
                                 className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
@@ -232,6 +243,24 @@ const IngredientList = () => {
                     </div>
                 </div>
             )}
+
+            <div className="flex justify-between mt-4">
+                <button
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                    onClick={handlePrevPage}
+                    disabled={currentPage === 1}
+                >
+                    Précédent
+                </button>
+                <span className="self-center">{`Page ${currentPage} sur ${totalPages}`}</span>
+                <button
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                >
+                    Suivant
+                </button>
+            </div>
         </div>
     );
 };

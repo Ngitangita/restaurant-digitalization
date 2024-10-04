@@ -18,25 +18,26 @@ const StockList = () => {
   useEffect(() => {
     const fetchStocks = async () => {
       try {
-        const searchParams = {
+        const searchParams = new URLSearchParams({
           ingredientName: searchName || "",
-          quantityMin: quantityMin ? parseFloat(quantityMin) : null,
-          quantityMax: quantityMax ? parseFloat(quantityMax) : null,
-          startDate: startDate || null,
-          startEnd: endDate || null,
-        };
-
-        const res = await fetch(apiUrl(`/stocks?page=${currentPage}&size=10`), {
-          method: "POST",
+          quantityMin: quantityMin ? quantityMin.toString() : "",
+          quantityMax: quantityMax ? quantityMax.toString() : "",
+          startDate: startDate || "",
+          endDate: endDate || ""
+        }).toString();
+        
+        const res = await fetch(apiUrl(`/stocks?page=${currentPage}&size=10&${searchParams}`), {
+          method: "GET",
           headers: {
             'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(searchParams)
+          }
         });
-
+        
         if (!res.ok) {
-          throw new Error('Erreur lors de la récupération des stocks');
+          const errorData = await res.json();
+          throw new Error(errorData.message || 'Erreur lors de la récupération des stocks');
         }
+        
 
         const data = await res.json();
         setStocks(data.items || []);
@@ -129,7 +130,7 @@ const StockList = () => {
         </thead>
         <tbody>
           {stocks.length > 0 ? stocks.map((stock) => (
-            <tr key={stock.id}>
+            <tr key={stock.id} className='text-center'>
               <td className="border-b p-2">{stock.ingredientName}</td>
               <td className="border-b p-2">{stock.quantity}</td>
               <td className="border-b p-2">{stock.cost}</td>

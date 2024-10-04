@@ -14,6 +14,13 @@
     box-sizing: border-box;
 }
 
+.Input, input {background: #ffffff; color: #333333; border: 1px solid #cccccc; }
+
+th { background: #f1f1f1; }
+
+td { color: #333333; }
+
+
 .LoginbgImg {
     background-image: url(../public/img-3.jpg); 
     background-repeat: no-repeat; background-size: cover;

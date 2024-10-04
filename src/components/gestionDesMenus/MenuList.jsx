@@ -1,23 +1,26 @@
 import React, { useEffect, useState } from 'react';
 import CreateMenu from './CreateMenu';
 import { apiUrl } from '../../services/api';
-import { MdDelete, MdClear } from 'react-icons/md'; 
+import { MdDelete, MdClear } from 'react-icons/md';
 
 const MenuList = () => {
     const [menus, setMenus] = useState([]);
-    const [categories, setCategories] = useState([]); 
+    const [categories, setCategories] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [error, setError] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [selectedMenu, setSelectedMenu] = useState(null);
-    const [isLoading, setIsLoading] = useState(false); 
+    const [isLoading, setIsLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+
+    // Pagination states
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5); // Nombre d'éléments par page
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
 
-  
     const fetchMenus = async () => {
         setIsLoading(true);
         try {
@@ -46,19 +49,24 @@ const MenuList = () => {
         fetchMenus();
     }, []);
 
-
     const filteredMenus = menus.filter(menu =>
         menu.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    
-    
+
+    // Pagination logic
+    const indexOfLastMenu = currentPage * itemsPerPage;
+    const indexOfFirstMenu = indexOfLastMenu - itemsPerPage;
+    const currentMenus = filteredMenus.slice(indexOfFirstMenu, indexOfLastMenu);
+
+    const totalPages = Math.ceil(filteredMenus.length / itemsPerPage);
 
     const handleSearch = (e) => {
         setSearchTerm(e.target.value);
+        setCurrentPage(1); // Reset to the first page when searching
     };
 
     const handleClearSearch = () => {
-        setSearchTerm(''); 
+        setSearchTerm('');
     };
 
     const handleCreateMenu = (menu) => {
@@ -76,7 +84,7 @@ const MenuList = () => {
             await fetch(apiUrl(`/menus/${selectedMenu}`), { method: 'DELETE' });
             setShowDeleteModal(false);
             setSelectedMenu(null);
-            fetchMenus();
+            fetchMenus(); // Récupérer à nouveau les menus après la suppression
         } catch (error) {
             console.error('Erreur lors de la suppression du menu:', error);
         }
@@ -85,6 +93,15 @@ const MenuList = () => {
     const cancelDelete = () => {
         setShowDeleteModal(false);
         setSelectedMenu(null);
+    };
+
+    // Pagination controls
+    const handleNextPage = () => {
+        if (currentPage < totalPages) setCurrentPage(prevPage => prevPage + 1);
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) setCurrentPage(prevPage => prevPage - 1);
     };
 
     return (
@@ -97,7 +114,7 @@ const MenuList = () => {
                     <input
                         type="text"
                         placeholder="Rechercher un menu"
-                        className=" pr-10 p-2 border rounded-md outline-none"
+                        className="pr-10 p-2 border rounded-md outline-none"
                         value={searchTerm}
                         onChange={handleSearch}
                     />
@@ -118,12 +135,12 @@ const MenuList = () => {
 
             {isModalOpen && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="CreateMenuModal bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                    <div className="CreateMenuModal relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
                         <h2 className="text-lg font-bold mb-4">Ajouter un nouveau menu</h2>
                         <CreateMenu
                             onCreate={handleCreateMenu}
                             createMenuModal={toggleModal}
-                            categories={categories} 
+                            categories={categories}
                         />
                     </div>
                 </div>
@@ -144,9 +161,9 @@ const MenuList = () => {
                             <td colSpan="4" className="text-center py-2">Chargement...</td>
                         </tr>
                     ) : (
-                        filteredMenus.length > 0 ? (
-                            filteredMenus.map(menu => (
-                                <tr key={menu.id} className="hover:bg-gray-100 text-center">
+                        currentMenus.length > 0 ? (
+                            currentMenus.map(menu => (
+                                <tr key={menu.id} className="hover:bg-gray-100 text-center border-y border-collapse">
                                     <td className="py-2 px-4">{menu.name}</td>
                                     <td className="py-2 px-4">{menu.price} €</td>
                                     <td className="py-2 px-4">{menu.description}</td>
@@ -191,6 +208,25 @@ const MenuList = () => {
                     </div>
                 </div>
             )}
+
+            {/* Pagination Controls */}
+            <div className="flex justify-between mt-4">
+                <button
+                    onClick={handlePrevPage}
+                    disabled={currentPage === 1}
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 disabled:opacity-50"
+                >
+                    Précédent
+                </button>
+                <span>Page {currentPage} sur {totalPages}</span>
+                <button
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400 disabled:opacity-50"
+                >
+                    Suivant
+                </button>
+            </div>
         </div>
     );
 };

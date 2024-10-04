@@ -112,7 +112,7 @@ const CreateMenu = ({ onCreate, createMenuModal, categories }) => {
 
             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
-            <div className="flex justify-end">
+            <div className="flex flex-row gap-52 relative top-4">
                 <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">Créer</button>
                 <button type="button" onClick={createMenuModal} className="ml-2 bg-gray-300 rounded px-4 py-2 hover:bg-gray-400">Annuler</button>
             </div>

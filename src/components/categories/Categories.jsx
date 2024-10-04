@@ -3,12 +3,40 @@ import { apiUrl, fetchJson } from '../../services/api';
 import CreateCategories from './CreateCategories'; 
 import { MdDelete } from 'react-icons/md'; 
 
+// Composant Modal pour confirmer la suppression
+const DeleteModal = ({ onDelete, onCancel }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
+            <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
+            <p className="mb-6">Êtes-vous sûr de vouloir supprimer cette catégorie ?</p>
+            <div className="flex justify-around">
+                <button
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    onClick={onDelete}
+                >
+                    Supprimer
+                </button>
+                <button
+                    className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                    onClick={onCancel}
+                >
+                    Annuler
+                </button>
+            </div>
+        </div>
+    </div>
+);
+
 const CategoriesList = () => {
     const [categories, setCategories] = useState([]);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false); 
     const [categoryToDelete, setCategoryToDelete] = useState(null); 
+
+    // Pagination states
+    const [currentPage, setCurrentPage] = useState(1);
+    const [itemsPerPage] = useState(5); // Nombre d'éléments par page
 
     useEffect(() => {
         fetchCategories();
@@ -17,18 +45,20 @@ const CategoriesList = () => {
     const fetchCategories = async () => {
         try {
             const data = await fetchJson(apiUrl("/categories/all")); 
-            setCategories(data);
+            setCategories(data); 
         } catch (err) {
-            setError('Erreur lors de la récupération des catégories');
+            const errorMsg = err.message || 'Erreur lors de la récupération des catégories';
+            setError(errorMsg);
         }
     };
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
-
+    
     const handleCategoryCreated = () => {
         fetchCategories(); 
+        setIsModalOpen(false); 
     };
 
     const confirmDelete = (id) => {
@@ -41,7 +71,8 @@ const CategoriesList = () => {
             await fetchJson(apiUrl(`/categories/${categoryToDelete}`), 'DELETE'); 
             fetchCategories(); 
         } catch (err) {
-            setError('Erreur lors de la suppression de la catégorie');
+            const errorMsg = err.message || 'Erreur lors de la suppression de la catégorie';
+            setError(errorMsg);
         } finally {
             setShowDeleteModal(false); 
         }
@@ -49,6 +80,21 @@ const CategoriesList = () => {
 
     const cancelDelete = () => {
         setShowDeleteModal(false); 
+    };
+
+    // Pagination logic
+    const indexOfLastCategory = currentPage * itemsPerPage;
+    const indexOfFirstCategory = indexOfLastCategory - itemsPerPage;
+    const currentCategories = categories.slice(indexOfFirstCategory, indexOfLastCategory);
+
+    const totalPages = Math.ceil(categories.length / itemsPerPage);
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) setCurrentPage(prevPage => prevPage + 1);
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage > 1) setCurrentPage(prevPage => prevPage - 1);
     };
 
     return (
@@ -75,9 +121,9 @@ const CategoriesList = () => {
                     </tr>
                 </thead>
                 <tbody>
-                    {categories.map(categorie => (
-                        <tr key={categorie.id} className="hover:bg-gray-100 text-center">
-                            <td className="py-2 px-4">{categorie.name}</td>
+                    {currentCategories.length > 0 ? currentCategories.map(categorie => (
+                        <tr key={categorie.id} className="hover:bg-gray-100 text-center border-y border-collapse">
+                            <td className="py-2 px-4 ">{categorie.name}</td>
                             <td className="py-2 px-4">
                                 <button
                                     className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
@@ -87,32 +133,36 @@ const CategoriesList = () => {
                                 </button>
                             </td>
                         </tr>
-                    ))}
+                    )) : (
+                        <tr>
+                            <td colSpan="2" className="py-4 text-center">Aucune catégorie trouvée</td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
 
             {showDeleteModal && ( 
-                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
-                        <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
-                        <p className="mb-6">Êtes-vous sûr de vouloir supprimer cette catégorie ?</p>
-                        <div className="flex justify-around">
-                            <button
-                                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                                onClick={handleDelete}
-                            >
-                                Supprimer
-                            </button>
-                            <button
-                                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-                                onClick={cancelDelete}
-                            >
-                                Annuler
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                <DeleteModal onDelete={handleDelete} onCancel={cancelDelete} />
             )}
+
+            {/* Pagination controls */}
+            <div className="flex justify-between mt-4">
+                <button
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                    onClick={handlePrevPage}
+                    disabled={currentPage === 1}
+                >
+                    Précédent
+                </button>
+                <span className="self-center">{`Page ${currentPage} sur ${totalPages}`}</span>
+                <button
+                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                    onClick={handleNextPage}
+                    disabled={currentPage === totalPages}
+                >
+                    Suivant
+                </button>
+            </div>
         </div>
     );
 };
