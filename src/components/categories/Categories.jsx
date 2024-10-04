@@ -145,7 +145,7 @@ const CategoriesList = () => {
                 <DeleteModal onDelete={handleDelete} onCancel={cancelDelete} />
             )}
 
-            {/* Pagination controls */}
+         
             <div className="flex justify-between mt-4">
                 <button
                     className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"

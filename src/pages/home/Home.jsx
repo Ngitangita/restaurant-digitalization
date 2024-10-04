@@ -1,7 +1,8 @@
 
 // import StockOperation from "../Stocks/Operation";
 
-import CategoriesList from "../../components/categories/Categories";
+// import CategoriesList from "../../components/categories/Categories";
+import TablesListe from "../../components/tables/TablesListe";
 
 export default function Home() {
 
@@ -11,7 +12,8 @@ export default function Home() {
         max-h-[calc(100%-80px)] fixed
         overflow-y-scroll overflow-x-hidden scrollbar-custom text-gray-500">
         {/* <StockOperation /> */}
-        <CategoriesList />
+        {/* <CategoriesList /> */}
+        <TablesListe />
       </div>
     </div>
   );
