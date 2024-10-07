@@ -4,9 +4,11 @@ import { Link, useLocation } from "react-router-dom";
 import { RiReservedLine } from "react-icons/ri";
 import { AiOutlineStock } from "react-icons/ai";
 import { RiMenuUnfold4Line } from "react-icons/ri";
-import { MdKeyboardCommandKey, MdOutlineCalendarMonth, 
-  MdCategory, MdOutlineHome, MdMenuBook, MdOutlineSettings, 
-  MdMenu, MdOutlineLogin } from "react-icons/md";
+import {
+  MdKeyboardCommandKey, MdOutlineCalendarMonth,
+  MdCategory, MdOutlineHome, MdMenuBook, MdOutlineSettings,
+  MdMenu, MdOutlineLogin
+} from "react-icons/md";
 import { useTitleStore } from '../../stores/useTitleStore';
 
 const menuItems = [
@@ -17,15 +19,26 @@ const menuItems = [
     subItems: [],
   },
   {
-    title: "Ingredients",
-    icon: <MdOutlineHome />,
-    path: "/ingredients",
-    subItems: [],
+    title: "Gestion des menus",
+    icon: <MdMenuBook />,
+    subItems: [
+      {
+        title: "List des menus",
+        path: "/menuList",
+      },
+      {
+        title: "Liste des catégories",
+        path: "/categoriesListe",
+      },
+      {
+        title: "Ingredients",
+        path: "/ingredients",
+      },
+    ],
   },
   {
-    title: "List des menus",
-    icon: <MdMenuBook />,
-    path: "/menuList",
+    title: "List des tables",
+    path: "/tableList",
     subItems: [],
   },
   {
@@ -53,7 +66,7 @@ const menuItems = [
   {
     title: "Stocks",
     icon: <AiOutlineStock />,
-    path:"/stocks",
+    path: "/stocks",
     subItems: [],
   },
   {
@@ -84,6 +97,7 @@ export default function Sidebar() {
   const [activeTab, setActiveTab] = useState(null);
   const [isToggleSubmenu, setIsToggleSubmenu] = useState({});
   const [openSidebar, setOpenSidebar] = useState(false);
+  const [showScrollbar, setShowScrollbar] = useState(false);
   const setTitle = useTitleStore(state => state.setTitle);
 
   const handleSubmenuToggle = (index) => {
@@ -108,10 +122,17 @@ export default function Sidebar() {
   return (
     <>
       <SidebarToggleButton handleSidebarToggle={handleSidebarToggle} openSidebar={openSidebar} />
-      <div className={`Sidebar fixed top-20 left-0 w-64 h-screen bg-white shadow-md flex flex-col 
-        overflow-y-scroll overflow-x-hidden scrollbar-custom
-        max-h-[calc(100%-80px)] transition-transform duration-300 
-        ease-in-out z-40 ${openSidebar ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:block`}>
+      <div
+        className={`Sidebar fixed top-20 left-0 w-64 h-screen bg-white shadow-md flex flex-col 
+          overflow-y-scroll overflow-x-hidden max-h-[calc(100%-80px)] transition-transform duration-300 
+          ease-in-out z-40 ${openSidebar ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:block`}
+        onMouseEnter={() => setShowScrollbar(true)} // Afficher la barre de défilement
+        onMouseLeave={() => setShowScrollbar(false)} // Masquer la barre de défilement
+        style={{
+          scrollbarWidth: showScrollbar ? 'thin' : 'none', // Pour Firefox
+          overflowY: showScrollbar ? 'scroll' : 'hidden' // Pour la barre de défilement
+        }}
+      >
         <div className="flex items-center justify-between p-4 text-2xl font-bold text-gray-500">
           <span>Tableau de bord</span>
         </div>
@@ -176,6 +197,19 @@ export default function Sidebar() {
           </Link>
         </div>
       </div>
+
+      <style jsx>{`
+        body {
+          overflow-y: hidden; /* Masquer la barre de défilement sur le corps */
+        }
+        .Sidebar::-webkit-scrollbar {
+          width: ${showScrollbar ? '8px' : '0px'}; /* Largeur de la barre de défilement */
+        }
+        .Sidebar::-webkit-scrollbar-thumb {
+          background-color: gray; /* Couleur de la barre de défilement */
+          border-radius: 10px; /* Coins arrondis */
+        }
+      `}</style>
     </>
   );
 }

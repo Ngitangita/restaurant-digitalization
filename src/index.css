@@ -14,12 +14,7 @@
     box-sizing: border-box;
 }
 
-.Input, input {background: #ffffff; color: #333333; border: 1px solid #cccccc; }
-
-th { background: #f1f1f1; }
-
-td { color: #333333; }
-
+body{background-color: #ebe9e9;}
 
 .LoginbgImg {
     background-image: url(../public/img-3.jpg); 
@@ -27,12 +22,6 @@ td { color: #333333; }
 }
 
 .scrollbar-custom {scrollbar-width: none;}
-/* Personnalisation de la barre de défilement */
-::-webkit-scrollbar {
-    width: 12px;  /* Largeur de la scrollbar */
-    height: 12px; /* Hauteur de la scrollbar horizontale */
-}
-
 
 body.dark {
     background: #0e1c36;

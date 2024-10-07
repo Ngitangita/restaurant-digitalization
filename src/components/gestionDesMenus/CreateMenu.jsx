@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { apiUrl } from '../../services/api';
 
-const CreateMenu = ({ onCreate, createMenuModal, categories }) => {
+const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [categoryId, setCategoryId] = useState('');
-    const [errorMessage, setErrorMessage] = useState(''); 
+    const [status, setStatus] = useState(''); // Nouveau champ pour le statut
+    const [errorMessage, setErrorMessage] = useState('');
+
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        
-        if (!name || !price || !categoryId) {
+        // Validation des champs
+        if (!name || !price || !categoryId || !status) {
             setErrorMessage('Tous les champs doivent être remplis.');
             return;
         }
@@ -26,6 +28,7 @@ const CreateMenu = ({ onCreate, createMenuModal, categories }) => {
             description,
             price: parseFloat(price),
             categoryId: parseInt(categoryId, 10),
+            status // Assurez-vous que le statut est inclus dans l'objet
         };
 
         try {
@@ -40,11 +43,13 @@ const CreateMenu = ({ onCreate, createMenuModal, categories }) => {
             if (response.ok) {
                 const createdMenu = await response.json();
                 onCreate(createdMenu); 
+                // Réinitialiser les champs
                 setName('');
                 setDescription('');
                 setPrice('');
                 setCategoryId('');
-                setErrorMessage(''); 
+                setStatus(''); // Réinitialiser le statut
+                setErrorMessage('');
             } else {
                 console.error('Erreur lors de la création du menu');
                 setErrorMessage('Erreur lors de la création du menu.');
@@ -57,17 +62,20 @@ const CreateMenu = ({ onCreate, createMenuModal, categories }) => {
 
     return (
         <form onSubmit={handleSubmit} className='CreateMenuModal'>
+            {/* Champ pour le nom */}
             <div>
-                <label htmlFor="name">Nom du Menu:</label>
+                <label htmlFor="name">Nom:</label>
                 <input
-                    type="text"
                     id="name"
+                    type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded"
                     required
                 />
             </div>
+
+            {/* Champ pour la description */}
             <div>
                 <label htmlFor="description">Description:</label>
                 <textarea
@@ -77,21 +85,25 @@ const CreateMenu = ({ onCreate, createMenuModal, categories }) => {
                     className="w-full px-3 py-2 border border-gray-300 rounded"
                 />
             </div>
+
+            {/* Champ pour le prix */}
             <div>
                 <label htmlFor="price">Prix:</label>
                 <input
-                    type="number"
                     id="price"
+                    type="number"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded"
                     required
                 />
             </div>
+
+            {/* Champ pour la catégorie */}
             <div>
-                <label htmlFor="category">Catégorie:</label>
+                <label htmlFor="categoryId">Catégorie:</label>
                 <select
-                    id="category"
+                    id="categoryId"
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
                     className="w-full px-3 py-2 border border-gray-300 rounded"
@@ -106,6 +118,29 @@ const CreateMenu = ({ onCreate, createMenuModal, categories }) => {
                         ))
                     ) : (
                         <option value="">Aucune catégorie disponible</option>
+                    )}
+                </select>
+            </div>
+
+            {/* Champ pour le statut */}
+            <div>
+                <label htmlFor="status">Statut:</label>
+                <select
+                    id="status"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    required
+                >
+                    <option value="">Sélectionnez un statut</option>
+                    {statuses && statuses.length > 0 ? (
+                        statuses.map(status => (
+                            <option key={status} value={status}>
+                                {status}
+                            </option>
+                        ))
+                    ) : (
+                        <option value="">Aucun statut disponible</option>
                     )}
                 </select>
             </div>

@@ -16,6 +16,8 @@ import ReservationList from "../pages/reservations/Reservation";
 import CreateReservation from "../components/createReservation/CreateReservation";
 import Stocks from "../pages/Stocks/Stocks";
 import MenuList from "../components/gestionDesMenus/MenuList";
+import CategoriesList from "../components/categories/Categories";
+import TablesListe from "../components/tables/TablesListe";
 
 function ProtectedRoute({ element, isAuthenticated }) {
   return isAuthenticated ? element : <Navigate to="/authentification" />;
@@ -58,6 +60,16 @@ function AppRouter() {
          <Route path="/menuList" element={
           <Layout showHeaderAndSidebar={isAuthenticated}>
             <ProtectedRoute element={<MenuList />} isAuthenticated={isAuthenticated} />
+          </Layout>
+        } />
+        <Route path="/categoriesListe" element={
+          <Layout showHeaderAndSidebar={isAuthenticated}>
+            <ProtectedRoute element={<CategoriesList />} isAuthenticated={isAuthenticated} />
+          </Layout>
+        } />
+         <Route path="/tableList" element={
+          <Layout showHeaderAndSidebar={isAuthenticated}>
+            <ProtectedRoute element={<TablesListe/>} isAuthenticated={isAuthenticated} />
           </Layout>
         } />
         <Route path="/bonDeCommandes" element={
