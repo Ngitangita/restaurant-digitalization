@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,30 +15,24 @@ const schema = z.object({
   description: z.string().max(255, "La description ne doit pas dépasser 255 caractères").optional(),
 });
 
-function CreateStock({ onStockCreated, createStockModale }) {
-  const [ingredients, setIngredients] = useState([]);
-  const { register, handleSubmit, reset, formState: { errors } } = useForm({
+function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredientName }) {
+  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
   });
 
+  // Remplir le champ de l'ID de l'ingrédient
   useEffect(() => {
-    const fetchIngredients = async () => {
-      try {
-        const data = await fetchJson(apiUrl("/ingredients/all"));
-        setIngredients(data);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des ingrédients:', error);
-      }
-    };
-    fetchIngredients();
-  }, []);
+    if (ingredientId) {
+      setValue("ingredientId", ingredientId);
+    }
+  }, [ingredientId, setValue]);
 
   const onSubmit = async (data) => {
     try {
       await fetchJson(apiUrl("/stocks/add"), 'POST', data);
       console.log('Stock créé avec succès:', data);
-      reset();  // Réinitialise le formulaire
-      if (onStockCreated) onStockCreated();  // Appelle la fonction passée en props
+      reset(); // Réinitialise le formulaire
+      if (onStockCreated) onStockCreated(); // Appelle la fonction passée en props
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
     }
@@ -48,16 +42,18 @@ function CreateStock({ onStockCreated, createStockModale }) {
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       <div>
         <label htmlFor="ingredient" className="block text-gray-700">Ingrédient</label>
-        <select
+        <input
           id="ingredient"
-          {...register("ingredientId")}
+          type="text"
+          value={ingredientName} // Afficher le nom de l'ingrédient
+          readOnly // Le champ est en lecture seule
           className={`block w-full p-2 border rounded-md ${errors.ingredientId ? 'border-red-500' : 'border-gray-300'}`}
-        >
-          <option value="">Sélectionnez un ingrédient</option>
-          {ingredients.map((ingredient) => (
-            <option key={ingredient.id} value={ingredient.id}>{ingredient.name}</option>
-          ))}
-        </select>
+        />
+        <input
+          type="hidden"
+          value={ingredientId}
+          {...register("ingredientId", { required: true })} // Assurez-vous que l'ID de l'ingrédient est requis
+        />
         {errors.ingredientId && <p className="text-red-500">{errors.ingredientId.message}</p>}
       </div>
 

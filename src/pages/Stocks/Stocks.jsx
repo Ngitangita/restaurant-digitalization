@@ -8,6 +8,7 @@ const StockList = () => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedStock, setSelectedStock] = useState(null); // État pour le stock sélectionné
   const [searchName, setSearchName] = useState('');
   const [quantityMin, setQuantityMin] = useState('');
   const [quantityMax, setQuantityMax] = useState('');
@@ -15,51 +16,53 @@ const StockList = () => {
   const [endDate, setEndDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchStocks = async () => {
-      setIsLoading(true);
-      try {
-        const searchParams = new URLSearchParams({
-          ingredientName: searchName || "",
-          quantityMin: quantityMin ? quantityMin.toString() : "",
-          quantityMax: quantityMax ? quantityMax.toString() : "",
-          startDate: startDate || "",
-          endDate: endDate || ""
-        }).toString();
+  const fetchStocks = async () => {
+    setIsLoading(true);
+    try {
+      const searchParams = new URLSearchParams({
+        ingredientName: searchName || "",
+        quantityMin: quantityMin ? quantityMin.toString() : "",
+        quantityMax: quantityMax ? quantityMax.toString() : "",
+        startDate: startDate || "",
+        endDate: endDate || ""
+      }).toString();
 
-        const res = await fetch(apiUrl(`/stocks?${searchParams}`), {
-          method: "GET",
-          headers: {
-            'Content-Type': 'application/json',
-          }
-        });
-
-        if (!res.ok) {
-          const errorData = await res.json();
-          throw new Error(errorData.message || 'Erreur lors de la récupération des stocks');
+      const res = await fetch(apiUrl(`/stocks?${searchParams}`), {
+        method: "GET",
+        headers: {
+          'Content-Type': 'application/json',
         }
+      });
 
-        const data = await res.json();
-        setStocks(data.items || []);
-        setSuccessMessage(null);
-      } catch (err) {
-        setError('Erreur lors de la récupération des stocks');
-        console.error(err);
-      } finally {
-        setIsLoading(false);
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || 'Erreur lors de la récupération des stocks');
       }
-    };
 
+      const data = await res.json();
+      setStocks(data.items || []);
+      setSuccessMessage(null);
+    } catch (err) {
+      setError('Erreur lors de la récupération des stocks');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchStocks();
   }, [searchName, quantityMin, quantityMax, startDate, endDate]);
 
-  const toggleModal = () => {
+  const toggleModal = (stock = null) => {
+    setSelectedStock(stock);  // Stock sélectionné pour modifier
     setIsModalOpen(!isModalOpen);
   };
 
   const handleStockCreated = () => {
     setSuccessMessage("Stock créé avec succès!");
     setIsModalOpen(false);
+    fetchStocks(); // Recharger les stocks après l'ajout
   };
 
   return (
@@ -113,8 +116,6 @@ const StockList = () => {
             <th className="p-2">Mis à jour</th>
             <th className="p-2">Ingrédient</th>
             <th className="p-2">Quantité</th>
-            <th className="p-2">Coût</th>
-            <th className="p-2">Description</th>
             <th className="p-2">Actions</th>
           </tr>
         </thead>
@@ -131,12 +132,10 @@ const StockList = () => {
                   <td className="border-b p-2">{new Date(stock.updatedAt).toLocaleDateString()}</td>
                   <td className="border-b p-2">{stock.ingredientName}</td>
                   <td className="border-b p-2">{stock.quantity}</td>
-                  <td className="border-b p-2">{stock.cost}</td>
-                  <td className="border-b p-2">{stock.description}</td>
                   <td className="border-b p-2">
                     <button
                       className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-                      onClick={toggleModal}
+                      onClick={() => toggleModal(stock)} // Passez le stock sélectionné
                     >
                       <FaRegEdit />
                     </button>
@@ -156,10 +155,16 @@ const StockList = () => {
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
           <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
             <h2 className="text-lg font-bold mb-4">Modifier le stock</h2>
-            <CreateStock onStockCreated={handleStockCreated} createStockModale={toggleModal} />
+            <CreateStock
+              onStockCreated={handleStockCreated}
+              createStockModale={toggleModal}
+              ingredientId={selectedStock ? selectedStock.ingredientId.toString() : ''} 
+              ingredientName={selectedStock ? selectedStock.ingredientName : ''} 
+            />
           </div>
         </div>
       )}
+
     </div>
   );
 };
