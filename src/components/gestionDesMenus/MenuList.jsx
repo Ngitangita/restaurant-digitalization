@@ -15,8 +15,6 @@ const MenuList = () => {
     const [showEditModal, setShowEditModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5);
     const [showEditMenuModal, setShowEditMenuModal] = useState(false);
     const [menuToEdit, setMenuToEdit] = useState(null);
 
@@ -125,16 +123,6 @@ const MenuList = () => {
         return acc;
     }, {});
 
-    const indexOfLastMenu = currentPage * itemsPerPage;
-    const indexOfFirstMenu = indexOfLastMenu - itemsPerPage;
-
-    // Filtrer les menus pour la pagination
-    const paginatedMenus = Object.entries(menusByCategory).flatMap(([_, { menus }]) =>
-        menus.slice(indexOfFirstMenu, indexOfLastMenu)
-    );
-
-    const totalPages = Math.ceil(filteredMenus.length / itemsPerPage);
-
     return (
         <div className="container bg-white MenuList mx-auto p-4">
             <h1 className="text-2xl font-bold mb-4">Liste des Menus</h1>
@@ -200,7 +188,7 @@ const MenuList = () => {
                             menus.length > 0 && (
                                 <React.Fragment key={categoryName}>
                                     <tr className='text-center'>
-                                        <td colSpan="6" className="font-bold text-lg">{categoryName}</td>
+                                        <td colSpan="6" className="font-bold text-lg pt-10">{categoryName}</td>
                                     </tr>
                                     {menus.map(menu => (
                                         <tr key={menu.id} className="hover:bg-gray-100 text-center border-y">
@@ -238,24 +226,6 @@ const MenuList = () => {
                 </tbody>
             </table>
 
-            <div className="pagination flex justify-between mt-4">
-                <button
-                    onClick={() => setCurrentPage(currentPage - 1)}
-                    disabled={currentPage === 1}
-                    className="bg-gray-300 text-gray-700 py-1 px-2 rounded-md disabled:opacity-50"
-                >
-                    Précédent
-                </button>
-                <span>{currentPage} / {totalPages}</span>
-                <button
-                    onClick={() => setCurrentPage(currentPage + 1)}
-                    disabled={currentPage === totalPages}
-                    className="bg-gray-300 text-gray-700 py-1 px-2 rounded-md disabled:opacity-50"
-                >
-                    Suivant
-                </button>
-            </div>
-
             {showEditModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
                     <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
@@ -277,7 +247,7 @@ const MenuList = () => {
                                 Mettre à jour
                             </button>
                             <button
-                                className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
+                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
                                 onClick={() => setShowEditModal(false)}
                             >
                                 Annuler
@@ -290,30 +260,29 @@ const MenuList = () => {
             {showEditMenuModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
                     <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                        <h2 className="text-xl font-bold mb-4">Modifier le menu</h2>
+                        <h2 className="text-xl font-bold mb-4">{menuToEdit.id ? 'Modifier' : 'Créer'} un Menu</h2>
                         <input
                             type="text"
-                            placeholder="Nom du menu"
-                            value={menuToEdit.name}
+                            placeholder="Nom"
+                            value={menuToEdit.name || ''}
                             onChange={(e) => setMenuToEdit({ ...menuToEdit, name: e.target.value })}
-                            className="mb-2 border rounded-md p-2 w-full"
+                            className="mb-4 border rounded-md p-2 w-full"
                         />
                         <input
                             type="number"
                             placeholder="Prix"
-                            value={menuToEdit.price}
-                            onChange={(e) => setMenuToEdit({ ...menuToEdit, price: Number(e.target.value) })}
-                            className="mb-2 border rounded-md p-2 w-full"
+                            value={menuToEdit.price || ''}
+                            onChange={(e) => setMenuToEdit({ ...menuToEdit, price: e.target.value })}
+                            className="mb-4 border rounded-md p-2 w-full"
                         />
-                        <input
-                            type="text"
+                        <textarea
                             placeholder="Description"
-                            value={menuToEdit.description}
+                            value={menuToEdit.description || ''}
                             onChange={(e) => setMenuToEdit({ ...menuToEdit, description: e.target.value })}
-                            className="mb-2 border rounded-md p-2 w-full"
+                            className="mb-4 border rounded-md p-2 w-full"
                         />
                         <select
-                            value={menuToEdit.categoryId}
+                            value={menuToEdit.categoryId || ''}
                             onChange={(e) => setMenuToEdit({ ...menuToEdit, categoryId: e.target.value })}
                             className="mb-4 border rounded-md p-2 w-full"
                         >
@@ -327,10 +296,10 @@ const MenuList = () => {
                                 className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
                                 onClick={handleUpdateMenu}
                             >
-                                Mettre à jour
+                                Enregistrer
                             </button>
                             <button
-                                className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600"
+                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
                                 onClick={() => setShowEditMenuModal(false)}
                             >
                                 Annuler

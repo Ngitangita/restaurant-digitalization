@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
 import { FaRegEdit } from 'react-icons/fa';
-import { MdDelete, MdClear } from 'react-icons/md';
+import { MdDelete, MdClear, MdEdit } from 'react-icons/md';
 
 function TablesListe() {
     const [tables, setTables] = useState([]);
@@ -109,11 +109,11 @@ function TablesListe() {
         setSearchTerm('');
     };
 
-   
+
     const filteredTables = tables.filter((table) =>
         table.number.toString().includes(searchTerm) ||
-        table.capacity.toString().includes(searchTerm) || 
-        table.status.toLowerCase().includes(searchTerm.toLowerCase()) 
+        table.capacity.toString().includes(searchTerm) ||
+        table.status.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     return (
@@ -136,7 +136,7 @@ function TablesListe() {
                 </div>
 
                 <button
-                    className="bg-green-500 text-white rounded px-4 py-2 mb-4"
+                    className="bg-blue-500 text-white rounded hover:bg-blue-600 px-4 py-2 mb-4"
                     onClick={() => setShowCreateModal(true)}
                 >
                     Créer Table
@@ -164,7 +164,14 @@ function TablesListe() {
                             <tr key={table.id} className="hover:bg-gray-100 text-center">
                                 <td className="py-2 px-4">{table.number}</td>
                                 <td className="py-2 px-4">{table.capacity}</td>
-                                <td className="py-2 px-4">{table.status}</td>
+                                <td className="py-2 px-4 cursor-pointer">
+                                    <button
+                                        onClick={() => handleEditStatus(table)}
+                                        className='flex flex-row gap-1 items-center w-full justify-center'
+                                    >
+                                        {table.status}<MdEdit />
+                                    </button>
+                                </td>
                                 <td className="py-2 px-4 flex flex-row gap-4 justify-center">
                                     <button
                                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
