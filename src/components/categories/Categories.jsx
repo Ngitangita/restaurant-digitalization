@@ -134,7 +134,12 @@ const CategoriesList = () => {
             </div>
 
             {isModalOpen && (
+                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                 <div className="creatUnitModal bg-white p-6 rounded-md shadow-md z-[9999]">
+                     <h2 className="text-xl mb-4">Créer une nouvelle catégorie</h2>
                 <CreateCategories onClose={toggleModal} onCategoryCreated={handleCategoryCreated} />
+                </div>
+                </div>
             )}
 
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden categoriesTable">
