@@ -154,7 +154,8 @@ function CreateIngredient({ onModalOpen, onToggle }) {
               <div className='flex flex-row gap-44'>
               <button type="submit" className="bg-blue-500 text-white p-2 px-4 rounded-md hover:bg-blue-600">
                 Créer</button>
-              <button type="button" onClick={() => setIsModalOpen(false)}  className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">
+              <button type="button" onClick={() => setIsModalOpen(false)}  
+              className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400">
                 Annuler</button>
               </div>
            </form>
@@ -166,7 +167,8 @@ function CreateIngredient({ onModalOpen, onToggle }) {
           <div className="ModalListeUnit bg-white p-6 rounded-md shadow-md">
             <h2 className="text-xl mb-4">Liste des unités</h2>
             <UnitsListe />
-            <button type="button" onClick={() => setIsModalOpenListeUnit(false)}  className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">Annuler</button>
+            <button type="button" onClick={() => setIsModalOpenListeUnit(false)}  
+            className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400">Annuler</button>
           </div>
         </div>)}
     </div>

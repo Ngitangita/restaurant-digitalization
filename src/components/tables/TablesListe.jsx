@@ -117,7 +117,7 @@ function TablesListe() {
     );
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 bg-white TableListe">
             <h1 className="text-2xl font-bold mb-4">Liste des Tables</h1>
             <div className='flex flex-row gap-4'>
                 <div className="w-64 relative flex items-center mb-4">
@@ -143,7 +143,7 @@ function TablesListe() {
                 </button>
             </div>
 
-            <table className="min-w-full shadow-md rounded-lg overflow-hidden">
+            <table className="min-w-full shadow-md rounded-lg overflow-hidden bg-white TableTbl">
                 <thead>
                     <tr className="bg-gray-200">
                         <th className="py-2 px-4">Numéro</th>
@@ -161,7 +161,7 @@ function TablesListe() {
                         </tr>
                     ) : (
                         filteredTables.map((table) => (
-                            <tr key={table.id} className="hover:bg-gray-100 text-center">
+                            <tr key={table.id} className="hover:bg-gray-100 text-center border-y">
                                 <td className="py-2 px-4">{table.number}</td>
                                 <td className="py-2 px-4">{table.capacity}</td>
                                 <td className="py-2 px-4 cursor-pointer">
@@ -194,7 +194,7 @@ function TablesListe() {
 
             {showDeleteModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
+                    <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center DeleteModal">
                         <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
                         <p className="mb-6">Êtes-vous sûr de vouloir supprimer cette table ?</p>
                         <div className="flex justify-around">
@@ -205,7 +205,7 @@ function TablesListe() {
                                 Supprimer
                             </button>
                             <button
-                                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
                                 onClick={cancelDelete}
                             >
                                 Annuler
@@ -217,7 +217,7 @@ function TablesListe() {
 
             {showCreateModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center EditModal">
                         <h2 className="text-lg font-semibold mb-4">Créer une Table</h2>
                         <input
                             type="number"
@@ -245,13 +245,13 @@ function TablesListe() {
                         </select>
                         <div className="flex justify-around">
                             <button
-                                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                                 onClick={handleCreateTable}
                             >
                                 Créer
                             </button>
                             <button
-                                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
                                 onClick={() => setShowCreateModal(false)}
                             >
                                 Annuler
@@ -263,7 +263,7 @@ function TablesListe() {
 
             {showEditModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center EditModal">
                         <h2 className="text-lg font-semibold mb-4">Modifier le statut</h2>
                         <select
                             value={tableStatus}
@@ -282,7 +282,7 @@ function TablesListe() {
                                 Mettre à jour
                             </button>
                             <button
-                                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                                className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
                                 onClick={() => setShowEditModal(false)}
                             >
                                 Annuler

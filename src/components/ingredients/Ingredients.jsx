@@ -130,7 +130,7 @@ const IngredientList = () => {
     };
 
     return (
-        <div className="ingredient container mx-auto p-4">
+        <div className="ingredient container mx-auto p-4 bg-white">
             <h1 className="text-2xl font-bold mb-4">Liste des Ingrédients</h1>
             {error && <p className="text-red-500">{error}</p>}
 
@@ -166,7 +166,7 @@ const IngredientList = () => {
                 </div>
             )}
 
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden ingredientTable">
                 <thead>
                     <tr className="bg-gray-200">
                         <th className="py-2 px-4">Nom</th>
@@ -174,7 +174,7 @@ const IngredientList = () => {
                         <th className="py-2 px-4">Actions</th>
                     </tr>
                 </thead>
-                <tbody className='ingredientTBody'>
+                <tbody>
                     {currentIngredients.length === 0 ? (
                         <tr className="text-center">
                             <td colSpan="3" className="py-4 text-gray-500">
@@ -186,19 +186,19 @@ const IngredientList = () => {
                         </tr>
                     ) : (
                         currentIngredients.map(ingredient => (
-                            <tr key={ingredient.id} className="hover:bg-gray-100 text-center border-y border-collapse">
+                            <tr key={ingredient.id} className="hover:bg-gray-100 text-center border-y">
                                 <td className="py-2 px-4">{ingredient.name}</td>
                                 <td className="py-2 px-4">{getUnitName(ingredient.unitId)}</td>
                                 <td className="py-2 px-4 flex flex-row gap-2 justify-center">
                                     <button
                                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-                                        onClick={() => handleEdit(ingredient)} // Appel correct de la fonction d'édition
+                                        onClick={() => handleEdit(ingredient)} 
                                     >
                                         <FaRegEdit />
                                     </button>
                                     <button
                                         className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
-                                        onClick={() => confirmDelete(ingredient.id)} // Appel correct de la fonction de suppression
+                                        onClick={() => confirmDelete(ingredient.id)}
                                     >
                                         <MdDelete />
                                     </button>
@@ -209,7 +209,6 @@ const IngredientList = () => {
                 </tbody>
             </table>
 
-            {/* Pagination */}
             <div className="flex justify-between mt-4">
                 <button
                     className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
@@ -231,7 +230,7 @@ const IngredientList = () => {
             {/* Modal de confirmation de suppression */}
             {showDeleteModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="bg-white p-8 rounded-lg shadow-lg">
+                    <div className="bg-white p-8 rounded-lg shadow-lg DeleteModal">
                     <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
                         <p>Êtes-vous sûr de vouloir supprimer cet ingrédient ?</p>
                         <div className="flex justify-end mt-4">
@@ -245,7 +244,7 @@ const IngredientList = () => {
             {/* Modal d'édition */}
             {showEditModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="bg-white p-8 rounded-lg shadow-lg">
+                    <div className="bg-white p-8 rounded-lg shadow-lg EditModal">
                         <h2 className="text-lg font-bold mb-4">Modifier l'ingrédient</h2>
                         <input
                             type="text"
@@ -266,6 +265,7 @@ const IngredientList = () => {
                             ))}
                         </select>
                         {error && <p className="text-red-500 mb-4">{error}</p>}
+                        
                         <div className="flex justify-end">
                             <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-2" onClick={handleUpdateIngredient}>
                                 Mettre à jour

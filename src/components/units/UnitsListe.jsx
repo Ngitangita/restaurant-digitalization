@@ -128,7 +128,7 @@ function UnitsListe() {
                                 Supprimer
                             </button>
                             <button
-                                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
                                 onClick={cancelDelete}
                             >
                                 Annuler
@@ -165,7 +165,7 @@ function UnitsListe() {
                                 Enregistrer
                             </button>
                             <button
-                                className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
+                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
                                 onClick={() => setShowEditModal(false)}
                             >
                                 Annuler

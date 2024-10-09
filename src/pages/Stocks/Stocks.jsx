@@ -55,14 +55,14 @@ const StockList = () => {
   }, [searchName, quantityMin, quantityMax, startDate, endDate]);
 
   const toggleModal = (stock = null) => {
-    setSelectedStock(stock);  // Stock sélectionné pour modifier
+    setSelectedStock(stock);  
     setIsModalOpen(!isModalOpen);
   };
 
   const handleStockCreated = () => {
     setSuccessMessage("Stock créé avec succès!");
     setIsModalOpen(false);
-    fetchStocks(); // Recharger les stocks après l'ajout
+    fetchStocks(); 
   };
 
   return (
@@ -135,7 +135,7 @@ const StockList = () => {
                   <td className="border-b p-2">
                     <button
                       className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-                      onClick={() => toggleModal(stock)} // Passez le stock sélectionné
+                      onClick={() => toggleModal(stock)} 
                     >
                       <FaRegEdit />
                     </button>
@@ -153,7 +153,7 @@ const StockList = () => {
 
       {isModalOpen && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md EditModal">
             <h2 className="text-lg font-bold mb-4">Modifier le stock</h2>
             <CreateStock
               onStockCreated={handleStockCreated}

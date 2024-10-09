@@ -5,7 +5,7 @@ import { MdDelete, MdClear } from 'react-icons/md';
 
 const DeleteModal = ({ onDelete, onCancel }) => (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
+        <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center DeleteModal">
             <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
             <p className="mb-6">Êtes-vous sûr de vouloir supprimer cette catégorie ?</p>
             <div className="flex justify-around">
@@ -85,13 +85,11 @@ const CategoriesList = () => {
     const handleClearSearch = () => {
         setSearchTerm('');
     };
-
-    // Filtrage des catégories en fonction du terme de recherche
+    
     const filteredCategories = categories.filter(categorie =>
         categorie.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-
-    // Pagination logic
+    
     const indexOfLastCategory = currentPage * itemsPerPage;
     const indexOfFirstCategory = indexOfLastCategory - itemsPerPage;
     const currentCategories = filteredCategories.slice(indexOfFirstCategory, indexOfLastCategory);
@@ -107,7 +105,7 @@ const CategoriesList = () => {
     };
 
     return (
-        <div className="container mx-auto p-4">
+        <div className="container mx-auto p-4 categories bg-white">
             <h1 className="text-2xl font-bold mb-4">Liste des catégories</h1>
             {error && <p className="text-red-500">{error}</p>}
 
@@ -139,14 +137,14 @@ const CategoriesList = () => {
                 <CreateCategories onClose={toggleModal} onCategoryCreated={handleCategoryCreated} />
             )}
 
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden categoriesTable">
                 <thead>
                     <tr className="bg-gray-200">
                         <th className="py-2 px-4">Nom</th>
                         <th className="py-2 px-4">Actions</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody >
                     {currentCategories.length > 0 ? currentCategories.map(categorie => (
                         <tr key={categorie.id} className="hover:bg-gray-100 text-center border-y border-collapse">
                             <td className="py-2 px-4 ">{categorie.name}</td>

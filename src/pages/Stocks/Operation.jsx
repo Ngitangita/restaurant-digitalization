@@ -25,7 +25,7 @@ function Operation() {
                     onClick={toggleModal}
                     type='button'
                     className="mb-3 rounded p-1 text-white flex flex-row items-center gap-2 bg-blue-500">
-                    <MdAdd className="size-8" /> Ajouter une boisson
+                    <MdAdd className="size-8" /> Ajouter 
                 </Boutton>
             </div>
             {isOpen && (

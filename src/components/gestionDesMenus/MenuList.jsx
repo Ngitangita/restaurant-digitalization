@@ -17,6 +17,8 @@ const MenuList = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [showEditMenuModal, setShowEditMenuModal] = useState(false);
     const [menuToEdit, setMenuToEdit] = useState(null);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [menuToDelete, setMenuToDelete] = useState(null);
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
@@ -90,7 +92,7 @@ const MenuList = () => {
         }
 
         try {
-            const url = apiUrl(`/menus`);
+            const url = apiUrl('/menus');
             const response = await fetch(url, {
                 method: 'POST',
                 headers: {
@@ -104,17 +106,39 @@ const MenuList = () => {
             }
 
             setShowEditMenuModal(false);
-            fetchMenus(); // Re-fetch menus to reflect changes
+            fetchMenus();
         } catch (error) {
             console.error('Erreur lors de la mise à jour du menu:', error);
         }
+    };
+
+    const handleDelete = async () => {
+        try {
+            await fetch(apiUrl(`/menus/${menuToDelete.id}`), {
+                method: 'DELETE',
+            });
+            setShowDeleteModal(false);
+            fetchMenus();
+        } catch (error) {
+            console.error('Erreur lors de la suppression du menu:', error);
+        }
+    };
+
+    const confirmDelete = (menuId) => {
+        const menu = menus.find(m => m.id === menuId);
+        setMenuToDelete(menu);
+        setShowDeleteModal(true);
+    };
+
+    const cancelDelete = () => {
+        setShowDeleteModal(false);
+        setMenuToDelete(null);
     };
 
     const filteredMenus = menus.filter(menu =>
         menu.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Regroupement des menus par catégorie
     const menusByCategory = categories.reduce((acc, category) => {
         acc[category.id] = {
             categoryName: category.name,
@@ -212,7 +236,7 @@ const MenuList = () => {
                                                 </button>
                                                 <button
                                                     className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
-                                                    onClick={() => setSelectedMenuId(menu.id)}
+                                                    onClick={() => confirmDelete(menu.id)}
                                                 >
                                                     <MdDelete />
                                                 </button>
@@ -226,25 +250,51 @@ const MenuList = () => {
                 </tbody>
             </table>
 
+            {showDeleteModal && (
+                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm DeleteModal">
+                        <h2 className="text-xl font-bold mb-4">Confirmer la suppression</h2>
+                        <p>Voulez-vous vraiment supprimer le menu "{menuToDelete?.name}" ?</p>
+                        <div className="flex justify-end mt-4">
+                            <button
+                                className="bg-red-500 text-white py-2 px-4 rounded-md mr-2"
+                                onClick={handleDelete}
+                            >
+                                Supprimer
+                            </button>
+                            <button
+                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
+                                onClick={cancelDelete}
+                            >
+                                Annuler
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Edit status modal */}
             {showEditModal && (
-                <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                        <h2 className="text-xl font-bold mb-4">Modifier le statut du menu</h2>
+                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
+                        <h2 className="text-xl font-bold mb-4">Modifier le statut</h2>
                         <select
                             value={menuStatus}
                             onChange={(e) => setMenuStatus(e.target.value)}
-                            className="mb-4 border rounded-md p-2"
+                            className="border p-2 rounded-md w-full mb-4"
                         >
-                            {statuses.map((status) => (
-                                <option key={status.id} value={status.name}>{status.name}</option>
+                            {statuses.map(status => (
+                                <option key={status} value={status}>
+                                    {status}
+                                </option>
                             ))}
                         </select>
-                        <div className="flex justify-between">
+                        <div className="flex justify-end">
                             <button
-                                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                                className="bg-blue-500 text-white py-2 px-4 rounded-md mr-2"
                                 onClick={handleUpdateStatus}
                             >
-                                Mettre à jour
+                                Sauvegarder
                             </button>
                             <button
                                 className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
@@ -259,7 +309,7 @@ const MenuList = () => {
 
             {showEditMenuModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md EditModal">
                         <h2 className="text-xl font-bold mb-4">{menuToEdit.id ? 'Modifier' : 'Créer'} un Menu</h2>
                         <input
                             type="text"
