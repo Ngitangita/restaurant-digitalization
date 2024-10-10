@@ -15,6 +15,12 @@ const StockList = () => {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage] = useState(5); // Par exemple, 5 éléments par page
+  const indexOfLastStock = currentPage * itemsPerPage;
+  const indexOfFirstStock = indexOfLastStock - itemsPerPage;
+  const currentStocks = stocks.slice(indexOfFirstStock, indexOfLastStock);
+
 
   const fetchStocks = async () => {
     setIsLoading(true);
@@ -55,18 +61,31 @@ const StockList = () => {
   }, [searchName, quantityMin, quantityMax, startDate, endDate]);
 
   const toggleModal = (stock = null) => {
-    setSelectedStock(stock);  
+    setSelectedStock(stock);
     setIsModalOpen(!isModalOpen);
   };
 
   const handleStockCreated = () => {
     setSuccessMessage("Stock créé avec succès!");
     setIsModalOpen(false);
-    fetchStocks(); 
+    fetchStocks();
   };
 
+  const handleNextPage = () => {
+    if (currentPage < Math.ceil(stocks.length / itemsPerPage)) {
+      setCurrentPage(prevPage => prevPage + 1);
+    }
+  };
+
+  const handlePrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(prevPage => prevPage - 1);
+    }
+  };
+
+
   return (
-    <div className="StockList container mx-auto p-4 bg-white">
+    <div className="StockList container mx-auto p-4 bg-white pb-10">
       <h1 className="text-2xl font-bold mb-4">Liste des Stocks</h1>
       {error && <p className="text-red-500">{error}</p>}
       {successMessage && <p className="text-green-500">{successMessage}</p>}
@@ -122,11 +141,11 @@ const StockList = () => {
         <tbody>
           {isLoading ? (
             <tr>
-              <td colSpan="7" className="text-center py-2">Chargement...</td>
+              <td colSpan="5" className="text-center py-2">Chargement...</td>
             </tr>
           ) : (
-            stocks.length > 0 ? (
-              stocks.map((stock) => (
+            currentStocks.length > 0 ? (
+              currentStocks.map((stock) => (
                 <tr key={stock.id} className='text-center'>
                   <td className="border-b p-2">{new Date(stock.createdAt).toLocaleDateString()}</td>
                   <td className="border-b p-2">{new Date(stock.updatedAt).toLocaleDateString()}</td>
@@ -140,7 +159,7 @@ const StockList = () => {
                   <td className="border-b p-2">
                     <button
                       className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-                      onClick={() => toggleModal(stock)} 
+                      onClick={() => toggleModal(stock)}
                     >
                       <FaRegEdit />
                     </button>
@@ -149,12 +168,31 @@ const StockList = () => {
               ))
             ) : (
               <tr>
-                <td colSpan="7" className="border-b p-2 text-center">Aucun stock trouvé</td>
+                <td colSpan="5" className="text-center py-4">Aucun stock trouvé</td>
               </tr>
             )
           )}
         </tbody>
+
       </table>
+      <div className="flex justify-between mt-4">
+        <button
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+          onClick={handlePrevPage}
+          disabled={currentPage === 1}
+        >
+          Précédent
+        </button>
+        <span className="self-center">{`Page ${currentPage} sur ${Math.ceil(stocks.length / itemsPerPage)}`}</span>
+        <button
+          className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+          onClick={handleNextPage}
+          disabled={currentPage === Math.ceil(stocks.length / itemsPerPage)}
+        >
+          Suivant
+        </button>
+      </div>
+
 
       {isModalOpen && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
@@ -163,8 +201,8 @@ const StockList = () => {
             <CreateStock
               onStockCreated={handleStockCreated}
               createStockModale={toggleModal}
-              ingredientId={selectedStock ? selectedStock.ingredientId.toString() : ''} 
-              ingredientName={selectedStock ? selectedStock.ingredientName : ''} 
+              ingredientId={selectedStock ? selectedStock.ingredientId.toString() : ''}
+              ingredientName={selectedStock ? selectedStock.ingredientName : ''}
             />
           </div>
         </div>
