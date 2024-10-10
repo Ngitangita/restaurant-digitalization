@@ -131,7 +131,12 @@ const StockList = () => {
                   <td className="border-b p-2">{new Date(stock.createdAt).toLocaleDateString()}</td>
                   <td className="border-b p-2">{new Date(stock.updatedAt).toLocaleDateString()}</td>
                   <td className="border-b p-2">{stock.ingredientName}</td>
-                  <td className="border-b p-2">{stock.quantity}</td>
+                  <td className={`border-b p-2 ${stock.quantity <= 5 ? 'text-red-500 font-bold' : ''}`}>
+                    {stock.quantity}
+                    {stock.quantity <= 5 && (
+                      <div className="text-red-500 font-bold">⚠️ Stock faible! Ajoutez du stock.</div>
+                    )}
+                  </td>
                   <td className="border-b p-2">
                     <button
                       className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
