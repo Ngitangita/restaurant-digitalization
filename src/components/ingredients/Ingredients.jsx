@@ -4,6 +4,7 @@ import CreateIngredient from './CreateIngredient';
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete, MdInfoOutline, MdClear } from "react-icons/md";
 import useFetch from '../../hooks/useFetch';
+import EditIngredients from './EditIngredients';
 
 const IngredientList = () => {
     const [ingredients, setIngredients] = useState([]);
@@ -11,8 +12,8 @@ const IngredientList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedIngredient, setSelectedIngredient] = useState(null); // Pour stocker l'ID de l'ingrédient sélectionné
-    const [ingredientName, setIngredientName] = useState('');
-    const [unitId, setUnitId] = useState('');
+    const [ingredientName, setIngredientName] = useState(null);
+    const [unitId, setUnitId] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const [currentPage, setCurrentPage] = useState(1);
@@ -129,6 +130,21 @@ const IngredientList = () => {
         setSearchTerm('');
     };
 
+    const handlePageInputChange = (e) => {
+        const page = Number(e.target.value);
+
+        // Vérifie si le nombre est valide et à l'intérieur des limites
+        if (!isNaN(page)) {
+            if (page >= 1 && page <= totalPages) {
+                setCurrentPage(page); // Met à jour la page courante
+            } else if (page < 1) {
+                setCurrentPage(1); // Si la page est inférieure à 1, aller à la première page
+            } else if (page > totalPages) {
+                setCurrentPage(totalPages); // Si la page est supérieure au total, aller à la dernière page
+            }
+        }
+    };
+
     return (
         <div className="ingredient container mx-auto p-4 bg-white">
             <h1 className="text-2xl font-bold mb-4">Liste des Ingrédients</h1>
@@ -158,7 +174,7 @@ const IngredientList = () => {
             </div>
 
             {isModalOpen && (
-                <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center top-7">
+                <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center ">
                     <div className="CreateIngredientModal bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
                         <h2 className="text-lg font-bold mb-4">Ajouter un nouvel ingrédient</h2>
                         <CreateIngredient onModalOpen={handleModalOpen} onToggle={toggleModal} />
@@ -192,7 +208,7 @@ const IngredientList = () => {
                                 <td className="py-2 px-4 flex flex-row gap-2 justify-center">
                                     <button
                                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-                                        onClick={() => handleEdit(ingredient)} 
+                                        onClick={() => handleEdit(ingredient)}
                                     >
                                         <FaRegEdit />
                                     </button>
@@ -217,7 +233,17 @@ const IngredientList = () => {
                 >
                     Précédent
                 </button>
-                <span className="self-center">{`Page ${currentPage} sur ${totalPages}`}</span>
+                <div className="flex items-center">
+                    <span className="self-center">{`Page ${currentPage} / ${totalPages}`}</span>
+                    <input
+                        type="number"
+                        value={currentPage}
+                        onChange={handlePageInputChange} // Met à jour la page courante directement
+                        min={1}
+                        max={totalPages}
+                        className="border border-gray-300 rounded-md px-2 py-1 outline-none w-20"
+                    />
+                </div>
                 <button
                     className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
                     onClick={handleNextPage}
@@ -231,7 +257,7 @@ const IngredientList = () => {
             {showDeleteModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
                     <div className="bg-white p-8 rounded-lg shadow-lg DeleteModal">
-                    <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
+                        <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
                         <p>Êtes-vous sûr de vouloir supprimer cet ingrédient ?</p>
                         <div className="flex justify-end mt-4">
                             <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mr-2" onClick={handleDelete}>Supprimer</button>
@@ -245,35 +271,16 @@ const IngredientList = () => {
             {showEditModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
                     <div className="bg-white p-8 rounded-lg shadow-lg EditModal">
-                        <h2 className="text-lg font-bold mb-4">Modifier l'ingrédient</h2>
-                        <input
-                            type="text"
-                            value={ingredientName}
-                            onChange={(e) => setIngredientName(e.target.value)}
-                            className="border p-2 rounded w-full mb-4"
+                        <EditIngredients
+                            ingredientName={ingredientName}
+                            setIngredientName={setIngredientName}
+                            unitId={unitId}
+                            setUnitId={setUnitId}
+                            units={units}
+                            onSave={handleUpdateIngredient}
+                            onCancel={() => setShowEditModal(false)}
+                            error={error}
                         />
-                        <select
-                            value={unitId}
-                            onChange={(e) => setUnitId(e.target.value)}
-                            className="border p-2 rounded w-full mb-4"
-                        >
-                            <option value="">Sélectionner une unité</option>
-                            {units.map((unit) => (
-                                <option key={unit.id} value={unit.id}>
-                                    {unit.abbreviation}
-                                </option>
-                            ))}
-                        </select>
-                        {error && <p className="text-red-500 mb-4">{error}</p>}
-                        
-                        <div className="flex justify-end">
-                            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-2" onClick={handleUpdateIngredient}>
-                                Mettre à jour
-                            </button>
-                            <button className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400" onClick={() => setShowEditModal(false)}>
-                                Annuler
-                            </button>
-                        </div>
                     </div>
                 </div>
             )}

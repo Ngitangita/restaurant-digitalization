@@ -31,6 +31,10 @@ const menuItems = [
         path: "/categoriesListe",
       },
       {
+        title: "Liste des menu avec ingrédients",
+        path: "/menu-ingredients/menu/1",
+      },
+      {
         title: "Ingredients",
         path: "/ingredients",
       },
@@ -124,8 +128,8 @@ export default function Sidebar() {
       <SidebarToggleButton handleSidebarToggle={handleSidebarToggle} openSidebar={openSidebar} />
       <div
         className={`Sidebar fixed top-20 left-0 w-64 h-screen bg-white shadow-md flex flex-col 
-          overflow-y-scroll overflow-x-hidden max-h-[calc(100%-80px)] transition-transform duration-300 
-          ease-in-out z-40 ${openSidebar ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:block`}
+          overflow-y-scroll overflow-x-hidden max-h-[calc(100%-80px)] transition-transform duration-300 z-[1000px]
+          ease-in-out ${openSidebar ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:block`}
         onMouseEnter={() => setShowScrollbar(true)} // Afficher la barre de défilement
         onMouseLeave={() => setShowScrollbar(false)} // Masquer la barre de défilement
         style={{
@@ -198,7 +202,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <style jsx>{`
+      <style  jsx="true">{`
         body {
           overflow-y: hidden; /* Masquer la barre de défilement sur le corps */
         }

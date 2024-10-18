@@ -2,29 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
 import CreateCategories from './CreateCategories';
 import { MdDelete, MdClear } from 'react-icons/md';
-
-const DeleteModal = ({ onDelete, onCancel }) => (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center DeleteModal">
-            <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
-            <p className="mb-6">Êtes-vous sûr de vouloir supprimer cette catégorie ?</p>
-            <div className="flex justify-around">
-                <button
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                    onClick={onDelete}
-                >
-                    Supprimer
-                </button>
-                <button
-                    className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400"
-                    onClick={onCancel}
-                >
-                    Annuler
-                </button>
-            </div>
-        </div>
-    </div>
-);
+import { FaRegEdit } from 'react-icons/fa';
+import EditModal from './EditModal';
+import DeleteModal from './DeleteModal';
 
 const CategoriesList = () => {
     const [categories, setCategories] = useState([]);
@@ -32,11 +12,12 @@ const CategoriesList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [categoryToDelete, setCategoryToDelete] = useState(null);
-    const [searchTerm, setSearchTerm] = useState(''); // État pour la barre de recherche
+    const [categoryToEdit, setCategoryToEdit] = useState(null);
+    const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
-    // Pagination states
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5); // Nombre d'éléments par page
+    const [itemsPerPage] = useState(5);
 
     useEffect(() => {
         fetchCategories();
@@ -85,11 +66,43 @@ const CategoriesList = () => {
     const handleClearSearch = () => {
         setSearchTerm('');
     };
-    
+
+    const handleEditCategory = (category) => {
+        setCategoryToEdit(category || {});
+        setShowEditCategoryModal(true);
+    };
+
+    const handleSaveEdit = async () => {
+        if (!categoryToEdit || !categoryToEdit.id || !categoryToEdit.name) {
+            console.error('Les informations de la catégorie sont incomplètes.');
+            return;
+        }
+
+        try {
+            const url = apiUrl(`/categories`);
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(categoryToEdit),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur lors de la mise à jour de la catégorie: ${response.statusText}`);
+            }
+
+            setShowEditCategoryModal(false);
+            fetchCategories();
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour de la catégorie:', error);
+        }
+    };
+
     const filteredCategories = categories.filter(categorie =>
         categorie.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
-    
+
     const indexOfLastCategory = currentPage * itemsPerPage;
     const indexOfFirstCategory = indexOfLastCategory - itemsPerPage;
     const currentCategories = filteredCategories.slice(indexOfFirstCategory, indexOfLastCategory);
@@ -102,6 +115,21 @@ const CategoriesList = () => {
 
     const handlePrevPage = () => {
         if (currentPage > 1) setCurrentPage(prevPage => prevPage - 1);
+    };
+
+    const handlePageInputChange = (e) => {
+        const page = Number(e.target.value);
+
+        // Vérifie si le nombre est valide et à l'intérieur des limites
+        if (!isNaN(page)) {
+            if (page >= 1 && page <= totalPages) {
+                setCurrentPage(page); // Met à jour la page courante
+            } else if (page < 1) {
+                setCurrentPage(1); // Si la page est inférieure à 1, aller à la première page
+            } else if (page > totalPages) {
+                setCurrentPage(totalPages); // Si la page est supérieure au total, aller à la dernière page
+            }
+        }
     };
 
     return (
@@ -134,11 +162,11 @@ const CategoriesList = () => {
             </div>
 
             {isModalOpen && (
-                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                 <div className="creatUnitModal bg-white p-6 rounded-md shadow-md z-[9999]">
-                     <h2 className="text-xl mb-4">Créer une nouvelle catégorie</h2>
-                <CreateCategories onClose={toggleModal} onCategoryCreated={handleCategoryCreated} />
-                </div>
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                    <div className="creatUnitModal bg-white p-6 rounded-md shadow-md z-[9999]">
+                        <h2 className="text-xl mb-4">Créer une nouvelle catégorie</h2>
+                        <CreateCategories onClose={toggleModal} onCategoryCreated={handleCategoryCreated} />
+                    </div>
                 </div>
             )}
 
@@ -149,11 +177,17 @@ const CategoriesList = () => {
                         <th className="py-2 px-4">Actions</th>
                     </tr>
                 </thead>
-                <tbody >
+                <tbody>
                     {currentCategories.length > 0 ? currentCategories.map(categorie => (
                         <tr key={categorie.id} className="hover:bg-gray-100 text-center border-y border-collapse">
                             <td className="py-2 px-4 ">{categorie.name}</td>
                             <td className="py-2 px-4">
+                                <button
+                                    className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
+                                    onClick={() => handleEditCategory(categorie)}
+                                >
+                                    <FaRegEdit />
+                                </button>
                                 <button
                                     className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
                                     onClick={() => confirmDelete(categorie.id)}
@@ -171,22 +205,49 @@ const CategoriesList = () => {
             </table>
 
             {showDeleteModal && (
-                <DeleteModal onDelete={handleDelete} onCancel={cancelDelete} />
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center DeleteModal">
+                        <DeleteModal onDelete={handleDelete} onCancel={cancelDelete} />
+                    </div>
+                </div>
             )}
 
-            {/* Pagination */}
-            <div className="flex justify-between mt-4">
+            {showEditCategoryModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="EditModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
+                        <EditModal
+                            category={categoryToEdit}
+                            setCategoryToEdit={setCategoryToEdit}
+                            categoryToEdit={categoryToEdit}
+                            onSave={handleSaveEdit}
+                            onCancel={() => setShowEditCategoryModal(false)}
+                        />
+                    </div>
+                </div>
+            )}
+
+            <div className="flex justify-between mt-4 items-center">
                 <button
-                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
                     onClick={handlePrevPage}
+                    className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
                     disabled={currentPage === 1}
                 >
                     Précédent
                 </button>
-                <span className="self-center">{`Page ${currentPage} sur ${totalPages}`}</span>
+                <div className="flex items-center">
+                    <span className="mr-2">Page {currentPage}/{totalPages}</span>
+                    <input
+                        type="number"
+                        value={currentPage}
+                        onChange={handlePageInputChange} // Met à jour la page courante directement
+                        min={1}
+                        max={totalPages}
+                        className="border border-gray-300 rounded-md px-2 py-1 outline-none w-20"
+                    />
+                </div>
                 <button
-                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
                     onClick={handleNextPage}
+                    className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
                     disabled={currentPage === totalPages}
                 >
                     Suivant

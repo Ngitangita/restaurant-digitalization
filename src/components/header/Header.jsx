@@ -8,7 +8,7 @@ export default function Header() {
     const isDark = useThemeStore(state => state.isDark);
     const toggleTheme = useThemeStore(state => state.toggleTheme);
     return (
-        <header className={`fixed top-0 left-0 w-full h-20 ${isDark ? 'bg-gray-800' : 'bg-white'} p-4 shadow-md z-50 flex items-center justify-between lg:p-6`}>
+        <header className={`fixed top-0 left-0 w-full h-20 z-[1010px] ${isDark ? 'bg-gray-800' : 'bg-white'} p-4 shadow-md flex items-center justify-between lg:p-6`}>
             <div className='flex items-center gap-14 '>
                 <Link to="/" className='flex items-center gap-2'>
                     <img src="/UTOPIA-B.png" alt="UTOPIA-B" className="w-12 h-12 lg:w-16 lg:h-16 rounded-full" />

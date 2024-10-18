@@ -45,34 +45,34 @@ body.dark .Sidebar .Authentification {
     background: #1a2b52; color: #e5e5e5 !important;}
 
 body.dark .CreateIngredientModal, body.dark .DeleteModal, body.dark .creatUnitModal, body.dark .ModalListeUnit,
-body.dark .EditModal, body.dark .createStockModale, body.dark .CreateMenuModal 
-{background: #0e1c36; color: #e5e5e5 !important;}
+body.dark .EditModal, body.dark .createStockModale, body.dark .CreateMenuModal, body.dark .AddIngredientsModal
+{background: #0e1c36; color: #e5e5e5 !important; opacity: 0.85;}
 
 body.dark label {
     color: rgba(255, 255, 255, 0.6) !important;
 }
 
 body.dark input, body.dark select, body.dark option, body.dark textarea {
-    background: #1a2b52; color: #e5e5e5 !important;}
+    background: #1a2b52; color: #e5e5e5 !important; opacity: 0.85;}
 
-body.dark .SearchBox {background: #1a2b52; color: #e5e5e5; border: none;}
+body.dark .SearchBox {background: #1a2b52; color: #e5e5e5; border: none; opacity: 0.85;}
 
 body.dark table {border: none;}
 
 body.dark .Commande, body.dark .DrinkStock, body.dark .FoodStock, body.dark .IngredientStock {
-    background: #1a2b52; color: #e5e5e5;}
+    background: #1a2b52; color: #e5e5e5; opacity: 0.85;}
 
 body.dark tr {border: none;}
 
 body.dark tr:hover {
-    background: rgba(255, 255, 255, 0.1); color: #e5e5e5 !important;}
+    background: rgba(255, 255, 255, 0.1); color: #e5e5e5 !important; opacity: 0.85;}
 
 body.dark th {background: #0e1c36; border: none;}
 
-body.dark td, body.dark td button {color: #e5e5e5; border: 1px solid rgba(255, 255, 255, 0.1);}
+body.dark td, body.dark td button {color: #e5e5e5; opacity: 0.85; border: 1px solid rgba(255, 255, 255, 0.1);}
 
 body.dark .CalendarHead { background: #0e1c36;}
 
-body.dark .CalendarHead button {background: #1a2b52; color: #e5e5e5;}
+body.dark .CalendarHead button {background: #1a2b52; color: #e5e5e5; opacity: 0.85;}
 
-body.dark .Calendar { background: #1a2b52; border: 1px solid rgba(255, 255, 255, 0.1); color: #e5e5e5;}
+body.dark .Calendar { opacity: 0.85; background: #1a2b52; border: 1px solid rgba(255, 255, 255, 0.1); color: #e5e5e5;}

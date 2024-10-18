@@ -1,15 +1,11 @@
+import ManageMenuIngredients from "../../components/gestionDesMenus/menuIngredients/ManageMenuIngredients";
+const Home = () => {
 
-import StockOperation from "../Stocks/Operation";
+    return (
+        <div>
+            <ManageMenuIngredients/>
+        </div>
+    );
+};
 
-export default function Home() {
-
-  return (
-    <div className="max-w-[970px]">
-      <div className="w-full max-w-[930px] h-full flex flex-row flex-wrap gap-7
-        max-h-[calc(100%-80px)] fixed
-        overflow-y-scroll overflow-x-hidden scrollbar-custom text-gray-500">
-        <StockOperation />
-      </div>
-    </div>
-  );
-}
+export default Home;

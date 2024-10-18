@@ -1,8 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import CreateMenu from './CreateMenu';
 import { apiUrl } from '../../services/api';
-import { MdDelete, MdClear, MdEdit } from 'react-icons/md';
+import { MdDelete, MdClear, MdEdit, MdMoreVert } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
+import EditMenu from './EditMenu';
+import UpdateStatus from './UpdateStatus';
+import { useNavigate } from 'react-router-dom';
+import ManageMenuIngredients from './menuIngredients/ManageMenuIngredients';
 
 const MenuList = () => {
     const [menus, setMenus] = useState([]);
@@ -19,6 +23,8 @@ const MenuList = () => {
     const [menuToEdit, setMenuToEdit] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [menuToDelete, setMenuToDelete] = useState(null);
+    const [detailsVisible, setDetailsVisible] = useState({}); // Change here
+    const navigate = useNavigate();
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
@@ -147,8 +153,16 @@ const MenuList = () => {
         return acc;
     }, {});
 
+    const handleClickRow = (menuId) => {
+        navigate(`/menu-ingredients/menu/${menuId}`);
+    };
+
+    const toggleDetails = (menuId) => {
+        setDetailsVisible(prev => ({ ...prev, [menuId]: !prev[menuId] })); // Change here
+    };
+
     return (
-        <div className="container bg-white MenuList mx-auto p-4">
+        <div className="container bg-white MenuList mx-auto p-10 pb-14">
             <h1 className="text-2xl font-bold mb-4">Liste des Menus</h1>
             {error && <p className="text-red-500">{error}</p>}
 
@@ -214,20 +228,16 @@ const MenuList = () => {
                                     <tr className='text-center'>
                                         <td colSpan="6" className="font-bold text-lg pt-10">{categoryName}</td>
                                     </tr>
+
                                     {menus.map(menu => (
-                                        <tr key={menu.id} className="hover:bg-gray-100 text-center border-y">
+                                        <tr key={menu.id}
+                                            className="hover:bg-gray-100 text-center border-y"
+                                        >
                                             <td className="py-2 px-4">{menu.name}</td>
-                                            <td className="py-2 px-4">{menu.price} Ar</td>
+                                            <td className="py-2 px-4">{menu.price}</td>
                                             <td className="py-2 px-4">{menu.description}</td>
-                                            <td className="py-2 px-4 cursor-pointer">
-                                                <button
-                                                    onClick={() => handleEditStatus(menu)}
-                                                    className='flex flex-row gap-1 items-center'
-                                                >
-                                                    {menu.status}<MdEdit />
-                                                </button>
-                                            </td>
-                                            <td className="py-2 px-4 flex flex-row justify-center">
+                                            <td className="py-2 px-4">{menu.status}</td>
+                                            <td className="py-2 px-4 flex flex-row justify-center gap-2">
                                                 <button
                                                     className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                                                     onClick={() => handleEditMenu(menu)}
@@ -240,6 +250,22 @@ const MenuList = () => {
                                                 >
                                                     <MdDelete />
                                                 </button>
+                                                <button className="relative">
+                                                    <button onClick={() => toggleDetails(menu.id)} className="focus:outline-none rounded p-2 bg-gray-200">
+                                                        <MdMoreVert />
+                                                    </button>
+                                                    {detailsVisible[menu.id] && (
+                                                        <div className="absolute text-start right-[1px] bottom-9 w-72 bg-gray-300 shadow-md rounded-md z-50 "> {/* Ajustez mt-1 pour espacement */}
+                                                            <button onClick={() => handleClickRow(menu.id)} 
+                                                            className="block text-start px-4 py-2 hover:bg-gray-100 w-full
+                                                            border-y border-white">
+                                                                Voir détail
+                                                            </button>
+                                                            <ManageMenuIngredients menuId={menu.id} />
+                                                        </div>
+                                                    )}
+                                                </button>
+
                                             </td>
                                         </tr>
                                     ))}
@@ -250,109 +276,50 @@ const MenuList = () => {
                 </tbody>
             </table>
 
-            {showDeleteModal && (
-                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm DeleteModal">
-                        <h2 className="text-xl font-bold mb-4">Confirmer la suppression</h2>
-                        <p>Voulez-vous vraiment supprimer le menu "{menuToDelete?.name}" ?</p>
-                        <div className="flex justify-end mt-4">
-                            <button
-                                className="bg-red-500 text-white py-2 px-4 rounded-md mr-2"
-                                onClick={handleDelete}
-                            >
-                                Supprimer
-                            </button>
-                            <button
-                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
-                                onClick={cancelDelete}
-                            >
-                                Annuler
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            )}
-
-            {/* Edit status modal */}
             {showEditModal && (
-                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
-                        <h2 className="text-xl font-bold mb-4">Modifier le statut</h2>
-                        <select
-                            value={menuStatus}
-                            onChange={(e) => setMenuStatus(e.target.value)}
-                            className="border p-2 rounded-md w-full mb-4"
-                        >
-                            {statuses.map(status => (
-                                <option key={status} value={status}>
-                                    {status}
-                                </option>
-                            ))}
-                        </select>
-                        <div className="flex justify-end">
-                            <button
-                                className="bg-blue-500 text-white py-2 px-4 rounded-md mr-2"
-                                onClick={handleUpdateStatus}
-                            >
-                                Sauvegarder
-                            </button>
-                            <button
-                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
-                                onClick={() => setShowEditModal(false)}
-                            >
-                                Annuler
-                            </button>
-                        </div>
+                <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
+                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                        <UpdateStatus
+                            onUpdate={handleUpdateStatus}
+                            onClose={() => setShowEditModal(false)}
+                            selectedMenuId={selectedMenuId}
+                            menuStatus={menuStatus}
+                            setMenuStatus={setMenuStatus}
+                        />
                     </div>
                 </div>
             )}
 
             {showEditMenuModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md EditModal">
-                        <h2 className="text-xl font-bold mb-4">{menuToEdit.id ? 'Modifier' : 'Créer'} un Menu</h2>
-                        <input
-                            type="text"
-                            placeholder="Nom"
-                            value={menuToEdit.name || ''}
-                            onChange={(e) => setMenuToEdit({ ...menuToEdit, name: e.target.value })}
-                            className="mb-4 border rounded-md p-2 w-full"
+                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                        <EditMenu
+                            menu={menuToEdit}
+                            onUpdate={handleUpdateMenu}
+                            onClose={() => setShowEditMenuModal(false)}
+                            categories={categories}
                         />
-                        <input
-                            type="number"
-                            placeholder="Prix"
-                            value={menuToEdit.price || ''}
-                            onChange={(e) => setMenuToEdit({ ...menuToEdit, price: e.target.value })}
-                            className="mb-4 border rounded-md p-2 w-full"
-                        />
-                        <textarea
-                            placeholder="Description"
-                            value={menuToEdit.description || ''}
-                            onChange={(e) => setMenuToEdit({ ...menuToEdit, description: e.target.value })}
-                            className="mb-4 border rounded-md p-2 w-full"
-                        />
-                        <select
-                            value={menuToEdit.categoryId || ''}
-                            onChange={(e) => setMenuToEdit({ ...menuToEdit, categoryId: e.target.value })}
-                            className="mb-4 border rounded-md p-2 w-full"
-                        >
-                            <option value="">Sélectionner une catégorie</option>
-                            {categories.map(category => (
-                                <option key={category.id} value={category.id}>{category.name}</option>
-                            ))}
-                        </select>
-                        <div className="flex justify-between">
+                    </div>
+                </div>
+            )}
+
+            {showDeleteModal && (
+                <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
+                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                        <h2 className="text-lg font-bold mb-4">Confirmer la suppression</h2>
+                        <p>Voulez-vous vraiment supprimer le menu {menuToDelete?.name} ?</p>
+                        <div className="mt-4">
                             <button
-                                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-                                onClick={handleUpdateMenu}
+                                className="bg-red-500 text-white rounded p-2 hover:bg-red-600 mr-2"
+                                onClick={handleDelete}
                             >
-                                Enregistrer
+                                Oui
                             </button>
                             <button
-                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
-                                onClick={() => setShowEditMenuModal(false)}
+                                className="bg-gray-300 text-black rounded p-2 hover:bg-gray-400"
+                                onClick={cancelDelete}
                             >
-                                Annuler
+                                Non
                             </button>
                         </div>
                     </div>

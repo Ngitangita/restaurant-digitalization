@@ -16,7 +16,7 @@ const StockList = () => {
   const [endDate, setEndDate] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5); // Par exemple, 5 éléments par page
+  const [itemsPerPage] = useState(5); 
   const indexOfLastStock = currentPage * itemsPerPage;
   const indexOfFirstStock = indexOfLastStock - itemsPerPage;
   const currentStocks = stocks.slice(indexOfFirstStock, indexOfLastStock);

@@ -62,7 +62,6 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
 
     return (
         <form onSubmit={handleSubmit} className='CreateMenuModal'>
-            {/* Champ pour le nom */}
             <div>
                 <label htmlFor="name">Nom:</label>
                 <input
@@ -75,7 +74,6 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
                 />
             </div>
 
-            {/* Champ pour la description */}
             <div>
                 <label htmlFor="description">Description:</label>
                 <textarea
@@ -86,7 +84,6 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
                 />
             </div>
 
-            {/* Champ pour le prix */}
             <div>
                 <label htmlFor="price">Prix:</label>
                 <input
@@ -99,7 +96,6 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
                 />
             </div>
 
-            {/* Champ pour la catégorie */}
             <div>
                 <label htmlFor="categoryId">Catégorie:</label>
                 <select
@@ -122,7 +118,6 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
                 </select>
             </div>
 
-            {/* Champ pour le statut */}
             <div>
                 <label htmlFor="status">Statut:</label>
                 <select
@@ -149,7 +144,7 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
 
             <div className="flex flex-row gap-52 relative top-4">
                 <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">Créer</button>
-                <button type="button" onClick={createMenuModal} className="ml-2 bg-gray-300 rounded px-4 py-2 hover:bg-gray-400">Annuler</button>
+                <button type="button" onClick={createMenuModal} className="ml-2 bg-gray-300 text-gray-800 rounded px-4 py-2 hover:bg-gray-400">Annuler</button>
             </div>
         </form>
     );

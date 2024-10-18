@@ -31,7 +31,7 @@ const CreateCategories = ({ onClose, onCategoryCreated }) => {
                 <button type="submit" className="bg-blue-500 text-white p-2 px-4 rounded-md hover:bg-blue-600">
                     Créer
                 </button>
-                <button type="button" onClick={onClose} className="bg-gray-300 px-4 py-2 rounded hover:bg-gray-400">
+                <button type="button" onClick={onClose} className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">
                     Annuler
                 </button>
             </div>
