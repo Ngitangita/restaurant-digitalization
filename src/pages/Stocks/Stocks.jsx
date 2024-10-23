@@ -1,88 +1,78 @@
-import React, { useEffect, useState } from 'react';
-import { apiUrl, fetchJson } from '../../services/api';
-import CreateStock from '../../components/addStocks/CreateStock';
+import { useEffect, useState } from "react";
+import { apiUrl, fetchJson } from "../../services/api";
+import dayjs from 'dayjs';
 import { FaRegEdit } from 'react-icons/fa';
+import OperationDetails from "./OperationDetails";
+import CreateStock from "../../components/addStocks/CreateStock";
 
-const StockList = () => {
+function StockList() {
   const [stocks, setStocks] = useState([]);
-  const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedStock, setSelectedStock] = useState(null); // État pour le stock sélectionné
-  const [searchName, setSearchName] = useState('');
-  const [quantityMin, setQuantityMin] = useState('');
-  const [quantityMax, setQuantityMax] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const [page, setPage] = useState(1);
+  const [size, setSize] = useState(8);
+  const [searchName, setSearchName] = useState("");
+  const [quantityMin, setQuantityMin] = useState("");
+  const [quantityMax, setQuantityMax] = useState("");
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5); 
-  const indexOfLastStock = currentPage * itemsPerPage;
-  const indexOfFirstStock = indexOfLastStock - itemsPerPage;
-  const currentStocks = stocks.slice(indexOfFirstStock, indexOfLastStock);
-
-
-  const fetchStocks = async () => {
-    setIsLoading(true);
-    try {
-      const searchParams = new URLSearchParams({
-        ingredientName: searchName || "",
-        quantityMin: quantityMin ? quantityMin.toString() : "",
-        quantityMax: quantityMax ? quantityMax.toString() : "",
-        startDate: startDate || "",
-        endDate: endDate || ""
-      }).toString();
-
-      const res = await fetch(apiUrl(`/stocks?${searchParams}`), {
-        method: "GET",
-        headers: {
-          'Content-Type': 'application/json',
-        }
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || 'Erreur lors de la récupération des stocks');
-      }
-
-      const data = await res.json();
-      setStocks(data.items || []);
-      setSuccessMessage(null);
-    } catch (err) {
-      setError('Erreur lors de la récupération des stocks');
-      console.error(err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null); // Ajout d'un message de succès
+  const [selectedStock, setSelectedStock] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [operationDetails, setOperationDetails] = useState(null);
+  const [selectedOperationId, setSelectedOperationId] = useState(null);
 
   useEffect(() => {
-    fetchStocks();
+
+    setIsLoading(true);
+    setError(null);
+    const url = `${apiUrl("/stocks")}?size=${size}&page=${page - 1}&name=${searchName}&quantityMin=${quantityMin}&quantityMax=${quantityMax}&startDate=${startDate}&endDate=${endDate}`;
+
+    // Debug : Affiche l'URL de l'API pour vérifier les paramètres
+    console.log("Requête API URL:", url);
+
+    fetchJson(url)
+      .then((d) => {
+        // Debug : Affiche les données récupérées
+        console.log("Données récupérées :", d);
+        setStocks(d.items || []);
+        setIsLoading(false);
+      })
+      .catch((e) => {
+        console.error(e);
+        setError("Une erreur s'est produite lors du chargement des stocks.");
+        setIsLoading(false);
+      });
+  }, [size, page, searchName, quantityMin, quantityMax, startDate, endDate]);
+
+
+  useEffect(() => {
+    setPage(1);
   }, [searchName, quantityMin, quantityMax, startDate, endDate]);
 
-  const toggleModal = (stock = null) => {
+  const toggleModal = (stock) => {
     setSelectedStock(stock);
     setIsModalOpen(!isModalOpen);
   };
 
+  const fetchOperationDetails = (stockId) => {
+    setSelectedOperationId(stockId);
+    setShowDetailsModal(true);
+  };
+
+  const closeDetailsModal = () => {
+    setShowDetailsModal(false);
+    setOperationDetails(null);
+  };
+
   const handleStockCreated = () => {
-    setSuccessMessage("Stock créé avec succès!");
     setIsModalOpen(false);
-    fetchStocks();
+    setSelectedStock(null);
+    setSuccessMessage("Le stock a été mis à jour avec succès."); // Ajout d'un message de succès
+    setTimeout(() => setSuccessMessage(null), 3000); // Efface le message après 3 secondes
+    setPage(1); // Recharger les stocks en repartant à la page 1
   };
-
-  const handleNextPage = () => {
-    if (currentPage < Math.ceil(stocks.length / itemsPerPage)) {
-      setCurrentPage(prevPage => prevPage + 1);
-    }
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 1) {
-      setCurrentPage(prevPage => prevPage - 1);
-    }
-  };
-
 
   return (
     <div className="StockList container mx-auto p-4 bg-white pb-10">
@@ -128,24 +118,44 @@ const StockList = () => {
         />
       </div>
 
-      <table className="min-w-full border border-gray-300">
-        <thead>
-          <tr className="bg-gray-200">
-            <th className="p-2">Créé</th>
-            <th className="p-2">Mis à jour</th>
-            <th className="p-2">Ingrédient</th>
-            <th className="p-2">Quantité</th>
-            <th className="p-2">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {isLoading ? (
-            <tr>
-              <td colSpan="5" className="text-center py-2">Chargement...</td>
+      <div className="flex justify-between mb-4">
+        <button
+          onClick={() => setPage((p) => p - 1)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+          disabled={page <= 1}
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Next
+        </button>
+      </div>
+
+      <div className="flex-grow overflow-auto">
+        <table className="min-w-full border border-gray-300">
+          <thead>
+            <tr className="bg-gray-200">
+              <th className="p-2">Créé</th>
+              <th className="p-2">Mis à jour</th>
+              <th className="p-2">Ingrédient</th>
+              <th className="p-2">Quantité</th>
+              <th className="p-2">Actions</th>
             </tr>
-          ) : (
-            currentStocks.length > 0 ? (
-              currentStocks.map((stock) => (
+          </thead>
+          <tbody>
+            {isLoading ? (
+              <tr>
+                <td colSpan="5" className="text-center py-2">Chargement...</td>
+              </tr>
+            ) : error ? (
+              <tr>
+                <td colSpan="5" className="text-center py-2 text-red-500">{error}</td>
+              </tr>
+            ) : stocks.length > 0 ? (
+              stocks.map((stock) => (
                 <tr key={stock.id} className='text-center'>
                   <td className="border-b p-2">{new Date(stock.createdAt).toLocaleDateString()}</td>
                   <td className="border-b p-2">{new Date(stock.updatedAt).toLocaleDateString()}</td>
@@ -156,12 +166,18 @@ const StockList = () => {
                       <div className="text-red-500 font-bold">⚠️ Stock faible! Ajoutez du stock.</div>
                     )}
                   </td>
-                  <td className="border-b p-2">
+                  <td className="border-b p-2 flex justify-center">
                     <button
-                      className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
+                      className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
                       onClick={() => toggleModal(stock)}
                     >
                       <FaRegEdit />
+                    </button>
+                    <button
+                      className="bg-green-500 text-white rounded p-2 hover:bg-green-600"
+                      onClick={() => fetchOperationDetails(stock.id)}
+                    >
+                      Voir Détails
                     </button>
                   </td>
                 </tr>
@@ -170,46 +186,34 @@ const StockList = () => {
               <tr>
                 <td colSpan="5" className="text-center py-4">Aucun stock trouvé</td>
               </tr>
-            )
-          )}
-        </tbody>
+            )}
+          </tbody>
+        </table>
 
-      </table>
-      <div className="flex justify-between mt-4">
-        <button
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
-          onClick={handlePrevPage}
-          disabled={currentPage === 1}
-        >
-          Précédent
-        </button>
-        <span className="self-center">{`Page ${currentPage} sur ${Math.ceil(stocks.length / itemsPerPage)}`}</span>
-        <button
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
-          onClick={handleNextPage}
-          disabled={currentPage === Math.ceil(stocks.length / itemsPerPage)}
-        >
-          Suivant
-        </button>
-      </div>
-
-
-      {isModalOpen && (
-        <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md EditModal">
-            <h2 className="text-lg font-bold mb-4">Modifier le stock</h2>
-            <CreateStock
-              onStockCreated={handleStockCreated}
-              createStockModale={toggleModal}
-              ingredientId={selectedStock ? selectedStock.ingredientId.toString() : ''}
-              ingredientName={selectedStock ? selectedStock.ingredientName : ''}
-            />
+        {isModalOpen && selectedStock && (
+          <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
+            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md EditModal">
+              <h2 className="text-lg font-bold mb-4">Modifier le stock</h2>
+              <CreateStock
+                onStockCreated={handleStockCreated}
+                createStockModale={toggleModal}
+                ingredientId={selectedStock ? selectedStock.ingredientId.toString() : ''}
+                ingredientName={selectedStock ? selectedStock.ingredientName : ''}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
+        {showDetailsModal && selectedOperationId && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div className="bg-white p-8 rounded-lg w-1/2">
+              <OperationDetails operationId={selectedOperationId} onClose={closeDetailsModal} />
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
-};
+}
 
 export default StockList;

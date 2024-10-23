@@ -6,7 +6,6 @@ import { FaRegEdit } from 'react-icons/fa';
 import EditMenu from './EditMenu';
 import UpdateStatus from './UpdateStatus';
 import { useNavigate } from 'react-router-dom';
-import ManageMenuIngredients from './menuIngredients/ManageMenuIngredients';
 
 const MenuList = () => {
     const [menus, setMenus] = useState([]);
@@ -236,7 +235,14 @@ const MenuList = () => {
                                             <td className="py-2 px-4">{menu.name}</td>
                                             <td className="py-2 px-4">{menu.price}</td>
                                             <td className="py-2 px-4">{menu.description}</td>
-                                            <td className="py-2 px-4">{menu.status}</td>
+                                            <td className="py-2 px-4 cursor-pointer">
+                                                <button
+                                                    onClick={() => handleEditStatus(menu)}
+                                                    className='flex flex-row gap-1 items-center'
+                                                >
+                                                   <MdEdit /> {menu.status}
+                                                </button>
+                                            </td>
                                             <td className="py-2 px-4 flex flex-row justify-center gap-2">
                                                 <button
                                                     className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
@@ -256,12 +262,11 @@ const MenuList = () => {
                                                     </button>
                                                     {detailsVisible[menu.id] && (
                                                         <div className="absolute text-start right-[1px] bottom-9 w-72 bg-gray-300 shadow-md rounded-md z-50 "> {/* Ajustez mt-1 pour espacement */}
-                                                            <button onClick={() => handleClickRow(menu.id)} 
-                                                            className="block text-start px-4 py-2 hover:bg-gray-100 w-full
+                                                            <button onClick={() => handleClickRow(menu.id)}
+                                                                className="block text-start px-4 py-2 hover:bg-gray-100 w-full
                                                             border-y border-white">
                                                                 Voir détail
                                                             </button>
-                                                            <ManageMenuIngredients menuId={menu.id} />
                                                         </div>
                                                     )}
                                                 </button>
@@ -277,27 +282,28 @@ const MenuList = () => {
             </table>
 
             {showEditModal && (
-                <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                        <UpdateStatus
-                            onUpdate={handleUpdateStatus}
-                            onClose={() => setShowEditModal(false)}
-                            selectedMenuId={selectedMenuId}
-                            menuStatus={menuStatus}
-                            setMenuStatus={setMenuStatus}
-                        />
+                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
+                    <UpdateStatus
+                        onSave={handleUpdateStatus}
+                        onCancel={() => setShowEditModal(false)}
+                        statuses={statuses}
+                        setMenuStatus={setMenuStatus}
+                        menuStatus={menuStatus}
+                    />
                     </div>
                 </div>
             )}
 
             {showEditMenuModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md EditModal">
                         <EditMenu
-                            menu={menuToEdit}
-                            onUpdate={handleUpdateMenu}
-                            onClose={() => setShowEditMenuModal(false)}
+                            menuToEdit={menuToEdit}
+                            setMenuToEdit={setMenuToEdit}
                             categories={categories}
+                            onSave={handleUpdateMenu}
+                            onCancel={() => setShowEditMenuModal(false)}
                         />
                     </div>
                 </div>

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiUrl } from '../../../services/api';
 import { useNavigate, useParams } from 'react-router-dom';
-import { MdDelete } from 'react-icons/md';
+
 
 const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => {
     const [ingredientQuantities, setIngredientQuantities] = useState([]);
@@ -9,7 +9,6 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
     const [quantity, setQuantity] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [selectedForDeletion, setSelectedForDeletion] = useState([]);
-    const [hoveredIngredient, setHoveredIngredient] = useState(null);
     const { menuId } = useParams();
     const navigate = useNavigate();
 
@@ -77,7 +76,6 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
     return (
         <form onSubmit={handleSubmit} className="AddIngredientsModal">
             <h1 className="text-2xl font-bold mb-4">Gestion des ingrédients de menus</h1>
-            {/* Formulaire pour ajouter les ingrédients */}
             <div className='flex flex-row gap-2 border-b-[1px] pb-5'>
                 <div>
                     <label htmlFor="ingredientId">Ingrédient:</label>
@@ -118,7 +116,6 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
                 </button>
             </div>
 
-            {/* Liste des ingrédients ajoutés */}
             <div>
                 <ul className="mt-4 pb-5">
                     {ingredientQuantities.map((ingredient, index) => (

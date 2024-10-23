@@ -11,7 +11,7 @@ const IngredientList = () => {
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
-    const [selectedIngredient, setSelectedIngredient] = useState(null); // Pour stocker l'ID de l'ingrédient sélectionné
+    const [selectedIngredient, setSelectedIngredient] = useState(null); 
     const [ingredientName, setIngredientName] = useState(null);
     const [unitId, setUnitId] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -22,7 +22,6 @@ const IngredientList = () => {
     const { data: units } = useFetch(() => apiUrl("/units/all"));
     const [searchTerm, setSearchTerm] = useState('');
 
-    // Fonction pour récupérer les ingrédients
     const fetchIngredients = async () => {
         try {
             const data = await fetchJson(apiUrl("/ingredients/all"));
@@ -36,50 +35,48 @@ const IngredientList = () => {
         fetchIngredients();
     }, []);
 
-    // Gérer l'ouverture/fermeture de la modale
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
     };
 
-    // Rechargement des ingrédients après ajout/mise à jour
     const handleModalOpen = useCallback((data) => {
         setIsModalOpen(data);
         fetchIngredients();
     }, []);
-
-    // Confirmer la suppression
+    
     const confirmDelete = (id) => {
-        setSelectedIngredient(id); // Stocker l'ID de l'ingrédient sélectionné
+        setSelectedIngredient(id); 
         setShowDeleteModal(true);
     };
 
-    // Supprimer un ingrédient
+
     const handleDelete = async () => {
         try {
             await fetchJson(apiUrl(`/ingredients/${selectedIngredient}`), 'DELETE');
             setShowDeleteModal(false);
             setSelectedIngredient(null);
-            fetchIngredients(); // Mettre à jour la liste après suppression
+            fetchIngredients();
         } catch (error) {
-            setError('Erreur lors de la suppression de l\'ingrédient');
+            if (error.message.includes("404")) {
+                setError("Ingrédient introuvable");
+            } else {
+                setError("Erreur lors de la suppression de l'ingrédient");
+            }
         }
     };
 
-    // Annuler la suppression
     const cancelDelete = () => {
         setShowDeleteModal(false);
         setSelectedIngredient(null);
     };
 
-    // Ouvrir la modale d'édition avec les informations de l'ingrédient
     const handleEdit = (ingredient) => {
-        setSelectedIngredient(ingredient.id); // Stocker l'ID de l'ingrédient sélectionné
+        setSelectedIngredient(ingredient.id); 
         setIngredientName(ingredient.name);
         setUnitId(ingredient.unitId);
         setShowEditModal(true);
     };
 
-    // Mettre à jour un ingrédient
     const handleUpdateIngredient = async () => {
         if (!ingredientName || !unitId) {
             setError('Veuillez fournir un nom et sélectionner une unité');
@@ -88,30 +85,23 @@ const IngredientList = () => {
 
         try {
             await fetchJson(apiUrl(`/ingredients`), 'PUT', {
-                id: selectedIngredient, // Utiliser l'ID de l'ingrédient sélectionné
+                id: selectedIngredient, 
                 name: ingredientName,
                 unitId: unitId
             });
             setShowEditModal(false);
             setSelectedIngredient(null);
-            fetchIngredients(); // Mettre à jour la liste après l'édition
+            fetchIngredients(); 
         } catch (error) {
             setError('Erreur lors de la mise à jour de l\'ingrédient');
         }
     };
 
-    // Récupérer le nom de l'unité
-    const getUnitName = (id) => {
-        const unit = units.find(u => u.id === id);
-        return unit ? unit.abbreviation : 'N/A';
-    };
 
-    // Filtrer les ingrédients par terme de recherche
     const filteredIngredients = ingredients.filter(ingredient =>
         ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    // Pagination
     const indexOfLastIngredient = currentPage * itemsPerPage;
     const indexOfFirstIngredient = indexOfLastIngredient - itemsPerPage;
     const currentIngredients = filteredIngredients.slice(indexOfFirstIngredient, indexOfLastIngredient);
@@ -133,14 +123,13 @@ const IngredientList = () => {
     const handlePageInputChange = (e) => {
         const page = Number(e.target.value);
 
-        // Vérifie si le nombre est valide et à l'intérieur des limites
         if (!isNaN(page)) {
             if (page >= 1 && page <= totalPages) {
-                setCurrentPage(page); // Met à jour la page courante
+                setCurrentPage(page);
             } else if (page < 1) {
-                setCurrentPage(1); // Si la page est inférieure à 1, aller à la première page
+                setCurrentPage(1);
             } else if (page > totalPages) {
-                setCurrentPage(totalPages); // Si la page est supérieure au total, aller à la dernière page
+                setCurrentPage(totalPages); 
             }
         }
     };
@@ -186,7 +175,6 @@ const IngredientList = () => {
                 <thead>
                     <tr className="bg-gray-200">
                         <th className="py-2 px-4">Nom</th>
-                        <th className="py-2 px-4">Unité</th>
                         <th className="py-2 px-4">Actions</th>
                     </tr>
                 </thead>
@@ -204,7 +192,6 @@ const IngredientList = () => {
                         currentIngredients.map(ingredient => (
                             <tr key={ingredient.id} className="hover:bg-gray-100 text-center border-y">
                                 <td className="py-2 px-4">{ingredient.name}</td>
-                                <td className="py-2 px-4">{getUnitName(ingredient.unitId)}</td>
                                 <td className="py-2 px-4 flex flex-row gap-2 justify-center">
                                     <button
                                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
@@ -238,7 +225,7 @@ const IngredientList = () => {
                     <input
                         type="number"
                         value={currentPage}
-                        onChange={handlePageInputChange} // Met à jour la page courante directement
+                        onChange={handlePageInputChange} 
                         min={1}
                         max={totalPages}
                         className="border border-gray-300 rounded-md px-2 py-1 outline-none w-20"
@@ -253,21 +240,19 @@ const IngredientList = () => {
                 </button>
             </div>
 
-            {/* Modal de confirmation de suppression */}
             {showDeleteModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
                     <div className="bg-white p-8 rounded-lg shadow-lg DeleteModal">
                         <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
                         <p>Êtes-vous sûr de vouloir supprimer cet ingrédient ?</p>
                         <div className="flex justify-end mt-4">
-                            <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mr-2" onClick={handleDelete}>Supprimer</button>
-                            <button className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400" onClick={cancelDelete}>Annuler</button>
+                            <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mr-2" onClick={handleDelete}>Oui</button>
+                            <button className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400" onClick={cancelDelete}>Non</button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Modal d'édition */}
             {showEditModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
                     <div className="bg-white p-8 rounded-lg shadow-lg EditModal">

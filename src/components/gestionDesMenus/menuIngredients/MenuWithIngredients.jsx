@@ -32,7 +32,6 @@ function MenuWithIngredients() {
     }
   };
 
-  // Charger les données au montage du composant
   useEffect(() => {
     fetchMenuWithIngredients();
   }, [menuId]);
@@ -51,9 +50,8 @@ function MenuWithIngredients() {
 
   return (
     <div className="container mx-auto p-4">
-      {/* Passe la fonction fetchMenuWithIngredients comme prop */}
       <ManageMenuIngredients 
-        onAddIngredients={fetchMenuWithIngredients}  // Rafraîchir après l'ajout
+        onAddIngredients={fetchMenuWithIngredients} 
         ingredients={menu.ingredients} 
       />
       <h1 className="text-2xl font-bold mb-4">{menu.menuName}</h1>

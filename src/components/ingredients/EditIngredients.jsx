@@ -1,5 +1,3 @@
-
-
 const EditIngredients = ({units, ingredientName, setIngredientName, unitId, setUnitId, onSave, onCancel, error}) => {
   return (
     <div>
@@ -16,7 +14,7 @@ const EditIngredients = ({units, ingredientName, setIngredientName, unitId, setU
         className="border p-2 rounded w-full mb-4"
       >
         <option value="">Sélectionner une unité</option>
-        {units.map((unit) => (
+        {units && units.map((unit) => (  // Ajout de la condition ici
           <option key={unit.id} value={unit.id}>
             {unit.abbreviation}
           </option>
@@ -38,4 +36,4 @@ const EditIngredients = ({units, ingredientName, setIngredientName, unitId, setU
   )
 }
 
-export default EditIngredients
+export default EditIngredients;

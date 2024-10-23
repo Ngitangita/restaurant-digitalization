@@ -68,10 +68,18 @@ const menuItems = [
     subItems: [],
   },
   {
-    title: "Stocks",
+    title: "Géstion du stocks",
     icon: <AiOutlineStock />,
-    path: "/stocks",
-    subItems: [],
+    subItems: [
+      {
+        title: "Stocks",
+        path: "/stocks",
+      },
+      {
+        title: "Liste d'achat des Stocks",
+        path: "/purchaseList",
+      }
+    ],
   },
   {
     title: "Réservations",
@@ -128,13 +136,13 @@ export default function Sidebar() {
       <SidebarToggleButton handleSidebarToggle={handleSidebarToggle} openSidebar={openSidebar} />
       <div
         className={`Sidebar fixed top-20 left-0 w-64 h-screen bg-white shadow-md flex flex-col 
-          overflow-y-scroll overflow-x-hidden max-h-[calc(100%-80px)] transition-transform duration-300 z-[1000px]
-          ease-in-out ${openSidebar ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 lg:block`}
-        onMouseEnter={() => setShowScrollbar(true)} // Afficher la barre de défilement
-        onMouseLeave={() => setShowScrollbar(false)} // Masquer la barre de défilement
+          overflow-y-scroll overflow-x-hidden max-h-[calc(100%-80px)] transition-transform duration-300 
+          ease-in-out ${openSidebar ? 'translate-x-0 z-50' : '-translate-x-full'} lg:translate-x-0 lg:block`}
+        onMouseEnter={() => setShowScrollbar(true)}
+        onMouseLeave={() => setShowScrollbar(false)}
         style={{
-          scrollbarWidth: showScrollbar ? 'thin' : 'none', // Pour Firefox
-          overflowY: showScrollbar ? 'scroll' : 'hidden' // Pour la barre de défilement
+          scrollbarWidth: showScrollbar ? 'thin' : 'none',
+          overflowY: showScrollbar ? 'scroll' : 'hidden'
         }}
       >
         <div className="flex items-center justify-between p-4 text-2xl font-bold text-gray-500">
@@ -202,7 +210,7 @@ export default function Sidebar() {
         </div>
       </div>
 
-      <style  jsx="true">{`
+      <style jsx="true">{`
         body {
           overflow-y: hidden; /* Masquer la barre de défilement sur le corps */
         }

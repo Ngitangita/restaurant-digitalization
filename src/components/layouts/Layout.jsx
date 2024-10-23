@@ -31,7 +31,7 @@ function Layout({ children, showHeaderAndSidebar }) {
         </>
       )}
       <main className="
-        flex-1 pl-10 relative w-full lg:left-[250px] top-[100px]
+         flex-1 pl-10 relative w-full lg:left-[250px] top-[100px] 
         overflow-x-scroll lg:overflow-x-hidden">
         <div className="
           w-full max-w-[980px] h-full flex flex-row flex-wrap gap-7

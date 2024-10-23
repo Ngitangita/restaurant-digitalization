@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
 import { FaRegEdit } from 'react-icons/fa';
 import { MdDelete, MdClear, MdEdit } from 'react-icons/md';
+import EditTable from './EditTable';
 
 function TablesListe() {
     const [tables, setTables] = useState([]);
@@ -15,6 +16,9 @@ function TablesListe() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedTableId, setSelectedTableId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
+    const [showEditTableModal, setShowEditTableModal] = useState(false);
+    const [tableToEdit, setTableToEdit] = useState(null);
+
 
     const fetchTables = async () => {
         try {
@@ -116,6 +120,39 @@ function TablesListe() {
         table.status.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
+    const handleEditTable = (table) => {
+        setTableToEdit(table || {});
+        setShowEditTableModal(true);
+    };
+
+    const handleUpdateTable = async () => {
+        console.log('Mise à jour du table:', tableToEdit);
+        if (!tableToEdit || !tableToEdit.number || !tableToEdit.capacity) {
+            console.error('Les informations du table sont incomplètes.');
+            return;
+        }
+
+        try {
+            const url = apiUrl('/tables');
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(tableToEdit),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur lors de la mise à jour du table: ${response.statusText}`);
+            }
+
+            setShowEditTableModal(false);
+            fetchTables();
+        } catch (error) {
+            console.error('Erreur lors de la mise à jour du table:', error);
+        }
+    };
+
     return (
         <div className="container mx-auto p-4 bg-white TableListe">
             <h1 className="text-2xl font-bold mb-4">Liste des Tables</h1>
@@ -175,7 +212,7 @@ function TablesListe() {
                                 <td className="py-2 px-4 flex flex-row gap-4 justify-center">
                                     <button
                                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-                                        onClick={() => handleEditStatus(table)}
+                                        onClick={() => handleEditTable(table)}
                                     >
                                         <FaRegEdit />
                                     </button>
@@ -291,6 +328,20 @@ function TablesListe() {
                     </div>
                 </div>
             )}
+
+            {showEditTableModal && (
+                <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
+                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md EditModal">
+                        <EditTable
+                            tableToEdit={tableToEdit}
+                            setTableToEdit={setTableToEdit}
+                            onSave={handleUpdateTable}
+                            onCancel={() => setShowEditTableModal(false)}
+                        />
+                    </div>
+                </div>
+            )}
+
         </div>
     );
 }

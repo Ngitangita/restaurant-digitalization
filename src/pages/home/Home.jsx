@@ -1,9 +1,20 @@
-import ManageMenuIngredients from "../../components/gestionDesMenus/menuIngredients/ManageMenuIngredients";
+// import CreateCustomer from "../../components/customer/CreateCustomer";
+
+import PurchaseList from "../Stocks/PurchaseList";
+
+// import OperationStatistics from "../Stocks/OperationStatistics";
+
+// import Operation from "../Stocks/Operation";
+
+
 const Home = () => {
 
     return (
         <div>
-            <ManageMenuIngredients/>
+            {/* <CreateCustomer/> */}
+            {/* <Operation/> */}
+            <PurchaseList/>
+            {/* <OperationStatistics/> */}
         </div>
     );
 };

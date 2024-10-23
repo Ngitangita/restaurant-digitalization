@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { apiUrl } from '../../../services/api';
 import AddIngredientsToMenu from './AddIngredientsToMenu';
-import { IoMdAddCircle } from "react-icons/io";
 
-const ManageMenuIngredients = ({ onAddIngredients }) => {
+const ManageMenuIngredients = ({ onAddIngredients}) => {
     const [ingredientsList, setIngredientsList] = useState([]); 
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -27,7 +26,7 @@ const ManageMenuIngredients = ({ onAddIngredients }) => {
     }, []);
 
     const handleAddIngredients = () => {
-        onAddIngredients();  // Appel de la fonction prop
+        onAddIngredients();  
         setIsModalOpen(false);
     };
 
@@ -57,8 +56,8 @@ const ManageMenuIngredients = ({ onAddIngredients }) => {
             </button>
 
             {isModalOpen && (
-                <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-1000">
-                    <div className="modal-content bg-white p-6 rounded shadow-lg relative z-[1050px]">
+                <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center ">
+                    <div className="modal-content bg-white p-6 rounded shadow-lg relative ">
                         <button 
                             onClick={handleCloseModal} 
                             className="absolute top-0 right-0 px-4 p-2 hover:bg-red-400 hover:text-white text-gray-600 text-2xl"
