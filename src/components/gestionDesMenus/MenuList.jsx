@@ -4,8 +4,8 @@ import { apiUrl } from '../../services/api';
 import { MdDelete, MdClear, MdEdit, MdMoreVert } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import EditMenu from './EditMenu';
-import UpdateStatus from './UpdateStatus';
 import { useNavigate } from 'react-router-dom';
+import UpdateStatus from '../updateStatus/UpdateStatus';
 
 const MenuList = () => {
     const [menus, setMenus] = useState([]);
@@ -14,7 +14,7 @@ const MenuList = () => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [error, setError] = useState(null);
     const [selectedMenuId, setSelectedMenuId] = useState(null);
-    const [menuStatus, setMenuStatus] = useState('');
+    const [status, setStatus] = useState('');
     const [showEditModal, setShowEditModal] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -62,13 +62,13 @@ const MenuList = () => {
 
     const handleEditStatus = (menu) => {
         setSelectedMenuId(menu.id);
-        setMenuStatus(menu.status);
+        setStatus(menu.status);
         setShowEditModal(true);
     };
 
     const handleUpdateStatus = async () => {
         try {
-            const url = apiUrl(`/menus/${selectedMenuId}/status?status=${encodeURIComponent(menuStatus)}`);
+            const url = apiUrl(`/menus/${selectedMenuId}/status?status=${encodeURIComponent(status)}`);
             await fetch(url, {
                 method: 'PUT',
                 headers: {
@@ -157,7 +157,7 @@ const MenuList = () => {
     };
 
     const toggleDetails = (menuId) => {
-        setDetailsVisible(prev => ({ ...prev, [menuId]: !prev[menuId] })); // Change here
+        setDetailsVisible(prev => ({ ...prev, [menuId]: !prev[menuId] }));
     };
 
     return (
@@ -235,12 +235,17 @@ const MenuList = () => {
                                             <td className="py-2 px-4">{menu.name}</td>
                                             <td className="py-2 px-4">{menu.price}</td>
                                             <td className="py-2 px-4">{menu.description}</td>
-                                            <td className="py-2 px-4 cursor-pointer">
+                                            <td className={`py-2 px-4 cursor-pointer ${menu.status.toLowerCase() !== "active" ? 'text-red-500 font-bold' : ''}`}>
                                                 <button
                                                     onClick={() => handleEditStatus(menu)}
-                                                    className='flex flex-row gap-1 items-center'
+                                                    className='flex flex-col gap-1 items-center '
                                                 >
-                                                   <MdEdit /> {menu.status}
+                                                   <span className='flex flex-row gap-1 items-center '>
+                                                   <MdEdit /> {menu.status.toLowerCase()}
+                                                   </span>
+                                                    {menu.status.toLowerCase() !== "active"  && (
+                                                        <div className="text-red-500">⚠️ désolé ce menu est {menu.status}</div>
+                                                    )}
                                                 </button>
                                             </td>
                                             <td className="py-2 px-4 flex flex-row justify-center gap-2">
@@ -284,13 +289,13 @@ const MenuList = () => {
             {showEditModal && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
                     <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
-                    <UpdateStatus
-                        onSave={handleUpdateStatus}
-                        onCancel={() => setShowEditModal(false)}
-                        statuses={statuses}
-                        setMenuStatus={setMenuStatus}
-                        menuStatus={menuStatus}
-                    />
+                        <UpdateStatus
+                            onSave={handleUpdateStatus}
+                            onCancel={() => setShowEditModal(false)}
+                            statuses={statuses}
+                            setStatus={setStatus}
+                            status={status}
+                        />
                     </div>
                 </div>
             )}

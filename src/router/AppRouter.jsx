@@ -6,20 +6,20 @@ import TheCalendar from "../pages/calendar/Calendar";
 import Authentification from "../pages/Authentification/Authentification";
 import Settings from "../pages/Settings/Settings";
 import NotFound from "../pages/NotFound/NotFound";
-import Commande from "../pages/commandes/ListDesCommandes";
-import BonDeCommandes from "../pages/commandes/BonDeCommandes";
 import { useAuthStore } from '../stores/useAuthStore';
 import { useThemeStore } from "../stores/useThemeStore";
 import Ingredients from "../components/ingredients/Ingredients";
 import Layout from "../components/layouts/Layout";
 import ReservationList from "../pages/reservations/Reservation";
-import CreateReservation from "../components/createReservation/CreateReservation";
 import Stocks from "../pages/Stocks/Stocks";
 import MenuList from "../components/gestionDesMenus/MenuList";
 import CategoriesList from "../components/categories/Categories";
 import TablesListe from "../components/tables/TablesListe";
 import MenuWithIngredients from "../components/gestionDesMenus/menuIngredients/MenuWithIngredients";
 import PurchaseList from "../pages/Stocks/PurchaseList";
+import RoomList from "../components/room/RoomList";
+import FloorList from "../components/floor/FloorList";
+import MenuOrdersList from "../components/gestionDesMenus/menuOrder/MenuOrdersList";
 
 function ProtectedRoute({ element, isAuthenticated }) {
   return isAuthenticated ? element : <Navigate to="/authentification" />;
@@ -64,14 +64,19 @@ function AppRouter() {
             <ProtectedRoute element={<MenuList />} isAuthenticated={isAuthenticated} />
           </Layout>
         } />
+         <Route path="/menu-ingredients/menu/:menuId" element={
+          <Layout showHeaderAndSidebar={isAuthenticated}>
+            <ProtectedRoute element={<MenuWithIngredients />} isAuthenticated={isAuthenticated} />
+          </Layout>
+        } />
         <Route path="/categoriesListe" element={
           <Layout showHeaderAndSidebar={isAuthenticated}>
             <ProtectedRoute element={<CategoriesList />} isAuthenticated={isAuthenticated} />
           </Layout>
         } />
-          <Route path="/menu-ingredients/menu/:menuId" element={
+         <Route path="/roomList" element={
           <Layout showHeaderAndSidebar={isAuthenticated}>
-            <ProtectedRoute element={<MenuWithIngredients />} isAuthenticated={isAuthenticated} />
+            <ProtectedRoute element={<RoomList/>} isAuthenticated={isAuthenticated} />
           </Layout>
         } />
          <Route path="/tableList" element={
@@ -79,11 +84,16 @@ function AppRouter() {
             <ProtectedRoute element={<TablesListe/>} isAuthenticated={isAuthenticated} />
           </Layout>
         } />
-        <Route path="/bonDeCommandes" element={
+         <Route path="/floorList" element={
+          <Layout showHeaderAndSidebar={isAuthenticated}>
+            <ProtectedRoute element={<FloorList/>} isAuthenticated={isAuthenticated} />
+          </Layout>
+        } />
+        {/* <Route path="/bonDeCommandes" element={
           <Layout showHeaderAndSidebar={isAuthenticated}>
             <ProtectedRoute element={<BonDeCommandes />} isAuthenticated={isAuthenticated} />
           </Layout>
-        } />
+        } /> */}
         <Route path="/calendar" element={
           <Layout showHeaderAndSidebar={isAuthenticated}>
             <ProtectedRoute element={<TheCalendar />} isAuthenticated={isAuthenticated} />
@@ -91,17 +101,12 @@ function AppRouter() {
         } />
         <Route path="/commandes" element={
           <Layout showHeaderAndSidebar={isAuthenticated}>
-            <ProtectedRoute element={<Commande />} isAuthenticated={isAuthenticated} />
+            <ProtectedRoute element={<MenuOrdersList />} isAuthenticated={isAuthenticated} />
           </Layout>
         } />
         <Route path="/reservations" element={
           <Layout showHeaderAndSidebar={isAuthenticated}>
             <ProtectedRoute element={<ReservationList />} isAuthenticated={isAuthenticated} />
-          </Layout>
-        } />
-         <Route path="/reservations/create" element={
-          <Layout showHeaderAndSidebar={isAuthenticated}>
-            <ProtectedRoute element={<CreateReservation />} isAuthenticated={isAuthenticated} />
           </Layout>
         } />
         <Route path="/stocks" element={

@@ -1,29 +1,29 @@
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom'; 
+import { Link, useParams } from 'react-router-dom';
 import { apiUrl, fetchJson } from '../../../services/api';
 import ManageMenuIngredients from './ManageMenuIngredients';
 
 function MenuWithIngredients() {
-  const { menuId } = useParams(); 
+  const { menuId } = useParams();
   const [menu, setMenu] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   const fetchMenuWithIngredients = async () => {
     try {
-      const parsedMenuId = parseInt(menuId, 10); 
+      const parsedMenuId = parseInt(menuId, 10);
       if (isNaN(parsedMenuId)) {
         throw new Error("ID de menu invalide.");
       }
 
-      const url = apiUrl(`/menu-ingredients/menu/${parsedMenuId}`); 
+      const url = apiUrl(`/menu-ingredients/menu/${parsedMenuId}`);
       const data = await fetchJson(url);
 
       if (!data) {
         throw new Error("Données du menu non disponibles");
       }
 
-      setMenu(data); 
+      setMenu(data);
     } catch (error) {
       console.error('Erreur lors de la récupération du menu:', error.message);
       setError('Erreur lors de la récupération des données du menu.');
@@ -49,14 +49,17 @@ function MenuWithIngredients() {
   }
 
   return (
-    <div className="container mx-auto p-4">
-      <ManageMenuIngredients 
-        onAddIngredients={fetchMenuWithIngredients} 
-        ingredients={menu.ingredients} 
-      />
+    <div className="container mx-auto p-4 bg-white">
+      <div className='flex flex-row gap-5 items-center'>
+        <ManageMenuIngredients
+          onAddIngredients={fetchMenuWithIngredients}
+          ingredients={menu.ingredients}
+        />
+        <Link to="/menuList" className='text-blue-500 hover:underline'>Rétour au menu</Link>
+      </div>
       <h1 className="text-2xl font-bold mb-4">{menu.menuName}</h1>
       <p className="mb-4">{menu.menuDesc}</p>
-      <p className="mb-4">Prix : {menu.menuPrice} €</p>
+      <p className="mb-4">Prix : {menu.menuPrice} Ar</p>
       <p className="mb-4">Statut : {menu.status}</p>
 
       <h2 className="text-xl font-bold mt-6">Ingrédients :</h2>
@@ -79,7 +82,7 @@ function MenuWithIngredients() {
             </tr>
           ) : (
             menu.ingredients.map((ingredient, i) => (
-              <tr key={i} className="hover:bg-gray-100 text-center">
+              <tr key={i} className="hover:bg-gray-100 text-center border-y">
                 <td className="py-2 px-4">{ingredient.ingredientName}</td>
                 <td className="py-2 px-4">{ingredient.quantity}</td>
                 <td className="py-2 px-4">{ingredient.unitName}</td>

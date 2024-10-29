@@ -7,27 +7,28 @@ function PurchaseList() {
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(10);
   const [ingredientName, setIngredientName] = useState('');
-  const [error, setError] = useState(null); // Pour gérer les erreurs
-
+  const [error, setError] = useState(null); 
   useEffect(() => {
     const fetchPurchases = async () => {
       const url = `${apiUrl('/purchases')}?page=${page - 1}&size=${size}&ingredientName=${ingredientName}`;
       try {
         const data = await fetchJson(url);
         setPurchases(data.items || []);
-        setError(null); // Réinitialiser l'erreur si la récupération réussit
+        setError(null); 
       } catch (e) {
         console.error(e);
-        setError('Erreur lors de la récupération des achats.'); // Gérer l'erreur
+        setError('Erreur lors de la récupération des achats.'); 
       }
     };
 
     fetchPurchases();
   }, [page, size, ingredientName]);
 
+  
+
+
   return (
     <div className="w-full p-4 bg-gray-100">
-      {/* Message d'erreur */}
       {error && <div className="bg-red-300 text-red-700 p-2 rounded mb-4">{error}</div>}
 
       <div className="mb-4">
@@ -77,17 +78,17 @@ function PurchaseList() {
 
       <div className="flex justify-between mt-4">
         <button
-          onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          onClick={() => setPage((p) => p - 1)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
           disabled={page <= 1}
         >
-          Précédent
+          Previous
         </button>
         <button
-          onClick={() => setPage((prev) => prev + 1)}
+          onClick={() => setPage((p) => p + 1)}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
         >
-          Suivant
+          Next
         </button>
       </div>
     </div>

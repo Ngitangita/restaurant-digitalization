@@ -1,160 +1,157 @@
-import React, { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { apiUrl, fetchJson } from '../../services/api';
-import { useNavigate } from 'react-router-dom'; // Import pour la navigation
+import React, { useState } from 'react';
+import { apiUrl } from '../../services/api';
 
-const schema = z.object({
-  customer_id: z.number().min(1, "Le client est requis"),
-  room_id: z.union([z.number().nullable(), z.undefined()]),
-  table_id: z.union([z.number().nullable(), z.undefined()]),
-  reservation_start: z.string().min(1, "La date de début est requise"),
-  reservation_end: z.string().min(1, "La date de fin est requise"),
-  status: z.string().min(1, "Le statut est requis"),
-  description: z.string().optional(),
-}).refine(data => data.room_id || data.table_id, {
-  message: "Vous devez réserver soit une chambre, soit une table, mais pas les deux.",
-});
+const CreateReservation = ({ onCreate, createReservationModal, rooms = [], customers = [] }) => {
+    const [customerId, setCustomerId] = useState('');
+    const [roomId, setRoomId] = useState('');
+    const [startDate, setStartDate] = useState('');
+    const [endDate, setEndDate] = useState('');
+    const [description, setDescription] = useState('');
+    const [status, setStatus] = useState(''); // Par exemple, 'CONFIRMED', 'CANCELLED', etc.
+    const [errorMessage, setErrorMessage] = useState('');
 
-function CreateReservation() {
-  const [customers, setCustomers] = useState([]);
-  const navigate = useNavigate(); // Hook pour la navigation
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    resolver: zodResolver(schema),
-  });
+    const handleSubmit = async (event) => {
+        event.preventDefault();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const customersData = await fetchJson(apiUrl("/customers"));
-        setCustomers(customersData);
-      } catch (error) {
-        console.error('Erreur lors de la récupération des données:', error);
-      }
+        // Validation des champs
+        if (!customerId || !roomId || !startDate || !endDate || !description || !status) {
+            setErrorMessage('Tous les champs doivent être remplis.');
+            return;
+        }
+
+        const newReservation = {
+            customer: { id: customerId }, // Créez un objet CustomerDTO
+            room: { id: roomId }, // Créez un objet RoomDTO
+            description,
+            reservationStart: new Date(startDate).toISOString(), // Formatez pour LocalDateTime
+            reservationEnd: new Date(endDate).toISOString(), // Formatez pour LocalDateTime
+            status, // État de la réservation
+        };
+
+        try {
+            const response = await fetch(apiUrl('/reservations'), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(newReservation),
+            });
+
+            if (response.ok) {
+                const createdReservation = await response.json();
+                onCreate(createdReservation);
+
+                // Réinitialisez les champs après la création réussie
+                setCustomerId('');
+                setRoomId('');
+                setStartDate('');
+                setEndDate('');
+                setDescription('');
+                setStatus('');
+                setErrorMessage('');
+                createReservationModal(); // Ferme la modal
+            } else {
+                setErrorMessage('Erreur lors de la création de la réservation.');
+            }
+        } catch (error) {
+            setErrorMessage('Erreur lors de l\'envoi des données.');
+        }
     };
 
-    fetchData();
-  }, []);
-
-  const onSubmit = async (data) => {
-    try {
-      await fetchJson(apiUrl("/reservations/create"), 'POST', data);
-      console.log('Réservation créée avec succès:', data);
-      navigate('/reservations'); // Rediriger après la création de la réservation
-    } catch (error) {
-      console.error('Erreur lors de la soumission:', error);
-    }
-  };
-
-  const handleCancel = () => {
-    navigate('/'); // Redirige l'utilisateur vers la page d'accueil
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}
-     className="m-0 p-6 w-[930px] bg-white shadow-md rounded-md
-      flex flex-row flex-wrap justify-between items-center">
-      <div className="mb-4 w-[280px]">
-        <label htmlFor="customer_id" className="block text-gray-700">Client</label>
-        <select
-          id="customer_id"
-          {...register("customer_id")}
-          className={`mt-1 block w-full p-2 border rounded-md ${errors.customer_id ? 'border-red-500' : 'border-gray-300'}`}
-        >
-          <option value="">Sélectionnez un client</option>
-          {customers.map((customer) => (
-            <option key={customer.id} value={customer.id}>{customer.name}</option>
-          ))}
-        </select>
-        {errors.customer_id && <p className="text-red-500 text-sm">{errors.customer_id.message}</p>}
-      </div>
-
-      <div className="mb-4 w-[280px]">
-        <label htmlFor="room_id" className="block text-gray-700">Chambre</label>
-        <input
-          id="room_id"
-          type="text"
-          {...register("room_id")}
-          className={`mt-1 block w-full p-2 border rounded-md ${errors.room_id ? 'border-red-500' : 'border-gray-300'}`}
-          placeholder="Entrez l'ID de la chambre"
-        />
-        {errors.room_id && <p className="text-red-500 text-sm">{errors.room_id.message}</p>}
-      </div>
-
-      <div className="mb-4 w-[280px]">
-        <label htmlFor="table_id" className="block text-gray-700">Table</label>
-        <input
-          id="table_id"
-          type="text"
-          {...register("table_id")}
-          className={`mt-1 block w-full p-2 border rounded-md ${errors.table_id ? 'border-red-500' : 'border-gray-300'}`}
-          placeholder="Entrez l'ID de la table"
-        />
-        {errors.table_id && <p className="text-red-500 text-sm">{errors.table_id.message}</p>}
-      </div>
-
-      <div className="mb-4 w-[280px]">
-        <label htmlFor="reservation_start" className="block text-gray-700">Date de début</label>
-        <input
-          id="reservation_start"
-          type="datetime-local"
-          {...register("reservation_start")}
-          className={`mt-1 block w-full p-2 border rounded-md ${errors.reservation_start ? 'border-red-500' : 'border-gray-300'}`}
-        />
-        {errors.reservation_start && <p className="text-red-500 text-sm">{errors.reservation_start.message}</p>}
-      </div>
-
-      <div className="mb-4 w-[280px]">
-        <label htmlFor="reservation_end" className="block text-gray-700">Date de fin</label>
-        <input
-          id="reservation_end"
-          type="datetime-local"
-          {...register("reservation_end")}
-          className={`mt-1 block w-full p-2 border rounded-md ${errors.reservation_end ? 'border-red-500' : 'border-gray-300'}`}
-        />
-        {errors.reservation_end && <p className="text-red-500 text-sm">{errors.reservation_end.message}</p>}
-      </div>
-
-      <div className="mb-4 w-[280px]">
-        <label htmlFor="status" className="block text-gray-700">Statut</label>
-        <input
-          id="status"
-          type="text"
-          {...register("status")}
-          className={`mt-1 block w-full p-2 border rounded-md ${errors.status ? 'border-red-500' : 'border-gray-300'}`}
-        />
-        {errors.status && <p className="text-red-500 text-sm">{errors.status.message}</p>}
-      </div>
-
-      <div className="mb-4 w-[900px]">
-        <label htmlFor="description" className="block text-gray-700">Description</label>
-        <textarea
-          id="description"
-          {...register("description")}
-          className="mt-1 block w-full p-2 border rounded-md h-[100px] outline-none"
-        />
-      </div>
-
-      <div className="flex space-x-4">
-        <button type="submit" className="w-full bg-blue-500 text-white 
-        p-2 rounded-md hover:bg-blue-600">
-          Soumettre
-        </button>
-        <button
-          type="button"
-          onClick={handleCancel}
-          className="w-full bg-gray-300 text-black p-2 rounded-md hover:bg-gray-400"
-        >
-          Annuler
-        </button>
-      </div>
-    </form>
-  );
-}
+    return (
+        <form onSubmit={handleSubmit} className='CreateReservationModal'>
+            <div>
+                <label htmlFor="customerId" className="block text-md font-medium text-gray-700">
+                    Sélectionnez un Client
+                </label>
+                <select
+                    id="customerId"
+                    {...register("customerId")}
+                    className={`mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2 ${errors.customerId ? 'border-red-500' : ''}`}
+                >
+                    <option value="">Sélectionnez un client</option>
+                    {customers.map(customer => (
+                        <option key={customer.id} value={customer.id}>{customer.lastName}</option>
+                    ))}
+                </select>
+                {errors.customerId && <p className="text-red-500 text-sm">{errors.customerId.message}</p>}
+            </div>
+            <div>
+                <label htmlFor="roomId" className="block text-md font-medium text-gray-700">
+                    Sélectionnez une Chambre
+                </label>
+                <select
+                    id="roomId"
+                    {...register("roomId")}
+                    className={`mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2 ${errors.roomId ? 'border-red-500' : ''}`}
+                >
+                    <option value="">Sélectionnez une chambre</option>
+                    {rooms.map(room => (
+                        <option key={room.id} value={room.id}>{room.roomNumber}</option>
+                    ))}
+                </select>
+                {errors.roomId && <p className="text-red-500 text-sm">{errors.roomId.message}</p>}
+            </div>
+            <div>
+                <label htmlFor="startDate">Date de début:</label>
+                <input
+                    id="startDate"
+                    type="datetime-local" // Utilisation de datetime-local pour LocalDateTime
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    required
+                />
+            </div>
+            <div>
+                <label htmlFor="endDate">Date de fin:</label>
+                <input
+                    id="endDate"
+                    type="datetime-local" // Utilisation de datetime-local pour LocalDateTime
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    required
+                />
+            </div>
+            <div>
+                <label htmlFor="description">Description:</label>
+                <textarea
+                    id="description"
+                    value={description}
+                    onChange={(e) => setDescription(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    required
+                />
+            </div>
+            <div>
+                <label htmlFor="status">Statut:</label>
+                <select
+                    id="status"
+                    value={status}
+                    onChange={(e) => setStatus(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    required
+                >
+                    <option value="">Sélectionnez un statut</option>
+                    <option value="CONFIRMED">Confirmé</option>
+                    <option value="CANCELLED">Annulé</option>
+                    {/* Ajoutez d'autres états selon vos besoins */}
+                </select>
+            </div>
+            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+            <div className="flex flex-row gap-52 relative top-4">
+                <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">Créer</button>
+                <button
+                    type="button"
+                    onClick={createReservationModal}
+                    className="ml-2 bg-gray-300 text-gray-800 rounded px-4 py-2 hover:bg-gray-400"
+                >
+                    Annuler
+                </button>
+            </div>
+        </form>
+    );
+};
 
 export default CreateReservation;

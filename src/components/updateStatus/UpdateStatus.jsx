@@ -1,12 +1,12 @@
 
 
-const UpdateStatus = ({menuStatus, statuses, setMenuStatus,  onSave, onCancel}) => {
+const UpdateStatus = ({status, statuses, setStatus,  onSave, onCancel}) => {
     return (
         <div>
             <h2 className="text-xl font-bold mb-4">Modifier le statut</h2>
             <select
-                value={menuStatus}
-                onChange={(e) => setMenuStatus(e.target.value)}
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
                 className="border p-2 rounded-md w-full mb-4"
             >
                 {statuses.map(status => (

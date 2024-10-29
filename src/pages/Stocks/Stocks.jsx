@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { apiUrl, fetchJson } from "../../services/api";
-import dayjs from 'dayjs';
 import { FaRegEdit } from 'react-icons/fa';
 import OperationDetails from "./OperationDetails";
 import CreateStock from "../../components/addStocks/CreateStock";
@@ -16,7 +15,7 @@ function StockList() {
   const [endDate, setEndDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null); // Ajout d'un message de succès
+  const [successMessage, setSuccessMessage] = useState(null);
   const [selectedStock, setSelectedStock] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -29,12 +28,10 @@ function StockList() {
     setError(null);
     const url = `${apiUrl("/stocks")}?size=${size}&page=${page - 1}&name=${searchName}&quantityMin=${quantityMin}&quantityMax=${quantityMax}&startDate=${startDate}&endDate=${endDate}`;
 
-    // Debug : Affiche l'URL de l'API pour vérifier les paramètres
     console.log("Requête API URL:", url);
 
     fetchJson(url)
       .then((d) => {
-        // Debug : Affiche les données récupérées
         console.log("Données récupérées :", d);
         setStocks(d.items || []);
         setIsLoading(false);
@@ -69,9 +66,9 @@ function StockList() {
   const handleStockCreated = () => {
     setIsModalOpen(false);
     setSelectedStock(null);
-    setSuccessMessage("Le stock a été mis à jour avec succès."); // Ajout d'un message de succès
-    setTimeout(() => setSuccessMessage(null), 3000); // Efface le message après 3 secondes
-    setPage(1); // Recharger les stocks en repartant à la page 1
+    setSuccessMessage("Le stock a été mis à jour avec succès."); 
+    setTimeout(() => setSuccessMessage(null), 3000); 
+    setPage(1); 
   };
 
   return (
@@ -116,22 +113,6 @@ function StockList() {
           onBlur={() => document.activeElement.blur()}
           className="border border-gray-300 p-2 rounded-md outline-none"
         />
-      </div>
-
-      <div className="flex justify-between mb-4">
-        <button
-          onClick={() => setPage((p) => p - 1)}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
-          disabled={page <= 1}
-        >
-          Previous
-        </button>
-        <button
-          onClick={() => setPage((p) => p + 1)}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Next
-        </button>
       </div>
 
       <div className="flex-grow overflow-auto">
@@ -211,6 +192,22 @@ function StockList() {
             </div>
           </div>
         )}
+      </div>
+
+      <div className="flex justify-between mt-4">
+        <button
+          onClick={() => setPage((p) => p - 1)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+          disabled={page <= 1}
+        >
+          Previous
+        </button>
+        <button
+          onClick={() => setPage((p) => p + 1)}
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        >
+          Next
+        </button>
       </div>
     </div>
   );

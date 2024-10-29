@@ -1,64 +1,53 @@
-
-
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { apiUrl, fetchJson } from '../../services/api';
+import { fetchJson, apiUrl } from '../../services/api';
 
+function ReservationList() {
+  const [reservations, setReservations] = useState([]);
 
-const ReservationList = () => {
-    const [reservations, setReservations] = useState([]);
-    const [error, setError] = useState(null);
+  useEffect(() => {
+    const fetchReservations = async () => {
+      try {
+        const reservationsData = await fetchJson(apiUrl("/reservations"));
+        setReservations(reservationsData);
+      } catch (error) {
+        console.error('Erreur lors de la récupération des réservations:', error);
+      }
+    };
 
-    useEffect(() => {
-       (async () => {
-            try {
-                const data = await fetchJson(apiUrl("/reservations"));
-                setReservations(data);
-            } catch (err) {
-                setError('Erreur lors de la récupération des reservations');
-            }
-        })();
-    }, []);
+    fetchReservations();
+  }, []);
 
-    return (
-        <div className="container mx-auto p-4">
-            <h1 className="text-2xl font-bold mb-4">Liste des reservations</h1>
-            {error && <p className="text-red-500">{error}</p>}
-            <Link to="/reservations/create">
-                <button className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600">
-                    Créer un reservation
-                </button>
-            </Link>
-
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
-                <thead>
-                    <tr className="bg-gray-200">
-                        <th className="py-2 px-4">Client</th>
-                        <th className="py-2 px-4">Chambre</th>
-                        <th className="py-2 px-4">Table</th>
-                        <th className="py-2 px-4">Date de début</th>
-                        <th className="py-2 px-4">Date de fin</th>
-                        <th className="py-2 px-4">Statut</th>
-                        <th className="py-2 px-4">Description</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {reservations.map(reservation => (
-                        <tr key={reservation.id} className="hover:bg-gray-100">
-                            <td className="py-2 px-4">{reservation.customer_id}</td>
-                            <td className="py-2 px-4">{reservation.room_id}</td>
-                            <td className="py-2 px-4">{reservation.table_id}</td>
-                            <td className="py-2 px-4">{reservation.reservation_start}</td>
-                            <td className="py-2 px-4">{reservation.reservation_end}</td>
-                            <td className="py-2 px-4">{reservation.status}</td>
-                            <td className="py-2 px-4">{reservation.description}</td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-    );
-};
+  return (
+    <div className="p-6 bg-white shadow-md rounded-md">
+      <h1 className="text-2xl font-bold mb-4">Liste des Réservations</h1>
+      <table className="w-full table-auto">
+        <thead>
+          <tr className="bg-gray-100">
+            <th className="px-4 py-2">Client</th>
+            <th className="px-4 py-2">Chambre</th>
+            <th className="px-4 py-2">Table</th>
+            <th className="px-4 py-2">Date de début</th>
+            <th className="px-4 py-2">Date de fin</th>
+            <th className="px-4 py-2">Statut</th>
+            <th className="px-4 py-2">Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          {reservations.map((reservation) => (
+            <tr key={reservation.id} className="border-b">
+              <td className="px-4 py-2">{reservation.customer.name}</td>
+              <td className="px-4 py-2">{reservation.room ? reservation.room.number : 'N/A'}</td>
+              <td className="px-4 py-2">{reservation.table ? reservation.table.id : 'N/A'}</td>
+              <td className="px-4 py-2">{reservation.reservationStart}</td>
+              <td className="px-4 py-2">{reservation.reservationEnd}</td>
+              <td className="px-4 py-2">{reservation.status}</td>
+              <td className="px-4 py-2">{reservation.description}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
 
 export default ReservationList;
-

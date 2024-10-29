@@ -41,19 +41,29 @@ const menuItems = [
     ],
   },
   {
-    title: "List des tables",
-    path: "/tableList",
-    subItems: [],
+    title: "Tables & chambres & étages",
+    subItems: [
+      {
+        title: "List des tables",
+        path: "/tableList",
+      }, {
+        title: "List des chambres",
+        path: "/roomList",
+      }, {
+        title: "List des étages",
+        path: "/floorList",
+      }
+    ],
   },
   {
     title: "Commandes",
     icon: <MdKeyboardCommandKey />,
     subItems: [
-      {
-        title: "Bon de commande",
-        path: "/bonDeCommandes",
-        icon: <MdCategory />,
-      },
+      // {
+      //   title: "Bon de commande",
+      //   path: "/bonDeCommandes",
+      //   icon: <MdCategory />,
+      // },
       {
         title: "Liste des commandes",
         path: "/commandes",
@@ -97,7 +107,8 @@ const menuItems = [
 
 export const SidebarToggleButton = ({ handleSidebarToggle, openSidebar }) => (
   <button
-    className="fixed top-4 left-20 z-50 rounded-full p-3 bg-slate-100 text-2xl flex items-center justify-center hover:bg-slate-200 lg:hidden"
+    className="fixed top-4 left-20 z-50 rounded-full p-3 bg-slate-100 text-2xl flex 
+    items-center justify-center hover:bg-slate-200 lg:hidden"
     onClick={handleSidebarToggle}
   >
     {openSidebar ? <MdMenu className="text-gray-500 text-xl" /> : <RiMenuUnfold4Line className="text-gray-500 text-xl" />}
@@ -137,7 +148,7 @@ export default function Sidebar() {
       <div
         className={`Sidebar fixed top-20 left-0 w-64 h-screen bg-white shadow-md flex flex-col 
           overflow-y-scroll overflow-x-hidden max-h-[calc(100%-80px)] transition-transform duration-300 
-          ease-in-out ${openSidebar ? 'translate-x-0 z-50' : '-translate-x-full'} lg:translate-x-0 lg:block`}
+          ease-in-out ${openSidebar ? 'translate-x-0 z-40' : '-translate-x-full'} lg:translate-x-0 lg:block`}
         onMouseEnter={() => setShowScrollbar(true)}
         onMouseLeave={() => setShowScrollbar(false)}
         style={{

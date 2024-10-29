@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { apiUrl } from '../../../services/api';
 import AddIngredientsToMenu from './AddIngredientsToMenu';
+import { MdAddBox } from "react-icons/md";
 
 const ManageMenuIngredients = ({ onAddIngredients}) => {
     const [ingredientsList, setIngredientsList] = useState([]); 
@@ -50,9 +51,9 @@ const ManageMenuIngredients = ({ onAddIngredients}) => {
         <div className=" MenuList">
             <button 
                 onClick={openModal} 
-                className="block px-4 py-2 hover:bg-gray-100 w-full text-start"
+                className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 flex flex-row items-center gap-2"
             >
-                Ajouter des ingrédients au menu
+                <MdAddBox /> Ajouter des ingrédients au menu
             </button>
 
             {isModalOpen && (

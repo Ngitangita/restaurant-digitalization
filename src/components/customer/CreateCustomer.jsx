@@ -3,6 +3,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { apiUrl, fetchJson } from "../../services/api";
+import { useNavigate } from "react-router-dom";
 
 const CustomerSchema = z.object({
   firstName: z.string().min(2, { message: "Le prénom doit comporter au moins 2 caractères" }),
@@ -14,6 +15,7 @@ const CustomerSchema = z.object({
 
 const CreateCustomer = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate(); // Hook pour la navigation
   
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: zodResolver(CustomerSchema),
@@ -24,7 +26,8 @@ const CreateCustomer = () => {
     setIsLoading(true);
     try {
       await fetchJson(apiUrl("/customers"), 'POST', data);
-      reset(); 
+      reset();
+      navigate("/customers"); // Redirection vers la liste des clients après enregistrement
     } catch (error) {
       console.error("Erreur lors de la création du client :", error);
     } finally {
