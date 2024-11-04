@@ -6,7 +6,7 @@ import { AiOutlineStock } from "react-icons/ai";
 import { RiMenuUnfold4Line } from "react-icons/ri";
 import {
   MdKeyboardCommandKey, MdOutlineCalendarMonth,
-  MdCategory, MdOutlineHome, MdMenuBook, MdOutlineSettings,
+  MdOutlineHome, MdMenuBook, MdOutlineSettings,
   MdMenu, MdOutlineLogin
 } from "react-icons/md";
 import { useTitleStore } from '../../stores/useTitleStore';
@@ -31,10 +31,6 @@ const menuItems = [
         path: "/categoriesListe",
       },
       {
-        title: "Liste des menu avec ingrédients",
-        path: "/menu-ingredients/menu/1",
-      },
-      {
         title: "Ingredients",
         path: "/ingredients",
       },
@@ -56,20 +52,10 @@ const menuItems = [
     ],
   },
   {
-    title: "Commandes",
+    title: "Liste des commandes",
     icon: <MdKeyboardCommandKey />,
-    subItems: [
-      // {
-      //   title: "Bon de commande",
-      //   path: "/bonDeCommandes",
-      //   icon: <MdCategory />,
-      // },
-      {
-        title: "Liste des commandes",
-        path: "/commandes",
-        icon: <MdMenuBook />,
-      },
-    ],
+    path: "/commandes",
+    subItems: [],
   },
   {
     title: "Calendrier",

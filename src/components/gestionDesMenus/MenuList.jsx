@@ -22,7 +22,9 @@ const MenuList = () => {
     const [menuToEdit, setMenuToEdit] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [menuToDelete, setMenuToDelete] = useState(null);
-    const [detailsVisible, setDetailsVisible] = useState({}); // Change here
+    const [detailsVisible, setDetailsVisible] = useState({}); 
+    const [page, setPage] = useState(1);
+    const [size, setSize] = useState(8);
     const navigate = useNavigate();
 
     const toggleModal = () => {
@@ -33,7 +35,7 @@ const MenuList = () => {
         setIsLoading(true);
         try {
             const [menusResponse, categoriesResponse, statusesResponse] = await Promise.all([
-                fetch(apiUrl('/menus/all')),
+                fetch(apiUrl(`/menus/all?size=${size}&page=${page - 1}`)),
                 fetch(apiUrl('/categories/all')),
                 fetch(apiUrl('/menus/status'))
             ]);
@@ -58,7 +60,7 @@ const MenuList = () => {
 
     useEffect(() => {
         fetchMenus();
-    }, []);
+    }, [size, page]);
 
     const handleEditStatus = (menu) => {
         setSelectedMenuId(menu.id);
@@ -240,10 +242,10 @@ const MenuList = () => {
                                                     onClick={() => handleEditStatus(menu)}
                                                     className='flex flex-col gap-1 items-center '
                                                 >
-                                                   <span className='flex flex-row gap-1 items-center '>
-                                                   <MdEdit /> {menu.status.toLowerCase()}
-                                                   </span>
-                                                    {menu.status.toLowerCase() !== "active"  && (
+                                                    <span className='flex flex-row gap-1 items-center '>
+                                                        <MdEdit /> {menu.status.toLowerCase()}
+                                                    </span>
+                                                    {menu.status.toLowerCase() !== "active" && (
                                                         <div className="text-red-500">⚠️ désolé ce menu est {menu.status}</div>
                                                     )}
                                                 </button>
@@ -336,6 +338,22 @@ const MenuList = () => {
                     </div>
                 </div>
             )}
+
+            <div className="flex justify-between mt-4">
+                <button
+                    onClick={() => setPage((p) => p - 1)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+                    disabled={page <= 1}
+                >
+                    Previous
+                </button>
+                <button
+                    onClick={() => setPage((p) => p + 1)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                >
+                    Next
+                </button>
+            </div>
         </div>
     );
 };

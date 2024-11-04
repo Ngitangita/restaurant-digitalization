@@ -89,11 +89,7 @@ function AppRouter() {
             <ProtectedRoute element={<FloorList/>} isAuthenticated={isAuthenticated} />
           </Layout>
         } />
-        {/* <Route path="/bonDeCommandes" element={
-          <Layout showHeaderAndSidebar={isAuthenticated}>
-            <ProtectedRoute element={<BonDeCommandes />} isAuthenticated={isAuthenticated} />
-          </Layout>
-        } /> */}
+       
         <Route path="/calendar" element={
           <Layout showHeaderAndSidebar={isAuthenticated}>
             <ProtectedRoute element={<TheCalendar />} isAuthenticated={isAuthenticated} />

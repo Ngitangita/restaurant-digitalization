@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { apiUrl, fetchJson } from '../../../services/api';
 import ManageMenuIngredients from './ManageMenuIngredients';
+import { MdDelete} from 'react-icons/md';
 
 function MenuWithIngredients() {
   const { menuId } = useParams();
   const [menu, setMenu] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [ingredientToDelete, setIngredientToDelete] = useState(null);
 
   const fetchMenuWithIngredients = async () => {
     try {
@@ -48,6 +51,30 @@ function MenuWithIngredients() {
     return <p>Aucun menu trouvé.</p>;
   }
 
+  const handleDelete = async () => {
+    try {
+      await fetch(apiUrl(`/menu-ingredients/menu/${menuId}/ingredient/${ingredientToDelete.id}`), {
+        method: 'DELETE',
+      });
+      setShowDeleteModal(false);
+      fetchMenuWithIngredients();
+    } catch (error) {
+      console.error('Erreur lors de la suppression de l\'ingrédient.', error);
+    }
+  };
+
+  const confirmDelete = (ingredientId) => {
+    const ingredient = menu.ingredients.find(m => m.id === ingredientId);
+    setIngredientToDelete(ingredient);
+    setShowDeleteModal(true);
+  };
+
+  const cancelDelete = () => {
+    setShowDeleteModal(false);
+    setIngredientToDelete(null);
+  };
+
+
   return (
     <div className="container mx-auto p-4 bg-white">
       <div className='flex flex-row gap-5 items-center'>
@@ -71,6 +98,7 @@ function MenuWithIngredients() {
             <th className="py-2 px-4">Unité</th>
             <th className="py-2 px-4">Créé le</th>
             <th className="py-2 px-4">Mis à jour le</th>
+            <th className="py-2 px-4">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -92,11 +120,41 @@ function MenuWithIngredients() {
                 <td className="py-2 px-4">
                   {new Date(ingredient.updatedAt).toLocaleDateString()}
                 </td>
+                <td className="py-2 px-4">
+                  <button
+                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
+                    onClick={() => confirmDelete(ingredient.id)}
+                  >
+                    <MdDelete />
+                  </button>
+                </td>
               </tr>
             ))
           )}
         </tbody>
       </table>
+      {showDeleteModal && (
+        <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
+          <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+            <h2 className="text-lg font-bold mb-4">Confirmer la suppression</h2>
+            <p>Voulez-vous vraiment supprimer le menu {ingredientToDelete?.ingredientName} ?</p>
+            <div className="mt-4">
+              <button
+                className="bg-red-500 text-white rounded p-2 hover:bg-red-600 mr-2"
+                onClick={handleDelete}
+              >
+                Oui
+              </button>
+              <button
+                className="bg-gray-300 text-black rounded p-2 hover:bg-gray-400"
+                onClick={cancelDelete}
+              >
+                Non
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

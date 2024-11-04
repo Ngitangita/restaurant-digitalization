@@ -73,10 +73,6 @@ const RoomList = () => {
 
     const handleUpdateRoom = async () => {
         try {
-            console.log(selectedRoom);
-            
-        
-            
             const url = apiUrl(`/rooms/${selectedRoom.id}`);
             const response = await fetch(url, {
                 method: 'PUT',
@@ -103,6 +99,11 @@ const RoomList = () => {
             console.error('Erreur lors de la suppression du room:', error);
         }
     };
+
+    // Filtrer les salles en fonction du terme de recherche
+    const filteredRooms = rooms.filter((room) =>
+        room.roomNumber.toString().toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     return (
         <div className="container mx-auto p-4 bg-white">
@@ -146,18 +147,31 @@ const RoomList = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {rooms.length > 0 ? (
-                            rooms.map((room) => (
+                        {filteredRooms.length > 0 ? (
+                            filteredRooms.map((room) => (
                                 <tr key={room.id} className="hover:bg-gray-100 text-center border-y border-collapse">
                                     <td className="py-2 px-4">{room.roomNumber}</td>
                                     <td className="py-2 px-4">{room.capacity} personnes</td>
                                     <td className="py-2 px-4">{room.price} Ar</td>
-                                    <td className="py-2 px-4 cursor-pointer">
+                                    {/* <td className="py-2 px-4 cursor-pointer">
                                         <button
                                             onClick={() => toggleModal('editStatus', room)}
                                             className='flex flex-row gap-1 items-center'
                                         >
                                             <MdEdit /> {room.status}
+                                        </button>
+                                    </td> */}
+                                    <td className={`py-2 px-4 cursor-pointer ${room.status.toLowerCase() !== "available" ? 'text-red-500 font-bold' : ''}`}>
+                                        <button
+                                            onClick={() => toggleModal('editStatus', room)}
+                                            className='flex flex-col gap-1 items-center'
+                                        >
+                                            <span className='flex flex-row gap-1 items-center '>
+                                                <MdEdit /> {room.status.toLowerCase()}
+                                            </span>
+                                            {room.status.toLowerCase() !== "available" && (
+                                                <div className="text-red-500">⚠️ désolé cette chambre est {room.status}</div>
+                                            )}
                                         </button>
                                     </td>
                                     <td className="py-2 px-4">
@@ -186,53 +200,54 @@ const RoomList = () => {
             )}
 
             {isModalOpen && modalType === 'create' && (
-                <CreateRoom
-                    onCreate={handleCreateRoom}
-                    closeModal={() => toggleModal('')}
-                    statuses={statuses}
-                    floors={floors}
-                />
+                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
+                        <CreateRoom
+                            onCreate={handleCreateRoom}
+                            closeModal={() => toggleModal('')}
+                            statuses={statuses}
+                            floors={floors}
+                        />
+                    </div>
+                </div>
             )}
             {isModalOpen && modalType === 'editStatus' && (
-                <UpdateStatus
-                    onSave={handleUpdateStatus}
-                    onCancel={() => toggleModal('')}
-                    statuses={statuses}
-                    setStatus={setStatus}
-                    status={status}
-                />
+                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
+                        <UpdateStatus
+                            onSave={handleUpdateStatus}
+                            onCancel={() => toggleModal('')}
+                            statuses={statuses}
+                            setStatus={setStatus}
+                            status={status}
+                        />
+                    </div>
+                </div>
             )}
             {isModalOpen && modalType === 'editRoom' && (
-            
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
                     <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md EditModal">
-                    <EditRoom
-                    roomToEdit={selectedRoom}
-                    setRoomToEdit={setSelectedRoom}
-                    onSave={handleUpdateRoom}
-                    onCancel={() => toggleModal('')}
-                    floors={floors}
-                />
+                        <EditRoom
+                            roomToEdit={selectedRoom}
+                            setRoomToEdit={setSelectedRoom}
+                            onSave={handleUpdateRoom}
+                            onCancel={() => toggleModal('')}
+                            floors={floors}
+                        />
                     </div>
                 </div>
             )}
             {isModalOpen && modalType === 'delete' && (
-                <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                        <h2 className="text-lg font-bold mb-4">Confirmer la suppression</h2>
-                        <p>Voulez-vous vraiment supprimer le room {selectedRoom?.roomNumber} ?</p>
-                        <div className="mt-4">
-                            <button
-                                className="bg-red-500 text-white rounded p-2 hover:bg-red-600 mr-2"
-                                onClick={handleDelete}
-                            >
-                                Oui
+                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
+                        <h3 className="text-lg font-bold mb-4">Confirmation de suppression</h3>
+                        <p>Êtes-vous sûr de vouloir supprimer cette salle ?</p>
+                        <div className="mt-4 flex justify-end">
+                            <button className="bg-red-500 text-white rounded px-4 py-2" onClick={handleDelete}>
+                                Supprimer
                             </button>
-                            <button
-                                className="bg-gray-300 text-black rounded p-2 hover:bg-gray-400"
-                                onClick={() => toggleModal('')}
-                            >
-                                Non
+                            <button className="bg-gray-300 text-gray-700 rounded px-4 py-2 ml-2" onClick={() => toggleModal('')}>
+                                Annuler
                             </button>
                         </div>
                     </div>

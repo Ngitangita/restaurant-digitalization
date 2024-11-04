@@ -4,24 +4,26 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useState } from "react";
 import { apiUrl, fetchJson } from "../../../services/api";
 import MenuItems from "./MenuItems";
-import { MdAddBox } from "react-icons/md";
+import { MdAddBox, MdDelete } from "react-icons/md";
 
+// Schéma de validation mis à jour
 const schema = z.object({
-    customerId: z.string().nullable(),
+    customerId: z.string().optional(),
     roomId: z.string().nullable(),
     tableId: z.string().nullable(),
 }).refine(data => data.roomId || data.tableId, {
     message: "Il faut choisir soit une table soit une chambre.",
-    path: ["roomId"], // Set the path for the error
+    path: ["roomId"], // Place l'erreur sur roomId pour la validation
 });
 
-function CreateMenuOrder({ onClose }) { // Ajout de props pour fermer le modal
+function CreateMenuOrder({ onClose }) {
     const [isOpen, setIsOpen] = useState(false);
     const [menuRequest, setMenuRequest] = useState([]);
     const { register, handleSubmit, formState: { errors } } = useForm({
         resolver: zodResolver(schema)
     });
     const [menuError, setMenuError] = useState("");
+    const [stockError, setStockError] = useState("");
     const [customers, setCustomers] = useState([]);
     const [tables, setTables] = useState([]);
     const [rooms, setRooms] = useState([]);
@@ -34,6 +36,7 @@ function CreateMenuOrder({ onClose }) { // Ajout de props pour fermer le modal
         }
 
         setMenuError("");
+        setStockError("");
 
         const payload = {
             customerId: data.customerId ? Number(data.customerId) : null,
@@ -42,20 +45,22 @@ function CreateMenuOrder({ onClose }) { // Ajout de props pour fermer le modal
             menuItems: menuRequest,
         };
 
-        console.log(payload);
-
         try {
             const response = await fetchJson(`${apiUrl("/menu-orders")}`, 'POST', payload);
             console.log('Réponse du serveur:', response);
             onClose(); // Fermer le modal après une confirmation réussie
         } catch (error) {
-            console.error('Erreur lors de l\'envoi de la commande:', error);
+            console.log(error);
         }
     };
 
     const handleSave = useCallback((data) => {
         setMenuRequest((prev) => [...prev, data]);
     }, []);
+
+    const removeItem = (menuId) => {
+        setMenuRequest(menuRequest.filter(item => item.menuId !== menuId));
+    };
 
     useEffect(() => {
         const fetchData = async () => {
@@ -73,7 +78,7 @@ function CreateMenuOrder({ onClose }) { // Ajout de props pour fermer le modal
                 setCustomers(customersData || []);
                 setTables(tablesData || []);
                 setRooms(roomsData || []);
-                setMenus(menusData || []); // Set the menus state
+                setMenus(menusData || []);
             } catch (e) {
                 console.log(e);
             }
@@ -83,88 +88,86 @@ function CreateMenuOrder({ onClose }) { // Ajout de props pour fermer le modal
     }, []);
 
     const handleCancel = () => {
-        setMenuRequest([]); // Réinitialiser la sélection du menu si nécessaire
-        onClose(); // Fermer le modal
+        setMenuRequest([]);
+        onClose();
     };
 
     return (
-        <div className="w-[900px] mx-auto p-4 bg-white rounded">
+        <div className="w-[700px] mx-auto p-4 bg-white rounded">
             <h1 className="text-center text-3xl font-serif font-bold mb-4">
                 Formulaire de Commande
+                <br /><span className="text-[10px]">nb : choisir table ou chambre</span>
             </h1>
-
             <form onSubmit={handleSubmit(handleConfirm)} className="space-y-4">
-                <div>
-                    <label htmlFor="customerId" className="block text-md font-medium text-gray-700">
-                        Sélectionnez un Client
-                    </label>
-                    <select
-                        id="customerId"
-                        {...register("customerId")}
-                        className={`mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2 ${errors.customerId ? 'border-red-500' : ''}`}
-                    >
-                        <option value="">Sélectionnez un client</option>
-                        {customers.map(customer => (
-                            <option key={customer.id} value={customer.id}>{customer.lastName}</option>
-                        ))}
-                    </select>
-                    {errors.customerId && <p className="text-red-500 text-sm">{errors.customerId.message}</p>}
-                </div>
-                <div>
-                    <label htmlFor="roomId" className="block text-md font-medium text-gray-700">
-                        Sélectionnez une Chambre
-                    </label>
-                    <select
-                        id="roomId"
-                        {...register("roomId")}
-                        className={`mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2 ${errors.roomId ? 'border-red-500' : ''}`}
-                    >
-                        <option value="">Sélectionnez une chambre</option>
-                        {rooms.map(room => (
-                            <option key={room.id} value={room.id}>{room.roomNumber}</option>
-                        ))}
-                    </select>
-                    {errors.roomId && <p className="text-red-500 text-sm">{errors.roomId.message}</p>}
+                <div className="flex flex-row gap-3 items-center">
+                    <div className="flex flex-col w-full relative">
+                        <label htmlFor="customerInput" className="block text-md font-medium text-gray-700">
+                            Un Client (facultatif)
+                        </label>
+                        <input
+                            id="customerInput"
+                            type="text"
+                            {...register("customerId")}
+                            placeholder="Tapez le nom du client..."
+                            className="mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2"
+                        />
+                        {errors.customerId && <p className="text-red-500 text-sm">{errors.customerId.message}</p>}
+                    </div>
+
+                    <div className="flex flex-col w-full relative">
+                        <label htmlFor="roomInput" className="block text-md font-medium text-gray-700">
+                            Une Chambre
+                        </label>
+                        <input
+                            id="roomInput"
+                            type="text"
+                            {...register("roomId")}
+                            placeholder="Tapez le numéro de la chambre..."
+                            className="mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2"
+                        />
+                        {errors.roomId && <p className="text-red-500 text-sm">{errors.roomId.message}</p>}
+                    </div>
+
+                    <div className="flex flex-col w-full relative">
+                        <label htmlFor="tableInput" className="block text-md font-medium text-gray-700">
+                            Une Table
+                        </label>
+                        <input
+                            id="tableInput"
+                            type="text"
+                            {...register("tableId")}
+                            placeholder="Tapez le numéro de la table..."
+                            className="mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2"
+                        />
+                        {errors.tableId && <p className="text-red-500 text-sm">{errors.tableId.message}</p>}
+                    </div>
                 </div>
 
                 <div>
-                    <label htmlFor="tableId" className="block text-md font-medium text-gray-700">
-                        Sélectionnez une Table
-                    </label>
-                    <select
-                        id="tableId"
-                        {...register("tableId")}
-                        className={`mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2 ${errors.tableId ? 'border-red-500' : ''}`}
-                    >
-                        <option value="">Sélectionnez une table</option>
-                        {tables.map(table => (
-                            <option key={table.id} value={table.id}>{table.number}</option>
-                        ))}
-                    </select>
-                    {errors.tableId && <p className="text-red-500 text-sm">{errors.tableId.message}</p>}
-                </div>
-
-                <div>
-                    <label className="block text-md font-medium text-gray-700">
-                        Éléments de Menu
-                    </label>
-                    <span className="text-blue-500 text-sm cursor-pointer hover:text-blue-600 flex flex-row gap-2 items-center" onClick={() => setIsOpen(!isOpen)}>
-                        <MdAddBox /> Ajoutez plusieurs éléments de menu. 
-                    </span>
                     <MenuItems isOpen={isOpen} setIsOpen={setIsOpen} onSave={handleSave} />
                     {menuError && <p className="text-red-500 text-sm">{menuError}</p>}
+                    {stockError && <p className="text-red-500 text-sm">{stockError}</p>}
 
                     {menuRequest.length > 0 && (
                         <div className="mt-4">
                             <h2 className="font-semibold">Articles sélectionnés :</h2>
-                            <textarea
-                                readOnly
-                                className="w-full h-24 border-2 border-gray-300 p-2 mt-2"
-                                value={menuRequest.map(item => {
+                            <ul className="mt-4 pb-5">
+                                {menuRequest.map((item, index) => {
                                     const menu = menus.find(m => m.id === item.menuId);
-                                    return `${menu ? menu.name : 'Menu inconnu'} - Quantité: ${item.quantity}`;
-                                }).join('\n')}
-                            />
+                                    return (
+                                        <li key={index} className="flex items-center justify-between py-2">
+                                            <span>{menu ? menu.name : 'Menu inconnu'} - Quantité: {item.quantity}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => removeItem(item.menuId)}
+                                                className="bg-red-500 text-white rounded p-1 hover:bg-red-600 ml-2"
+                                            >
+                                                <MdDelete />
+                                            </button>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
                         </div>
                     )}
                 </div>
@@ -173,7 +176,7 @@ function CreateMenuOrder({ onClose }) { // Ajout de props pour fermer le modal
                     <button
                         type="button"
                         className="bg-gray-500 text-gray-800 rounded px-4 py-2 hover:bg-gray-600"
-                        onClick={handleCancel} // Appel à la fonction de gestion de l'annulation
+                        onClick={handleCancel}
                     >
                         Annuler
                     </button>

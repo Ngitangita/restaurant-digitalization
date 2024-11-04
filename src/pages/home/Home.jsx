@@ -1,4 +1,5 @@
-import OperationStatistics from "../Stocks/OperationStatistics";
+import CreatePayment from "../../components/payment/CreatePayment";
+// import OperationStatistics from "../Stocks/OperationStatistics";
 
 
 
@@ -7,7 +8,8 @@ const Home = () => {
     return (
         <div>
             
-            <OperationStatistics />
+            {/* <OperationStatistics /> */}
+            <CreatePayment/>
            
         </div>
     );
