@@ -2,7 +2,7 @@
 
 const EditRoom = ({ roomToEdit, setRoomToEdit, floors, onSave, onCancel }) => {
     return (
-        <div>
+        <div className="p-8"> 
             <h2 className="text-xl font-bold mb-4">{roomToEdit.id ? 'Modifier' : 'Créer'} un Room</h2>
             <div>
                 <label htmlFor="roomNumber">N° de la salle:</label>

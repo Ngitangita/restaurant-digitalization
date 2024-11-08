@@ -3,8 +3,7 @@ import { useState } from "react";
 const EditModal = ({onSave, onCancel, setCategoryToEdit, categoryToEdit }) => {
 
     return (
-        <div>
-            <h2 className="text-lg font-semibold mb-4">Modifier la catégorie</h2>
+        <div className="p-6">
             <input
                 type="text"
                 value={categoryToEdit.name || ''}

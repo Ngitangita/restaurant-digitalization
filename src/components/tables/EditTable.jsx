@@ -2,7 +2,7 @@
 
 const EditTable = ({ tableToEdit, setTableToEdit, onSave, onCancel }) => {
     return (
-        <div>
+        <div className="p-8">
             <h2 className="text-xl font-bold mb-4">{tableToEdit.id ? 'Modifier' : 'Créer'} un Table</h2>
             <input
                 type="number"

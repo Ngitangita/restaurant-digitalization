@@ -66,9 +66,9 @@ function StockList() {
   const handleStockCreated = () => {
     setIsModalOpen(false);
     setSelectedStock(null);
-    setSuccessMessage("Le stock a été mis à jour avec succès."); 
-    setTimeout(() => setSuccessMessage(null), 3000); 
-    setPage(1); 
+    setSuccessMessage("Le stock a été mis à jour avec succès.");
+    setTimeout(() => setSuccessMessage(null), 3000);
+    setPage(1);
   };
 
   return (
@@ -144,7 +144,7 @@ function StockList() {
                   <td className={`border-b p-2 ${stock.quantity <= 5 ? 'text-red-500 font-bold' : ''}`}>
                     {stock.quantity}
                     {stock.quantity <= 5 && (
-                      <div className="text-red-500 font-bold">⚠️ Stock faible! Ajoutez du stock.</div>
+                      <div className="text-red-500 text-[10px]">⚠️ Stock faible! Ajoutez du stock.</div>
                     )}
                   </td>
                   <td className="border-b p-2 flex justify-center">
@@ -173,8 +173,15 @@ function StockList() {
 
         {isModalOpen && selectedStock && (
           <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-            <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md EditModal">
-              <h2 className="text-lg font-bold mb-4">Modifier le stock</h2>
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-md EditModal">
+              <div className='flex flex-row justify-between items-center'>
+                <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le stock</h2>
+                <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                  onClick={toggleModal}>
+                  x
+                </span>
+              </div>
               <CreateStock
                 onStockCreated={handleStockCreated}
                 createStockModale={toggleModal}
@@ -187,7 +194,15 @@ function StockList() {
 
         {showDetailsModal && selectedOperationId && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white p-8 rounded-lg w-1/2">
+            <div className="bg-white rounded-lg w-1/2">
+              <div className='flex flex-row justify-between items-center'>
+                <h2 className="text-xl pl-8 pt-8 pb-4">Détails de l'Opération</h2>
+                <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                  onClick={closeDetailsModal}>
+                  x
+                </span>
+              </div>
               <OperationDetails operationId={selectedOperationId} onClose={closeDetailsModal} />
             </div>
           </div>

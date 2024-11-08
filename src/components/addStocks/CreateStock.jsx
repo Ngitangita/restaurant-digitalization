@@ -31,22 +31,22 @@ function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredie
     try {
       await fetchJson(apiUrl("/stocks/add"), 'POST', data);
       console.log('Stock créé avec succès:', data);
-      reset(); // Réinitialise le formulaire
-      if (onStockCreated) onStockCreated(); // Appelle la fonction passée en props
+      reset();
+      if (onStockCreated) onStockCreated(); 
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-8">
       <div>
         <label htmlFor="ingredient" className="block text-gray-700">Ingrédient</label>
         <input
           id="ingredient"
           type="text"
-          value={ingredientName} // Afficher le nom de l'ingrédient
-          readOnly // Le champ est en lecture seule
+          value={ingredientName} 
+          readOnly 
           className={`block w-full p-2 border rounded-md ${errors.ingredientId ? 'border-red-500' : 'border-gray-300'}`}
         />
         <input

@@ -93,15 +93,10 @@ function CreateMenuOrder({ onClose }) {
     };
 
     return (
-        <div className="w-[700px] mx-auto p-4 bg-white rounded">
-            <h1 className="text-center text-3xl font-serif font-bold mb-4">
-                Formulaire de Commande
-                <br /><span className="text-[10px]">nb : choisir table ou chambre</span>
-            </h1>
-            <form onSubmit={handleSubmit(handleConfirm)} className="space-y-4">
+            <form onSubmit={handleSubmit(handleConfirm)} className="space-y-4 p-8">
                 <div className="flex flex-row gap-3 items-center">
                     <div className="flex flex-col w-full relative">
-                        <label htmlFor="customerInput" className="block text-md font-medium text-gray-700">
+                        <label htmlFor="customerInput">
                             Un Client (facultatif)
                         </label>
                         <input
@@ -115,7 +110,7 @@ function CreateMenuOrder({ onClose }) {
                     </div>
 
                     <div className="flex flex-col w-full relative">
-                        <label htmlFor="roomInput" className="block text-md font-medium text-gray-700">
+                        <label htmlFor="roomInput">
                             Une Chambre
                         </label>
                         <input
@@ -129,7 +124,7 @@ function CreateMenuOrder({ onClose }) {
                     </div>
 
                     <div className="flex flex-col w-full relative">
-                        <label htmlFor="tableInput" className="block text-md font-medium text-gray-700">
+                        <label htmlFor="tableInput">
                             Une Table
                         </label>
                         <input
@@ -151,7 +146,7 @@ function CreateMenuOrder({ onClose }) {
                     {menuRequest.length > 0 && (
                         <div className="mt-4">
                             <h2 className="font-semibold">Articles sélectionnés :</h2>
-                            <ul className="mt-4 pb-5">
+                            <ul className="mt-4 pb-5 overflow-y-auto scrollbar-custom h-20 border border-collapse">
                                 {menuRequest.map((item, index) => {
                                     const menu = menus.find(m => m.id === item.menuId);
                                     return (
@@ -175,7 +170,7 @@ function CreateMenuOrder({ onClose }) {
                 <div className="flex justify-between space-x-2 mt-4">
                     <button
                         type="button"
-                        className="bg-gray-500 text-gray-800 rounded px-4 py-2 hover:bg-gray-600"
+                        className="ml-2 bg-gray-300 text-gray-800 rounded px-4 py-2 hover:bg-gray-400"
                         onClick={handleCancel}
                     >
                         Annuler
@@ -188,7 +183,6 @@ function CreateMenuOrder({ onClose }) {
                     </button>
                 </div>
             </form>
-        </div>
     );
 }
 

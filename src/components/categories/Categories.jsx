@@ -120,14 +120,13 @@ const CategoriesList = () => {
     const handlePageInputChange = (e) => {
         const page = Number(e.target.value);
 
-        // Vérifie si le nombre est valide et à l'intérieur des limites
         if (!isNaN(page)) {
             if (page >= 1 && page <= totalPages) {
-                setCurrentPage(page); // Met à jour la page courante
+                setCurrentPage(page);
             } else if (page < 1) {
-                setCurrentPage(1); // Si la page est inférieure à 1, aller à la première page
+                setCurrentPage(1);
             } else if (page > totalPages) {
-                setCurrentPage(totalPages); // Si la page est supérieure au total, aller à la dernière page
+                setCurrentPage(totalPages);
             }
         }
     };
@@ -163,9 +162,18 @@ const CategoriesList = () => {
 
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div className="creatUnitModal bg-white p-6 rounded-md shadow-md z-[9999]">
-                        <h2 className="text-xl mb-4">Créer une nouvelle catégorie</h2>
-                        <CreateCategories onClose={toggleModal} onCategoryCreated={handleCategoryCreated} />
+                    <div className="creatUnitModal bg-white rounded-md shadow-md z-[9999]">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Créer une nouvelle catégorie</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={toggleModal}>
+                                x
+                            </span>
+                        </div>
+                        <CreateCategories
+                            onClose={toggleModal}
+                            onCategoryCreated={handleCategoryCreated} />
                     </div>
                 </div>
             )}
@@ -214,7 +222,15 @@ const CategoriesList = () => {
 
             {showEditCategoryModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="EditModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
+                    <div className="EditModal bg-white rounded-lg shadow-lg w-[400px] text-center">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Modifier la catégorie</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={() => setShowEditCategoryModal(false)}>
+                                x
+                            </span>
+                        </div>
                         <EditModal
                             category={categoryToEdit}
                             setCategoryToEdit={setCategoryToEdit}

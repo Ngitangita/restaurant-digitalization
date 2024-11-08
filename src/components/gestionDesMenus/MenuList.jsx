@@ -22,7 +22,7 @@ const MenuList = () => {
     const [menuToEdit, setMenuToEdit] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [menuToDelete, setMenuToDelete] = useState(null);
-    const [detailsVisible, setDetailsVisible] = useState({}); 
+    const [detailsVisible, setDetailsVisible] = useState({});
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(8);
     const navigate = useNavigate();
@@ -193,7 +193,15 @@ const MenuList = () => {
 
             {isModalOpen && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="CreateMenuModal relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+                    <div className="CreateMenuModal bg-white rounded-lg shadow-lg w-full max-w-md">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Créer une nouvelle menu</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={toggleModal}>
+                                x
+                            </span>
+                        </div>
                         <CreateMenu
                             onCreate={menu => {
                                 setMenus(prev => [...prev, menu]);
@@ -240,13 +248,13 @@ const MenuList = () => {
                                             <td className={`py-2 px-4 cursor-pointer ${menu.status.toLowerCase() !== "active" ? 'text-red-500 font-bold' : ''}`}>
                                                 <button
                                                     onClick={() => handleEditStatus(menu)}
-                                                    className='flex flex-col gap-1 items-center '
+                                                    className='w-full flex flex-col gap-1 items-center '
                                                 >
                                                     <span className='flex flex-row gap-1 items-center '>
                                                         <MdEdit /> {menu.status.toLowerCase()}
                                                     </span>
                                                     {menu.status.toLowerCase() !== "active" && (
-                                                        <div className="text-red-500">⚠️ désolé ce menu est {menu.status}</div>
+                                                        <div className="text-red-500 text-[10px]">⚠️ désolé ce menu est {menu.status}</div>
                                                     )}
                                                 </button>
                                             </td>
@@ -264,13 +272,14 @@ const MenuList = () => {
                                                     <MdDelete />
                                                 </button>
                                                 <button className="relative">
-                                                    <button onClick={() => toggleDetails(menu.id)} className="focus:outline-none rounded p-2 bg-gray-200">
+                                                    <button onClick={() => toggleDetails(menu.id)}
+                                                        className="detail focus:outline-none rounded p-2 bg-gray-200">
                                                         <MdMoreVert />
                                                     </button>
                                                     {detailsVisible[menu.id] && (
-                                                        <div className="absolute text-start right-[1px] bottom-9 w-72 bg-gray-300 shadow-md rounded-md z-50 "> {/* Ajustez mt-1 pour espacement */}
+                                                        <div className="absolute text-start right-[1px] bottom-9 w-72 bg-gray-300 shadow-md rounded-md z-50 ">
                                                             <button onClick={() => handleClickRow(menu.id)}
-                                                                className="block text-start px-4 py-2 hover:bg-gray-100 w-full
+                                                                className="detail block text-start px-4 py-2 hover:bg-gray-100 w-full
                                                             border-y border-white">
                                                                 Voir détail
                                                             </button>
@@ -290,7 +299,15 @@ const MenuList = () => {
 
             {showEditModal && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
+                    <div className="bg-white rounded-lg shadow-lg max-w-sm EditModal">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statut</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={() => setShowEditModal(false)}>
+                                x
+                            </span>
+                        </div>
                         <UpdateStatus
                             onSave={handleUpdateStatus}
                             onCancel={() => setShowEditModal(false)}
@@ -304,7 +321,11 @@ const MenuList = () => {
 
             {showEditMenuModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md EditModal">
+                    <div className="relative top-6 bg-white rounded-lg shadow-lg w-full max-w-md EditModal">
+                        <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                        relative left-[408px] text-[30px] hover:text-white cursor-pointer'
+                            onClick={() => setShowEditMenuModal(false)}>
+                            x</span>
                         <EditMenu
                             menuToEdit={menuToEdit}
                             setMenuToEdit={setMenuToEdit}

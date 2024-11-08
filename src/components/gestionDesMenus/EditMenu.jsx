@@ -2,7 +2,7 @@
 
 const EditMenu = ({ menuToEdit, setMenuToEdit, categories, onSave, onCancel }) => {
     return (
-        <div>
+        <div className="p-8">
             <h2 className="text-xl font-bold mb-4">{menuToEdit.id ? 'Modifier' : 'Créer'} un Menu</h2>
             <input
                 type="text"

@@ -24,14 +24,13 @@ function OperationDetails({ operationId, onClose }) {
   }
 
   return (
-    <div>
+    <div className="p-8">
         {error && <div className="bg-red-300 text-red-700 p-2 rounded mb-4">{error}</div>}
         {!error && (
           <>
-            <h2 className="text-lg font-semibold mb-4">Détails de l'Opération</h2>
             <p><strong>Nom de l'Ingrédient:</strong> {operationDetails.ingredientName}</p>
             <h3 className="text-md font-semibold mt-4">Liste des opérations résumées :</h3>
-            <ul>
+            <ul className="h-[300px] overflow-y-auto scrollbar-custom">
               {operationDetails.operations.map((op) => (
                 <li key={op.id} className="border-b border-gray-300 py-2">
                   <p><strong>Type:</strong> {op.type}</p>

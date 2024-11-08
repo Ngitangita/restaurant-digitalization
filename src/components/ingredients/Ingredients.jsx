@@ -11,7 +11,7 @@ const IngredientList = () => {
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
-    const [selectedIngredient, setSelectedIngredient] = useState(null); 
+    const [selectedIngredient, setSelectedIngredient] = useState(null);
     const [ingredientName, setIngredientName] = useState(null);
     const [unitId, setUnitId] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -43,9 +43,9 @@ const IngredientList = () => {
         setIsModalOpen(data);
         fetchIngredients();
     }, []);
-    
+
     const confirmDelete = (id) => {
-        setSelectedIngredient(id); 
+        setSelectedIngredient(id);
         setShowDeleteModal(true);
     };
 
@@ -71,7 +71,7 @@ const IngredientList = () => {
     };
 
     const handleEdit = (ingredient) => {
-        setSelectedIngredient(ingredient.id); 
+        setSelectedIngredient(ingredient.id);
         setIngredientName(ingredient.name);
         setUnitId(ingredient.unitId);
         setShowEditModal(true);
@@ -85,13 +85,13 @@ const IngredientList = () => {
 
         try {
             await fetchJson(apiUrl(`/ingredients`), 'PUT', {
-                id: selectedIngredient, 
+                id: selectedIngredient,
                 name: ingredientName,
                 unitId: unitId
             });
             setShowEditModal(false);
             setSelectedIngredient(null);
-            fetchIngredients(); 
+            fetchIngredients();
         } catch (error) {
             setError('Erreur lors de la mise à jour de l\'ingrédient');
         }
@@ -129,7 +129,7 @@ const IngredientList = () => {
             } else if (page < 1) {
                 setCurrentPage(1);
             } else if (page > totalPages) {
-                setCurrentPage(totalPages); 
+                setCurrentPage(totalPages);
             }
         }
     };
@@ -164,8 +164,15 @@ const IngredientList = () => {
 
             {isModalOpen && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center ">
-                    <div className="CreateIngredientModal bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                        <h2 className="text-lg font-bold mb-4">Ajouter un nouvel ingrédient</h2>
+                    <div className="CreateIngredientModal bg-white rounded-lg shadow-lg w-full max-w-md">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Ajouter un nouvel ingrédient</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={toggleModal}>
+                                x
+                            </span>
+                        </div>
                         <CreateIngredient onModalOpen={handleModalOpen} onToggle={toggleModal} />
                     </div>
                 </div>
@@ -225,7 +232,7 @@ const IngredientList = () => {
                     <input
                         type="number"
                         value={currentPage}
-                        onChange={handlePageInputChange} 
+                        onChange={handlePageInputChange}
                         min={1}
                         max={totalPages}
                         className="border border-gray-300 rounded-md px-2 py-1 outline-none w-20"
@@ -255,7 +262,15 @@ const IngredientList = () => {
 
             {showEditModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="bg-white p-8 rounded-lg shadow-lg EditModal">
+                    <div className="bg-white rounded-lg shadow-lg EditModal">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Modifier l'ingrédient</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={() => setShowEditModal(false)}>
+                                x
+                            </span>
+                        </div>
                         <EditIngredients
                             ingredientName={ingredientName}
                             setIngredientName={setIngredientName}

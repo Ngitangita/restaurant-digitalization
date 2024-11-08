@@ -2,8 +2,7 @@
 
 const UpdateStatus = ({status, statuses, setStatus,  onSave, onCancel}) => {
     return (
-        <div>
-            <h2 className="text-xl font-bold mb-4">Modifier le statut</h2>
+        <div className="p-8">
             <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}

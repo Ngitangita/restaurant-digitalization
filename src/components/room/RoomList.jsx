@@ -153,24 +153,16 @@ const RoomList = () => {
                                     <td className="py-2 px-4">{room.roomNumber}</td>
                                     <td className="py-2 px-4">{room.capacity} personnes</td>
                                     <td className="py-2 px-4">{room.price} Ar</td>
-                                    {/* <td className="py-2 px-4 cursor-pointer">
-                                        <button
-                                            onClick={() => toggleModal('editStatus', room)}
-                                            className='flex flex-row gap-1 items-center'
-                                        >
-                                            <MdEdit /> {room.status}
-                                        </button>
-                                    </td> */}
                                     <td className={`py-2 px-4 cursor-pointer ${room.status.toLowerCase() !== "available" ? 'text-red-500 font-bold' : ''}`}>
                                         <button
                                             onClick={() => toggleModal('editStatus', room)}
-                                            className='flex flex-col gap-1 items-center'
+                                            className='w-full flex flex-col gap-1 items-center'
                                         >
                                             <span className='flex flex-row gap-1 items-center '>
                                                 <MdEdit /> {room.status.toLowerCase()}
                                             </span>
                                             {room.status.toLowerCase() !== "available" && (
-                                                <div className="text-red-500">⚠️ désolé cette chambre est {room.status}</div>
+                                                <div className="text-red-500 text-[10px]">⚠️ désolé cette chambre est {room.status}</div>
                                             )}
                                         </button>
                                     </td>
@@ -201,7 +193,15 @@ const RoomList = () => {
 
             {isModalOpen && modalType === 'create' && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
+                    <div className="bg-white rounded-lg shadow-lg EditModal">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Ajouter le numéro du chambre</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={() => toggleModal('')}>
+                                x
+                            </span>
+                        </div>
                         <CreateRoom
                             onCreate={handleCreateRoom}
                             closeModal={() => toggleModal('')}
@@ -213,7 +213,15 @@ const RoomList = () => {
             )}
             {isModalOpen && modalType === 'editStatus' && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
+                    <div className="bg-white rounded-lg shadow-lg max-w-sm EditModal">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statue</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={() => toggleModal('')}>
+                                x
+                            </span>
+                        </div>
                         <UpdateStatus
                             onSave={handleUpdateStatus}
                             onCancel={() => toggleModal('')}
@@ -226,7 +234,11 @@ const RoomList = () => {
             )}
             {isModalOpen && modalType === 'editRoom' && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md EditModal">
+                    <div className="bg-white rounded-lg shadow-lg w-full max-w-md EditModal">
+                        <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                        relative left-[408px] text-[30px] hover:text-white cursor-pointer'
+                            onClick={() => toggleModal('')}>
+                            x</span>
                         <EditRoom
                             roomToEdit={selectedRoom}
                             setRoomToEdit={setSelectedRoom}

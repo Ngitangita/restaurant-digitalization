@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { apiUrl } from '../../services/api';
 
-const CreateRoom = ({ onCreate, createRoomModal, statuses = [], floors = [] }) => {
+const CreateRoom = ({ onCreate, createRoomModal, closeModal, statuses = [], floors = [] }) => {
     const [price, setPrice] = useState('');
     const [status, setStatus] = useState('');
     const [floorId, setFloorId] = useState('');
@@ -58,9 +58,9 @@ const CreateRoom = ({ onCreate, createRoomModal, statuses = [], floors = [] }) =
     };
 
     return (
-        <form onSubmit={handleSubmit} className='CreateRoomModal'>
+        <form onSubmit={handleSubmit} className='CreateRoomModal p-8 '>
             <div>
-                <label htmlFor="roomNumber">Room number:</label>
+                <label htmlFor="roomNumber">N° du chambre:</label>
                 <input
                     id="roomNumber"
                     type="number"
@@ -133,11 +133,11 @@ const CreateRoom = ({ onCreate, createRoomModal, statuses = [], floors = [] }) =
             </div>
 
             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-            <div className="flex flex-row gap-52 relative top-4">
+            <div className="flex flex-row gap-4 relative top-4">
                 <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">Créer</button>
                 <button
                     type="button"
-                    onClick={createRoomModal}
+                    onClick={closeModal}
                     className="ml-2 bg-gray-300 text-gray-800 rounded px-4 py-2 hover:bg-gray-400"
                 >
                     Annuler

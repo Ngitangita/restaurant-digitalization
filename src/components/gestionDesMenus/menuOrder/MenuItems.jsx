@@ -58,7 +58,7 @@ function MenuItems({ onSave }) {
         <div className="w-full flex flex-row gap-4 items-start">
 
             <div className="flex flex-col w-full relative">
-                <label htmlFor="menuInput" className="block text-md font-medium text-gray-700">
+                <label htmlFor="menuInput">
                     Menu Sélectionné
                 </label>
                 <input
@@ -86,7 +86,7 @@ function MenuItems({ onSave }) {
             </div>
 
             <div className="flex flex-col w-full">
-                <label htmlFor="quantity" className="block w-full font-medium text-gray-700">
+                <label htmlFor="quantity">
                     Quantité
                 </label>
                 <input

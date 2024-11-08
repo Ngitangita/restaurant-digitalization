@@ -47,8 +47,7 @@ const CreateFloor = ({ onCreate, closeModal }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="p-6 bg-white rounded shadow-md">
-            <h2 className="text-lg font-semibold mb-4">Créer un nouvel étage</h2>
+        <form onSubmit={handleSubmit} className="p-6">
             <div className="mb-4">
                 <input
                     type="number"

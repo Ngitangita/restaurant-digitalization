@@ -1,7 +1,6 @@
 const EditIngredients = ({units, ingredientName, setIngredientName, unitId, setUnitId, onSave, onCancel, error}) => {
   return (
-    <div>
-      <h2 className="text-lg font-bold mb-4">Modifier l'ingrédient</h2>
+    <div className="p-8">
       <input
         type="text"
         value={ingredientName}

@@ -2,7 +2,7 @@
 
 const EditFloor = ({ floorToEdit, setFloorToEdit, onSave, onCancel }) => {
     return (
-        <div>
+        <div className="p-8">
             <h2 className="text-xl font-bold mb-4">{floorToEdit.id ? 'Modifier' : 'Créer'} un Floor</h2>
             <div>
                 <label htmlFor="floorNumber">N° de l'étage:</label>

@@ -114,13 +114,13 @@ function MenuOrdersList() {
                             <td className="py-2 px-4 cursor-pointer">
                                 <button
                                     onClick={() => handleEditStatus(order)}
-                                    className={`flex flex-col gap-1 items-center ${order.orderStatus?.toLowerCase() !== "completed" ? 'text-red-500 font-bold' : ''}`}
+                                    className={`w-full flex flex-col gap-1 items-center ${order.orderStatus?.toLowerCase() !== "completed" ? 'text-red-500 font-bold' : ''}`}
                                 >
                                     <span className='flex flex-row gap-1 items-center '>
                                         <MdEdit /> {order.orderStatus?.toLowerCase() || "N/A"}
                                     </span>
                                     {order.orderStatus?.toLowerCase() !== "completed" && (
-                                        <div className="text-red-500">⚠️ désolé, la commande est {order.orderStatus}</div>
+                                        <div className="text-red-500 text-[10px]">⚠️ désolé, la commande est {order.orderStatus}</div>
                                     )}
                                 </button>
                             </td>
@@ -131,7 +131,15 @@ function MenuOrdersList() {
 
             {showEditModal && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-                    <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
+                    <div className="bg-white rounded-lg shadow-lg EditModal">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statut</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={() => setShowEditModal(false)}>
+                                x
+                            </span>
+                        </div>
                         <UpdateStatus
                             onSave={handleUpdateStatus}
                             onCancel={() => setShowEditModal(false)}
@@ -146,11 +154,25 @@ function MenuOrdersList() {
             {/* Modal for creating a new order */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-                    <CreateMenuOrder
-                        isOpen={isModalOpen}
-                        onClose={() => setIsModalOpen(false)}
-                        onOrderCreated={(newOrder) => setOrders(prev => [...prev, newOrder])}
-                    />
+                    <dir className="w-[700px] mx-auto bg-white rounded">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-center font-serif font-bold
+                            text-xl pl-8 pt-8 pb-4">
+                                Formulaire de Commande
+                                <br /><span className="text-[10px]">nb : choisir table ou chambre</span>
+                            </h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-8 text-[30px] hover:text-white cursor-pointer'
+                                onClick={() => setIsModalOpen(false)}>
+                                x
+                            </span>
+                        </div>
+                        <CreateMenuOrder
+                            isOpen={isModalOpen}
+                            onClose={() => setIsModalOpen(false)}
+                            onOrderCreated={(newOrder) => setOrders(prev => [...prev, newOrder])}
+                        />
+                    </dir>
                 </div>
             )}
         </div>

@@ -76,7 +76,7 @@ function CreateIngredient({ onModalOpen, onToggle }) {
   };
 
   return (
-    <div >
+    <div className='p-8'>
       <form onSubmit={handleSubmit(onSubmit)} className="CreateIngredient m-0 p-4 w-full rounded-md">
         <div className="mb-4">
           <label htmlFor="name" className="block text-gray-700">Nom</label>

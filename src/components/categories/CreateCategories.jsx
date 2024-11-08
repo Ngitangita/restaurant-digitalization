@@ -16,8 +16,8 @@ const CreateCategories = ({ onClose, onCategoryCreated }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-4">
+        <form onSubmit={handleSubmit(onSubmit)} className='p-6 flex flex-col gap-4'>
+            <div>
                 <label htmlFor="name" className="block text-gray-700">Nom de la catégorie</label>
                 <input
                     id="name"

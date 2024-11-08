@@ -201,12 +201,17 @@ function TablesListe() {
                             <tr key={table.id} className="hover:bg-gray-100 text-center border-y">
                                 <td className="py-2 px-4">{table.number}</td>
                                 <td className="py-2 px-4">{table.capacity}</td>
-                                <td className="py-2 px-4 cursor-pointer">
+                                <td className={`py-2 px-4 cursor-pointer ${table.status.toLowerCase() !== "available" ? 'text-red-500 font-bold' : ''}`}>
                                     <button
                                         onClick={() => handleEditStatus(table)}
-                                        className='flex flex-row gap-1 items-center w-full justify-center'
+                                        className='w-full flex flex-col gap-1 items-center '
                                     >
-                                        {table.status}<MdEdit />
+                                        <span className='flex flex-row gap-1 items-center '>
+                                            <MdEdit /> {table.status.toLowerCase()}
+                                        </span>
+                                        {table.status.toLowerCase() !== "available" && (
+                                            <div className="text-red-500 text-[10px]">⚠️ désolé cette table est {table.status}</div>
+                                        )}
                                     </button>
                                 </td>
                                 <td className="py-2 px-4 flex flex-row gap-4 justify-center">
@@ -254,45 +259,54 @@ function TablesListe() {
 
             {showCreateModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center EditModal">
-                        <h2 className="text-lg font-semibold mb-4">Créer une Table</h2>
-                        <input
-                            type="number"
-                            value={tableNumber}
-                            onChange={(e) => setTableNumber(e.target.value)}
-                            placeholder="Numéro de la table"
-                            className="border border-gray-300 p-2 mb-4 w-full"
-                        />
-                        <input
-                            type="number"
-                            value={tableCapacity}
-                            onChange={(e) => setTableCapacity(e.target.value)}
-                            placeholder="Capacité de la table"
-                            className="border border-gray-300 p-2 mb-4 w-full"
-                        />
-                        <select
-                            value={tableStatus}
-                            onChange={(e) => setTableStatus(e.target.value)}
-                            className="border border-gray-300 p-2 mb-4 w-full"
-                        >
-                            <option value="" disabled>Sélectionner le statut</option>
-                            {tableStatuses.map((status) => (
-                                <option key={status} value={status}>{status}</option>
-                            ))}
-                        </select>
-                        <div className="flex justify-around">
-                            <button
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                                onClick={handleCreateTable}
+                    <div className="bg-white  rounded-lg shadow-lg w-[400px] text-center EditModal">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Créer une Table</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={() => setShowCreateModal(false)}>
+                                x
+                            </span>
+                        </div>
+                        <div className='p-6'>
+                            <input
+                                type="number"
+                                value={tableNumber}
+                                onChange={(e) => setTableNumber(e.target.value)}
+                                placeholder="Numéro de la table"
+                                className="border border-gray-300 p-2 mb-4 w-full"
+                            />
+                            <input
+                                type="number"
+                                value={tableCapacity}
+                                onChange={(e) => setTableCapacity(e.target.value)}
+                                placeholder="Capacité de la table"
+                                className="border border-gray-300 p-2 mb-4 w-full"
+                            />
+                            <select
+                                value={tableStatus}
+                                onChange={(e) => setTableStatus(e.target.value)}
+                                className="border border-gray-300 p-2 mb-4 w-full"
                             >
-                                Créer
-                            </button>
-                            <button
-                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
-                                onClick={() => setShowCreateModal(false)}
-                            >
-                                Annuler
-                            </button>
+                                <option value="" disabled>Sélectionner le statut</option>
+                                {tableStatuses.map((status) => (
+                                    <option key={status} value={status}>{status}</option>
+                                ))}
+                            </select>
+                            <div className="flex justify-around">
+                                <button
+                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                    onClick={handleCreateTable}
+                                >
+                                    Créer
+                                </button>
+                                <button
+                                    className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
+                                    onClick={() => setShowCreateModal(false)}
+                                >
+                                    Annuler
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -300,30 +314,39 @@ function TablesListe() {
 
             {showEditModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center EditModal">
-                        <h2 className="text-lg font-semibold mb-4">Modifier le statut</h2>
-                        <select
-                            value={tableStatus}
-                            onChange={(e) => setTableStatus(e.target.value)}
-                            className="border border-gray-300 p-2 mb-4 w-full"
-                        >
-                            {tableStatuses.map((status) => (
-                                <option key={status} value={status}>{status}</option>
-                            ))}
-                        </select>
-                        <div className="flex justify-around">
-                            <button
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                                onClick={handleUpdateStatus}
+                    <div className="bg-white rounded-lg shadow-lg w-[400px] text-center EditModal">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statut</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={() => setShowEditModal(false)}>
+                                x
+                            </span>
+                        </div>
+                        <div className='p-6'>
+                            <select
+                                value={tableStatus}
+                                onChange={(e) => setTableStatus(e.target.value)}
+                                className="border border-gray-300 p-2 mb-4 w-full"
                             >
-                                Mettre à jour
-                            </button>
-                            <button
-                                className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
-                                onClick={() => setShowEditModal(false)}
-                            >
-                                Annuler
-                            </button>
+                                {tableStatuses.map((status) => (
+                                    <option key={status} value={status}>{status}</option>
+                                ))}
+                            </select>
+                            <div className="flex justify-around">
+                                <button
+                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                    onClick={handleUpdateStatus}
+                                >
+                                    Mettre à jour
+                                </button>
+                                <button
+                                    className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                                    onClick={() => setShowEditModal(false)}
+                                >
+                                    Annuler
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -331,7 +354,11 @@ function TablesListe() {
 
             {showEditTableModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md EditModal">
+                    <div className="relative top-6 bg-white rounded-lg shadow-lg w-full max-w-md EditModal">
+                        <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                        relative left-[408px] text-[30px] hover:text-white cursor-pointer'
+                            onClick={() => setShowEditTableModal(false)}>
+                            x</span>
                         <EditTable
                             tableToEdit={tableToEdit}
                             setTableToEdit={setTableToEdit}

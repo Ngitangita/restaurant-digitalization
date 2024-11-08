@@ -21,7 +21,7 @@ body{background-color: #ebe9e9;}
     background-repeat: no-repeat; background-size: cover;
 }
 
-.scrollbar-custom {scrollbar-width: none;}
+.scrollbar-custom {scrollbar-width: thin;}
 
 body.dark {
     background: #0e1c36;
@@ -67,7 +67,9 @@ body.dark tr {border: none;}
 body.dark tr:hover {
     background: rgba(255, 255, 255, 0.1); color: #e5e5e5 !important; opacity: 0.85;}
 
-body.dark th {background: #0e1c36; border: none;}
+body.dark th{background: #0e1c36; border: none;}
+
+body.dark .detail{color: #0e1c36;}
 
 body.dark td, body.dark td button {color: #e5e5e5; opacity: 0.85; border: 1px solid rgba(255, 255, 255, 0.1);}
 
