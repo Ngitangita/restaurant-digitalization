@@ -21,7 +21,7 @@ body{background-color: #ebe9e9;}
     background-repeat: no-repeat; background-size: cover;
 }
 
-.scrollbar-custom {scrollbar-width: thin;}
+.scrollbar-custom {scrollbar-width: none;}
 
 body.dark {
     background: #0e1c36;
@@ -29,8 +29,9 @@ body.dark {
 
 body.dark header, body.dark .Sidebar, body.dark .BonDeCommandes, body.dark .ingredient, body.dark .ingredientTable, 
 body.dark .Breadcrumb, body.dark .MenuList, body.dark .categories, body.dark .categoriesTable, body.dark .StockList, 
-body.dark .StockListTBody, body.dark .Notifications, body.dark .UpdatePassword, body.dark .TableListe, body.dark .TableTbl {
-    background: #1a2b52; color: #e5e5e5 !important; opacity: 0.85;}
+body.dark .StockListTBody, body.dark .Notifications, body.dark .UpdatePassword, body.dark .TableListe, body.dark .TableTbl,
+body.dark .MenuWithIngredients, body.dark .RoomList, body.dark .FloorList, body.dark .menuOrdersList,
+body.dark .PurchaseList{background: #1a2b52; color: #e5e5e5 !important; opacity: 0.85;}
 
 body.dark span {
     color: #e5e5e5 !important; opacity: 0.85;}
@@ -44,16 +45,18 @@ body.dark .Sidebar .button:hover {
 body.dark .Sidebar .Authentification {
     background: #1a2b52; color: #e5e5e5 !important;}
 
-body.dark .CreateIngredientModal, body.dark .DeleteModal, body.dark .creatUnitModal, body.dark .ModalListeUnit,
-body.dark .EditModal, body.dark .createStockModale, body.dark .CreateMenuModal, body.dark .AddIngredientsModal
-{background: #0e1c36; color: #e5e5e5 !important; opacity: 0.85;}
+body.dark .CreateModal, body.dark .DeleteModal, body.dark .ModalListeUnit,
+body.dark .EditModal, body.dark .DetailsModal{background: #0e1c36; color: #e5e5e5 !important; }
 
 body.dark label {
     color: rgba(255, 255, 255, 0.6) !important;
 }
 
-body.dark input, body.dark select, body.dark option, body.dark textarea {
+body.dark input, body.dark select, body.dark option, body.dark textarea, body.dark .Suggestions {
     background: #1a2b52; color: #e5e5e5 !important; opacity: 0.85;}
+    body.dark .Suggestions:hover{
+         background-color: #0e1c36;
+    }
 
 body.dark .SearchBox {background: #1a2b52; color: #e5e5e5; border: none; opacity: 0.85;}
 

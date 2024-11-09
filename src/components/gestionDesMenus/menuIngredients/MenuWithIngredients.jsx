@@ -76,7 +76,7 @@ function MenuWithIngredients() {
 
 
   return (
-    <div className="container mx-auto p-4 bg-white">
+    <div className="container mx-auto p-4 bg-white MenuWithIngredients">
       <div className='flex flex-row gap-5 items-center'>
         <ManageMenuIngredients
           onAddIngredients={fetchMenuWithIngredients}
@@ -85,9 +85,9 @@ function MenuWithIngredients() {
         <Link to="/menuList" className='text-blue-500 hover:underline'>Rétour au menu</Link>
       </div>
       <h1 className="text-2xl font-bold mb-4">{menu.menuName}</h1>
-      <p className="mb-4">{menu.menuDesc}</p>
       <p className="mb-4">Prix : {menu.menuPrice} Ar</p>
       <p className="mb-4">Statut : {menu.status}</p>
+      <p className="mb-4">{menu.menuDesc}</p>
 
       <h2 className="text-xl font-bold mt-6">Ingrédients :</h2>
       <table className="min-w-full shadow-md rounded-lg overflow-hidden mt-4">
@@ -135,9 +135,9 @@ function MenuWithIngredients() {
       </table>
       {showDeleteModal && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+          <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md DeleteModal">
             <h2 className="text-lg font-bold mb-4">Confirmer la suppression</h2>
-            <p>Voulez-vous vraiment supprimer le menu {ingredientToDelete?.ingredientName} ?</p>
+            <p>Voulez-vous vraiment supprimer l'ingredient {ingredientToDelete?.ingredientName} ?</p>
             <div className="mt-4">
               <button
                 className="bg-red-500 text-white rounded p-2 hover:bg-red-600 mr-2"

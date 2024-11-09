@@ -106,7 +106,7 @@ const RoomList = () => {
     );
 
     return (
-        <div className="container mx-auto p-4 bg-white">
+        <div className="container mx-auto p-4 bg-white RoomList">
             <h2 className="text-2xl font-bold mb-4">Liste des Salles</h2>
             <div className="flex flex-row gap-4 mb-4">
                 <div className="relative flex items-center w-64">
@@ -136,7 +136,7 @@ const RoomList = () => {
             ) : error ? (
                 <p className="text-center text-red-500">{error}</p>
             ) : (
-                <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden">
+                <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden RoomList">
                     <thead>
                         <tr className="bg-gray-200">
                             <th className="py-2 px-4">Numéro de Salle</th>
@@ -193,9 +193,9 @@ const RoomList = () => {
 
             {isModalOpen && modalType === 'create' && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-                    <div className="bg-white rounded-lg shadow-lg EditModal">
+                    <div className="bg-white rounded-lg shadow-lg EditModal w-auto">
                         <div className='flex flex-row justify-between items-center'>
-                            <h2 className="text-xl pl-8 pt-8 pb-4">Ajouter le numéro du chambre</h2>
+                            <h2 className="text-xl pl-8 pt-8">Ajouter le numéro du chambre</h2>
                             <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
                             relative bottom-4 text-[30px] hover:text-white cursor-pointer'
                                 onClick={() => toggleModal('')}>
@@ -252,14 +252,13 @@ const RoomList = () => {
             {isModalOpen && modalType === 'delete' && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
                     <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
-                        <h3 className="text-lg font-bold mb-4">Confirmation de suppression</h3>
-                        <p>Êtes-vous sûr de vouloir supprimer cette salle ?</p>
+                        <p>Êtes-vous sûr de vouloir supprimer cette salle n°{selectedRoom?.roomNumber} ?</p>
                         <div className="mt-4 flex justify-end">
                             <button className="bg-red-500 text-white rounded px-4 py-2" onClick={handleDelete}>
-                                Supprimer
+                                Oui
                             </button>
                             <button className="bg-gray-300 text-gray-700 rounded px-4 py-2 ml-2" onClick={() => toggleModal('')}>
-                                Annuler
+                                Non
                             </button>
                         </div>
                     </div>

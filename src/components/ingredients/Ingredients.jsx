@@ -11,6 +11,7 @@ const IngredientList = () => {
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
+    const [ingredientToDelete, setIngredientToDelete] = useState(null);
     const [selectedIngredient, setSelectedIngredient] = useState(null);
     const [ingredientName, setIngredientName] = useState(null);
     const [unitId, setUnitId] = useState(null);
@@ -44,30 +45,27 @@ const IngredientList = () => {
         fetchIngredients();
     }, []);
 
-    const confirmDelete = (id) => {
-        setSelectedIngredient(id);
-        setShowDeleteModal(true);
-    };
-
-
     const handleDelete = async () => {
         try {
-            await fetchJson(apiUrl(`/ingredients/${selectedIngredient}`), 'DELETE');
+            await fetch(apiUrl(`/ingredients/${ingredientToDelete.id}`), {
+                method: 'DELETE',
+            });
             setShowDeleteModal(false);
-            setSelectedIngredient(null);
             fetchIngredients();
         } catch (error) {
-            if (error.message.includes("404")) {
-                setError("Ingrédient introuvable");
-            } else {
-                setError("Erreur lors de la suppression de l'ingrédient");
-            }
+            console.error('Erreur lors de la suppression de l\'ingredients:', error);
         }
+    };
+
+    const confirmDelete = (ingredientId) => {
+        const ingredient = ingredients.find(i => i.id === ingredientId);
+        setIngredientToDelete(ingredient);
+        setShowDeleteModal(true);
     };
 
     const cancelDelete = () => {
         setShowDeleteModal(false);
-        setSelectedIngredient(null);
+        setIngredientToDelete(null);
     };
 
     const handleEdit = (ingredient) => {
@@ -164,7 +162,7 @@ const IngredientList = () => {
 
             {isModalOpen && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center ">
-                    <div className="CreateIngredientModal bg-white rounded-lg shadow-lg w-full max-w-md">
+                    <div className="CreateModal bg-white rounded-lg shadow-lg w-full max-w-md">
                         <div className='flex flex-row justify-between items-center'>
                             <h2 className="text-xl pl-8 pt-8 pb-4">Ajouter un nouvel ingrédient</h2>
                             <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
@@ -250,8 +248,7 @@ const IngredientList = () => {
             {showDeleteModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
                     <div className="bg-white p-8 rounded-lg shadow-lg DeleteModal">
-                        <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
-                        <p>Êtes-vous sûr de vouloir supprimer cet ingrédient ?</p>
+                        <p>Êtes-vous sûr de vouloir supprimer l'ingrédient {ingredientToDelete?.name} ?</p>
                         <div className="flex justify-end mt-4">
                             <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mr-2" onClick={handleDelete}>Oui</button>
                             <button className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400" onClick={cancelDelete}>Non</button>

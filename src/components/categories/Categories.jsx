@@ -4,7 +4,6 @@ import CreateCategories from './CreateCategories';
 import { MdDelete, MdClear } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import EditModal from './EditModal';
-import DeleteModal from './DeleteModal';
 
 const CategoriesList = () => {
     const [categories, setCategories] = useState([]);
@@ -42,25 +41,27 @@ const CategoriesList = () => {
         setIsModalOpen(false);
     };
 
-    const confirmDelete = (id) => {
-        setCategoryToDelete(id);
-        setShowDeleteModal(true);
-    };
-
     const handleDelete = async () => {
         try {
-            await fetchJson(apiUrl(`/categories/${categoryToDelete}`), 'DELETE');
-            fetchCategories();
-        } catch (err) {
-            const errorMsg = err.message || 'Erreur lors de la suppression de la catégorie';
-            setError(errorMsg);
-        } finally {
+            await fetch(apiUrl(`/categories/${categoryToDelete.id}`), {
+                method: 'DELETE',
+            });
             setShowDeleteModal(false);
+            fetchCategories();
+        } catch (error) {
+            console.error('Erreur lors de la suppression de la catégorie', error);
         }
+    };
+
+    const confirmDelete = (categorieId) => {
+        const categorie = categories.find(c => c.id === categorieId);
+        setCategoryToDelete(categorie);
+        setShowDeleteModal(true);
     };
 
     const cancelDelete = () => {
         setShowDeleteModal(false);
+        setCategoryToDelete(null);
     };
 
     const handleClearSearch = () => {
@@ -162,7 +163,7 @@ const CategoriesList = () => {
 
             {isModalOpen && (
                 <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-                    <div className="creatUnitModal bg-white rounded-md shadow-md z-[9999]">
+                    <div className="CreateModal bg-white rounded-md shadow-md z-[9999]">
                         <div className='flex flex-row justify-between items-center'>
                             <h2 className="text-xl pl-8 pt-8 pb-4">Créer une nouvelle catégorie</h2>
                             <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
@@ -215,7 +216,23 @@ const CategoriesList = () => {
             {showDeleteModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center DeleteModal">
-                        <DeleteModal onDelete={handleDelete} onCancel={cancelDelete} />
+                        <div>
+                            <p className="mb-6">Êtes-vous sûr de vouloir supprimer le catégorie {categoryToDelete?.name} ?</p>
+                            <div className="flex justify-around">
+                                <button
+                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                                    onClick={handleDelete}
+                                >
+                                    Oui
+                                </button>
+                                <button
+                                    className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                                    onClick={cancelDelete}
+                                >
+                                    Non
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}

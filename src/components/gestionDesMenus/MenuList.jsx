@@ -193,7 +193,7 @@ const MenuList = () => {
 
             {isModalOpen && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="CreateMenuModal bg-white rounded-lg shadow-lg w-full max-w-md">
+                    <div className="CreateModal bg-white rounded-lg shadow-lg w-full max-w-md">
                         <div className='flex flex-row justify-between items-center'>
                             <h2 className="text-xl pl-8 pt-8 pb-4">Créer une nouvelle menu</h2>
                             <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
@@ -339,8 +339,8 @@ const MenuList = () => {
 
             {showDeleteModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-                        <h2 className="text-lg font-bold mb-4">Confirmer la suppression</h2>
+                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg 
+                    w-full max-w-md DeleteModal">
                         <p>Voulez-vous vraiment supprimer le menu {menuToDelete?.name} ?</p>
                         <div className="mt-4">
                             <button

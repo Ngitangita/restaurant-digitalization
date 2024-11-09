@@ -194,7 +194,7 @@ function StockList() {
 
         {showDetailsModal && selectedOperationId && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg w-1/2">
+            <div className="bg-white rounded-lg w-1/2 DetailsModal">
               <div className='flex flex-row justify-between items-center'>
                 <h2 className="text-xl pl-8 pt-8 pb-4">Détails de l'Opération</h2>
                 <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]

@@ -97,7 +97,7 @@ const FloorsList = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-white">
+    <div className="container mx-auto p-4 bg-white FloorList">
       <h1 className="text-2xl font-bold mb-4">Liste des étages</h1>
       {error && <p className="text-red-500">{error}</p>}
 
@@ -112,7 +112,7 @@ const FloorsList = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="creatUnitModal bg-white rounded-md shadow-md z-[9999]">
+          <div className="CreateModal bg-white rounded-md shadow-md z-[9999]">
             <div className='flex flex-row justify-between items-center'>
               <h2 className="text-xl pl-8 pt-8 pb-4"> Créer une nouvelle étage</h2>
               <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
@@ -185,9 +185,8 @@ const FloorsList = () => {
       )}
       {showDeleteModal && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-            <h2 className="text-lg font-bold mb-4">Confirmer la suppression</h2>
-            <p>Voulez-vous vraiment supprimer l'étage {floorToDelete?.floorNumber} ?</p>
+          <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md DeleteModal">
+            <p>Voulez-vous vraiment supprimer l'étage n°{floorToDelete?.floorNumber} ?</p>
             <div className="mt-4">
               <button
                 className="bg-red-500 text-white rounded p-2 hover:bg-red-600 mr-2"

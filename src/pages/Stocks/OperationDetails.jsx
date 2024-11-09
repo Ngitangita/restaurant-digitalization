@@ -5,6 +5,7 @@ import dayjs from 'dayjs';
 function OperationDetails({ operationId, onClose }) {
   const [operationDetails, setOperationDetails] = useState(null);
   const [error, setError] = useState(null);
+  const [showScrollbar, setShowScrollbar] = useState(false);
 
   useEffect(() => {
     const url = `${apiUrl("/operations/details/")}${operationId}`;
@@ -24,13 +25,19 @@ function OperationDetails({ operationId, onClose }) {
   }
 
   return (
-    <div className="p-8">
+    <div className="p-8 ">
         {error && <div className="bg-red-300 text-red-700 p-2 rounded mb-4">{error}</div>}
         {!error && (
           <>
             <p><strong>Nom de l'Ingrédient:</strong> {operationDetails.ingredientName}</p>
             <h3 className="text-md font-semibold mt-4">Liste des opérations résumées :</h3>
-            <ul className="h-[300px] overflow-y-auto scrollbar-custom">
+            <ul className="h-[300px] overflow-y-auto scrollbar-custom border border-collapse p-4"
+             onMouseEnter={() => setShowScrollbar(true)}
+             onMouseLeave={() => setShowScrollbar(false)}
+             style={{
+               scrollbarWidth: showScrollbar ? 'thin' : 'none',
+               overflowY: showScrollbar ? 'scroll' : 'hidden'
+             }}>
               {operationDetails.operations.map((op) => (
                 <li key={op.id} className="border-b border-gray-300 py-2">
                   <p><strong>Type:</strong> {op.type}</p>
@@ -47,6 +54,18 @@ function OperationDetails({ operationId, onClose }) {
         >
           Fermer
         </button>
+        <style jsx="true">{`
+        body {
+          overflow-y: hidden; /* Masquer la barre de défilement sur le corps */
+        }
+        .Sidebar::-webkit-scrollbar {
+          width: ${showScrollbar ? '8px' : '0px'}; /* Largeur de la barre de défilement */
+        }
+        .Sidebar::-webkit-scrollbar-thumb {
+          background-color: gray; /* Couleur de la barre de défilement */
+          border-radius: 10px; /* Coins arrondis */
+        }
+      `}</style>
       </div>
   );
 }

@@ -12,7 +12,7 @@ function TablesListe() {
     const [tableStatus, setTableStatus] = useState('');
     const [tableStatuses, setTableStatuses] = useState([]);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [selectedTable, setSelectedTable] = useState(null);
+    const [tableToDelete, setTableToDelete] = useState(null);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedTableId, setSelectedTableId] = useState(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -65,26 +65,28 @@ function TablesListe() {
         setTableCapacity('');
         setTableStatus('');
     };
-
-    const confirmDelete = (id) => {
-        setSelectedTable(id);
-        setShowDeleteModal(true);
-    };
-
+    
     const handleDelete = async () => {
         try {
-            await fetchJson(apiUrl(`/tables/${selectedTable}`), 'DELETE');
+            await fetch(apiUrl(`/tables/${tableToDelete.id}`), {
+                method: 'DELETE',
+            });
             setShowDeleteModal(false);
-            setSelectedTable(null);
             fetchTables();
         } catch (error) {
             console.error('Erreur lors de la suppression de la table:', error);
         }
     };
 
+    const confirmDelete = (tableId) => {
+        const table = tables.find(t => t.id === tableId);
+        setTableToDelete(table);
+        setShowDeleteModal(true);
+    };
+
     const cancelDelete = () => {
         setShowDeleteModal(false);
-        setSelectedTable(null);
+        setTableToDelete(null);
     };
 
     const handleEditStatus = (table) => {
@@ -237,20 +239,19 @@ function TablesListe() {
             {showDeleteModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center DeleteModal">
-                        <h2 className="text-lg font-semibold mb-4">Confirmer la suppression</h2>
-                        <p className="mb-6">Êtes-vous sûr de vouloir supprimer cette table ?</p>
+                        <p className="mb-6">Êtes-vous sûr de vouloir supprimer la table n°{tableToDelete?.number} ?</p>
                         <div className="flex justify-around">
                             <button
                                 className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
                                 onClick={handleDelete}
                             >
-                                Supprimer
+                                Oui
                             </button>
                             <button
                                 className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
                                 onClick={cancelDelete}
                             >
-                                Annuler
+                                Non
                             </button>
                         </div>
                     </div>

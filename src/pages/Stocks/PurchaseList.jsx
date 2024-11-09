@@ -28,7 +28,7 @@ function PurchaseList() {
 
 
   return (
-    <div className="w-full p-4 bg-gray-100">
+    <div className="w-full p-4 bg-gray-100 PurchaseList">
       {error && <div className="bg-red-300 text-red-700 p-2 rounded mb-4">{error}</div>}
 
       <div className="mb-4">
@@ -42,9 +42,9 @@ function PurchaseList() {
       </div>
 
       <div className="overflow-auto">
-        <table className="min-w-full bg-white shadow-md rounded-lg">
-          <thead className="bg-gray-200 text-gray-700">
-            <tr>
+        <table className="min-w-full bg-white shadow-md rounded-lg PurchaseList">
+          <thead >
+            <tr className="bg-gray-200">
               <th className="py-2 px-4">Nom Ingrédient</th>
               <th className="py-2 px-4">Quantité</th>
               <th className="py-2 px-4">Coût</th>

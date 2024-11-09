@@ -144,7 +144,7 @@ function CreateMenuOrder({ onClose }) {
                     {stockError && <p className="text-red-500 text-sm">{stockError}</p>}
 
                     {menuRequest.length > 0 && (
-                        <div className="mt-4">
+                        <div className="mt-4 ">
                             <h2 className="font-semibold">Articles sélectionnés :</h2>
                             <ul className="mt-4 pb-5 overflow-y-auto scrollbar-custom h-20 border border-collapse">
                                 {menuRequest.map((item, index) => {

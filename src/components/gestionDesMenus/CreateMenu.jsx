@@ -61,7 +61,7 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
     };
 
     return (
-        <form onSubmit={handleSubmit} className='CreateMenuModal pl-8 pt-0 pr-8 pb-8'>
+        <form onSubmit={handleSubmit} className='pl-8 pt-0 pr-8 pb-8'>
             <div>
                 <label htmlFor="name">Nom:</label>
                 <input

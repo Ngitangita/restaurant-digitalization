@@ -70,12 +70,12 @@ function MenuItems({ onSave }) {
                     className="mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2"
                 />
                 {showSuggestions && (
-                    <ul className="absolute top-full left-0 w-full border border-gray-300 bg-white mt-1 max-h-32 overflow-y-auto z-10">
+                    <ul className="Suggestions absolute top-full left-0 w-full border border-gray-300 bg-white mt-1 max-h-32 overflow-y-auto z-10">
                         {filteredMenus.map(menu => (
                             <li 
                                 key={menu.id} 
                                 onClick={() => handleSuggestionClick(menu)}
-                                className="p-2 hover:bg-blue-100 cursor-pointer"
+                                className="p-2 hover:bg-blue-100 cursor-pointer Suggestions"
                             >
                                 {menu.name}
                             </li>

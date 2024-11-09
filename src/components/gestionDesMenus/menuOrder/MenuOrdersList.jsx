@@ -62,7 +62,7 @@ function MenuOrdersList() {
     };
 
     return (
-        <div className="w-full p-4 bg-white rounded shadow-lg">
+        <div className="w-full p-4 bg-white rounded shadow-lg menuOrdersList">
             <h2 className="text-2xl font-bold mb-4">Liste des Commandes</h2>
             <button
                 onClick={() => setIsModalOpen(true)}
@@ -90,7 +90,7 @@ function MenuOrdersList() {
             </div>
 
             {/* Table d'affichage des commandes */}
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden mt-4">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden mt-4 menuOrdersList">
                 <thead>
                     <tr className="bg-gray-200">
                         <th className="py-2">Date de Commande</th>
@@ -154,7 +154,7 @@ function MenuOrdersList() {
             {/* Modal for creating a new order */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-                    <dir className="w-[700px] mx-auto bg-white rounded">
+                    <dir className="w-[700px] mx-auto bg-white rounded CreateModal">
                         <div className='flex flex-row justify-between items-center'>
                             <h2 className="text-center font-serif font-bold
                             text-xl pl-8 pt-8 pb-4">

@@ -77,7 +77,7 @@ function CreateIngredient({ onModalOpen, onToggle }) {
 
   return (
     <div className='p-8'>
-      <form onSubmit={handleSubmit(onSubmit)} className="CreateIngredient m-0 p-4 w-full rounded-md">
+      <form onSubmit={handleSubmit(onSubmit)} className="m-0 p-4 w-full rounded-md">
         <div className="mb-4">
           <label htmlFor="name" className="block text-gray-700">Nom</label>
           <input
@@ -127,7 +127,7 @@ function CreateIngredient({ onModalOpen, onToggle }) {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="creatUnitModal bg-white p-6 rounded-md shadow-md">
+          <div className="CreateModal bg-white p-6 rounded-md shadow-md">
             <h2 className="text-xl mb-4">Créer une nouvelle unité</h2>
             <form onSubmit={handleSubmitUnit(onSubmitUnit)}>
               <div className="mb-4">
