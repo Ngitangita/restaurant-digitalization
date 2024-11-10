@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { FaAngleRight } from "react-icons/fa";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import { RiReservedLine } from "react-icons/ri";
@@ -20,40 +20,43 @@ const menuItems = [
     subItems: [],
   },
   {
-    title: "Gestion des menus",
+    title: "Menus",
     icon: <MdMenuBook />,
-    subItems: [
-      {
-        title: "List des menus",
-        path: "/menuList",
-      },
-      {
-        title: "Liste des catégories",
-        path: "/categoriesListe",
-      },
-      {
-        title: "Ingredients",
-        path: "/ingredients",
-      },
-    ],
+    path: "/menuList",
+    subItems: [],
   },
   {
-    title: "Tables & chambres & étages",
-    subItems: [
-      {
-        title: "List des tables",
-        path: "/tableList",
-      }, {
-        title: "List des chambres",
-        path: "/roomList",
-      }, {
-        title: "List des étages",
-        path: "/floorList",
-      }
-    ],
+    title: "Catégories",
+    icon: <RiReservedLine />,
+    path: "/categoriesListe",
+    subItems: [],
   },
   {
-    title: "Liste des commandes",
+    title: "Ingredients",
+    icon: <MdOutlineSettings />,
+    path: "/ingredients",
+    subItems: [],
+  },
+  {
+    title: "Tables",
+    icon: <MdOutlineCalendarMonth />,
+    path: "/tableList",
+    subItems: [],
+  },
+  {
+    title: "Chambres",
+    icon: <AiOutlineStock />,
+    path: "/roomList",
+    subItems: [],
+  },
+  {
+    title: "Étages",
+    icon: <RiReservedLine />,
+    path: "/floorList",
+    subItems: [],
+  },
+  {
+    title: "Commandes",
     icon: <MdKeyboardCommandKey />,
     path: "/commandes",
     subItems: [],
@@ -65,18 +68,16 @@ const menuItems = [
     subItems: [],
   },
   {
-    title: "Géstion du stocks",
+    title: "Stocks",
     icon: <AiOutlineStock />,
-    subItems: [
-      {
-        title: "Stocks",
-        path: "/stocks",
-      },
-      {
-        title: "Liste d'achat des Stocks",
-        path: "/purchaseList",
-      }
-    ],
+    path: "/stocks",
+    subItems: [],
+  },
+  {
+    title: "Achat des Stocks",
+    icon: <AiOutlineStock />,
+    path: "/purchaseList",
+    subItems: [],
   },
   {
     title: "Réservations",
