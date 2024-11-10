@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import UpdateStatus from '../updateStatus/UpdateStatus';
 import dayjs from "dayjs";
 import {truncate} from "../../services/truncate.js";
+import {convertStatusMenu} from "../../services/convertStatus.js";
 
 const MenuList = () => {
     const [menus, setMenus] = useState([]);
@@ -49,7 +50,6 @@ const MenuList = () => {
             const menusData = await menusResponse.json();
             const categoriesData = await categoriesResponse.json();
             const statusesData = await statusesResponse.json();
-            console.log(menusData)
 
             setMenus(menusData);
             setCategories(categoriesData);
@@ -257,15 +257,16 @@ const MenuList = () => {
                                             <td className={`py-2 px-4 cursor-pointer ${menu.status.toLowerCase() !== "active" ? 'text-red-500 font-bold' : ''}`}>
                                                 <button
                                                     onClick={() => handleEditStatus(menu)}
-                                                    className='w-full flex flex-col gap-1 items-center '
+                                                    className='w-full flex flex-row gap-1 items-center '
                                                 >
-                                                    <span className='flex flex-row gap-1 items-center '>
-                                                        <MdEdit/> {menu.status.toLowerCase()}
-                                                    </span>
-                                                    {menu.status.toLowerCase() !== "active" && (
-                                                        <div className="text-red-500 text-[10px]">⚠️ désolé ce menu
-                                                            est {menu.status}</div>
+
+                                                    <span className='flex text-sm flex-row gap-1 items-center '>
+                                                        <MdEdit/>  {menu.status.toLowerCase() !== "active" && (
+                                                        <span className="text-red-500 text-[10px]">⚠️</span>
                                                     )}
+                                                        {convertStatusMenu(menu.status.toLowerCase())}
+                                                    </span>
+
                                                 </button>
                                             </td>
 

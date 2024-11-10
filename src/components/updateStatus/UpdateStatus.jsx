@@ -1,3 +1,4 @@
+import {convertStatusMenu} from "../../services/convertStatus.js";
 
 
 const UpdateStatus = ({status, statuses, setStatus,  onSave, onCancel}) => {
@@ -10,7 +11,7 @@ const UpdateStatus = ({status, statuses, setStatus,  onSave, onCancel}) => {
             >
                 {statuses.map(status => (
                     <option key={status} value={status}>
-                        {status.toLowerCase()}
+                        {convertStatusMenu(status.toLowerCase())}
                     </option>
                 ))}
             </select>
