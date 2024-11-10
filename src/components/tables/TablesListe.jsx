@@ -223,8 +223,8 @@ function TablesListe() {
                                         )}
                                     </button>
                                 </td>
-                                <td className="py-3 px-4">{dayjs(table.createdAt).format('MM/DD/YYYY HH:mm:ss')}</td>
-                                <td className="py-3 px-4">{dayjs(table.updatedAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                                <td className="py-3 px-4">{dayjs(table.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                                <td className="py-3 px-4">{dayjs(table.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                                 <td className="py-2 px-4 flex flex-row gap-4 justify-center">
                                     <button
                                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"

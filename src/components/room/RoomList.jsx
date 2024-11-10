@@ -173,8 +173,8 @@ const RoomList = () => {
 
                                         </button>
                                     </td>
-                                    <td className="py-3 px-4">{dayjs(room.createdAt).format('MM/DD/YYYY')}</td>
-                                    <td className="py-3 px-4">{dayjs(room.updatedAt).format('MM/DD/YYYY')}</td>
+                                    <td className="py-3 px-4">{dayjs(room.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                                    <td className="py-3 px-4">{dayjs(room.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                                     <td className="py-2 px-4">
                                         <button
                                             className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"

@@ -270,8 +270,8 @@ const MenuList = () => {
                                                 </button>
                                             </td>
 
-                                            <td className="py-2 px-4">{dayjs(menu.createdAt).format('MM/DD/YYYY HH:mm:ss')}</td>
-                                            <td className="py-2 px-4">{dayjs(menu.updatedAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                                            <td className="py-2 px-4">{dayjs(menu.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                                            <td className="py-2 px-4">{dayjs(menu.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
 
                                             <td className="py-2 px-4 flex flex-row justify-center gap-2">
                                                 <button

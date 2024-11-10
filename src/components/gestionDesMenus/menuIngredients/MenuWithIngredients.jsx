@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { apiUrl, fetchJson } from '../../../services/api';
 import ManageMenuIngredients from './ManageMenuIngredients';
 import { MdDelete} from 'react-icons/md';
+import dayjs from "dayjs";
 
 function MenuWithIngredients() {
   const { menuId } = useParams();
@@ -110,32 +111,28 @@ function MenuWithIngredients() {
             </tr>
           ) : (
             menu.ingredients.map((ingredient, i) => (
-              <tr key={i} className="hover:bg-gray-100 text-center border-y">
-                <td className="py-2 px-4">{ingredient.ingredientName}</td>
-                <td className="py-2 px-4">{ingredient.quantity}</td>
-                <td className="py-2 px-4">{ingredient.unitName}</td>
-                <td className="py-2 px-4">
-                  {new Date(ingredient.createdAt).toLocaleDateString()}
-                </td>
-                <td className="py-2 px-4">
-                  {new Date(ingredient.updatedAt).toLocaleDateString()}
-                </td>
-                <td className="py-2 px-4">
-                  <button
-                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
-                    onClick={() => confirmDelete(ingredient.id)}
-                  >
-                    <MdDelete />
-                  </button>
-                </td>
-              </tr>
+                <tr key={i} className="hover:bg-gray-100 text-center border-y">
+                  <td className="py-2 px-4">{ingredient.ingredientName}</td>
+                  <td className="py-2 px-4">{ingredient.quantity}</td>
+                  <td className="py-2 px-4">{ingredient.unitName}</td>
+                  <td className="py-2 px-4">{dayjs(ingredient.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                  <td className="py-2 px-4">{dayjs(ingredient.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
+                  <td className="py-2 px-4">
+                    <button
+                        className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
+                        onClick={() => confirmDelete(ingredient.id)}
+                    >
+                      <MdDelete/>
+                    </button>
+                  </td>
+                </tr>
             ))
           )}
         </tbody>
       </table>
       {showDeleteModal && (
-        <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md DeleteModal">
+          <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
+            <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md DeleteModal">
             <h2 className="text-lg font-bold mb-4">Confirmer la suppression</h2>
             <p>Voulez-vous vraiment supprimer l'ingredient {ingredientToDelete?.ingredientName} ?</p>
             <div className="mt-4">

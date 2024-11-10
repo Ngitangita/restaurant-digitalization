@@ -141,8 +141,8 @@ function StockList() {
               stocks.map((stock) => (
                   <tr key={stock.id} className='text-center'>
                     <td className="border-b p-2">{stock.id}</td>
-                    <td className="py-3 px-4">{dayjs(stock.createdAt).format('MM/DD/YYYY HH:mm:ss')}</td>
-                    <td className="py-3 px-4">{dayjs(stock.updatedAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                    <td className="py-3 px-4">{dayjs(stock.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                    <td className="py-3 px-4">{dayjs(stock.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                     <td className="border-b p-2">{stock.ingredientName}</td>
                     <td className={`border-b p-2 ${stock.quantity <= 5 ? 'text-red-500 font-bold' : ''}`}>
                       {stock.quantity}

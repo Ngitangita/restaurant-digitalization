@@ -195,8 +195,8 @@ const CategoriesList = () => {
                         <tr key={category.id} className="hover:bg-gray-100 text-center border-y border-collapse">
                             <td className="py-3 px-4 ">{category.id}</td>
                             <td className="py-3 px-4 ">{category.name}</td>
-                            <td className="py-3 px-4">{dayjs(category.createdAt).format('MM/DD/YYYY HH:mm:ss')}</td>
-                            <td className="py-3 px-4">{dayjs(category.updatedAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                            <td className="py-3 px-4">{dayjs(category.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                            <td className="py-3 px-4">{dayjs(category.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                             <td className="py-3 px-4">
                                 <button
                                     className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"

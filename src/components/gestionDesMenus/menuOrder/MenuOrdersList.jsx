@@ -127,8 +127,9 @@ function MenuOrdersList() {
                                 )}
                             </button>
                         </td>
-                        <td className="py-2">{dayjs(order.orderDate).format('MM/DD/YYYY HH:mm:ss')}</td>
-                        <td className="py-2 px-4">{dayjs(order.updatedAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+
+                        <td className="py-2">{dayjs(order.orderDate).format('YYYY-MM-DD HH:mm')}</td>
+                        <td className="py-2 px-4">{dayjs(order.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                     </tr>
                 ))}
                 </tbody>

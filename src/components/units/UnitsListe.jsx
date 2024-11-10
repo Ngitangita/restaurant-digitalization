@@ -119,8 +119,8 @@ function UnitsListe() {
                             <td className="py-2 px-4">{unit.id}</td>
                             <td className="py-2 px-4">{unit.name}</td>
                             <td className="py-2 px-4">{unit.abbreviation}</td>
-                            <td className="py-3 px-4">{dayjs(unit.createdAt).format('MM/DD/YYYY HH:mm:ss')}</td>
-                            <td className="py-3 px-4">{dayjs(unit.updatedAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                            <td className="py-3 px-4">{dayjs(unit.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                            <td className="py-3 px-4">{dayjs(unit.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                             <td className="py-2 px-4 w-[120px] flex flex-row gap-2 justify-end">
                                 <button
                                     className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"

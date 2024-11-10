@@ -202,8 +202,8 @@ const IngredientList = () => {
                             <tr key={ingredient.id} className="hover:bg-gray-100 text-center border-y">
                                 <td className="py-2 px-4">{ingredient.id}</td>
                                 <td className="py-2 px-4">{ingredient.name}</td>
-                                <td className="py-3 px-4">{dayjs(ingredient.createdAt).format('MM/DD/YYYY HH:mm:ss')}</td>
-                                <td className="py-3 px-4">{dayjs(ingredient.updatedAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                                <td className="py-3 px-4">{dayjs(ingredient.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                                <td className="py-3 px-4">{dayjs(ingredient.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                                 <td className="py-2 px-4 flex flex-row gap-2 justify-center">
                                     <button
                                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
