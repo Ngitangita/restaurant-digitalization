@@ -40,3 +40,15 @@ export const convertStatusToRoom = (status) => {
 
     return formattedStatus.toLowerCase();
 };
+
+
+export const convertStatusToOrder = (status) => {
+    const statusMap = {
+        PENDING: 'En attente',
+        COMPLETED: 'Terminé',
+        CANCELED: 'Annulé',
+        IN_PROGRESS: 'En cours',
+    };
+
+    return statusMap[status.toUpperCase()] || status;
+};

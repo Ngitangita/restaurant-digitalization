@@ -1,8 +1,10 @@
-import { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { apiUrl, fetchJson } from "../../../services/api";
 import CreateMenuOrder from "./CreateMenuOrder";
 import { MdAddBox, MdEdit } from "react-icons/md";
-import UpdateStatus from "../../updateStatus/UpdateStatus";
+import UpdateStatusOrder from "../../updateStatus/UpdateStatusOrder.jsx";
+import dayjs from "dayjs";
+import {convertStatusToOrder} from "../../../services/convertStatus.js";
 
 function MenuOrdersList() {
     const [orders, setOrders] = useState([]);
@@ -11,12 +13,12 @@ function MenuOrdersList() {
     const [status, setStatus] = useState('');
     const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [searchCriteria, setSearchCriteria] = useState({
-        roomId: "", // Suppression de customerId
+        roomId: "",
         tableId: ""
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
 
-    // Fetch orders based on search criteria
+
     const fetchOrders = () => {
         const params = new URLSearchParams(searchCriteria);
         const url = `${apiUrl("/menu-orders/search")}?${params.toString()}`;
@@ -30,7 +32,6 @@ function MenuOrdersList() {
 
     useEffect(fetchOrders, [searchCriteria]);
 
-    // Fetch order statuses
     useEffect(() => {
         fetchJson(apiUrl("/menu-orders/status"))
             .then((data) => setStatuses(data))
@@ -45,9 +46,10 @@ function MenuOrdersList() {
 
     const handleUpdateStatus = async () => {
         try {
-            const url = apiUrl(`/menu-orders/${selectedOrderId}/status?status=${encodeURIComponent(status)}`);
+            const url = apiUrl(`/menu-orders/${selectedOrderId}/status`);
             await fetch(url, {
                 method: 'PATCH',
+                body: JSON.stringify(status),
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -71,7 +73,6 @@ function MenuOrdersList() {
                 <MdAddBox /> Ajouter une commande
             </button>
 
-            {/* Barre de recherche */}
             <div className="flex gap-10 my-4">
                 <input
                     type="text"
@@ -89,43 +90,47 @@ function MenuOrdersList() {
                 />
             </div>
 
-            {/* Table d'affichage des commandes */}
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden mt-4 menuOrdersList">
                 <thead>
-                    <tr className="bg-gray-200">
-                        <th className="py-2">Date de Commande</th>
-                        <th className="py-2">Chambre</th>
-                        <th className="py-2">Table</th>
-                        <th className="py-2">Menu</th>
-                        <th className="py-2">Quantité</th>
-                        <th className="py-2">Coût</th>
-                        <th className="py-2">Statut</th>
-                    </tr>
+                <tr className="bg-gray-200">
+                    <th className="py-2">Id</th>
+                    <th className="py-2">Chambre</th>
+                    <th className="py-2">Table</th>
+                    <th className="py-2">Menu</th>
+                    <th className="py-2">Quantité</th>
+                    <th className="py-2">Coût</th>
+                    <th className="py-2">Statut</th>
+                    <th className="py-2">Date de Commande</th>
+                    <th className="py-2 px-4">Modifié le</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {orders.map((order) => (
-                        <tr key={order.id} className="hover:bg-gray-100 text-center border-y">
-                            <td className="py-2">{new Date(order.orderDate).toLocaleDateString()}</td>
-                            <td className="py-2">{order.room?.roomNumber || "-"}</td>
-                            <td className="py-2">{order.table?.number || "-"}</td>
-                            <td className="py-2">{order.menu?.name || "-"}</td>
-                            <td className="py-2">{order.quantity}</td>
-                            <td className="py-2">{order.cost}</td>
-                            <td className="py-2 px-4 cursor-pointer">
-                                <button
-                                    onClick={() => handleEditStatus(order)}
-                                    className={`w-full flex flex-col gap-1 items-center ${order.orderStatus?.toLowerCase() !== "completed" ? 'text-red-500 font-bold' : ''}`}
-                                >
-                                    <span className='flex flex-row gap-1 items-center '>
-                                        <MdEdit /> {order.orderStatus?.toLowerCase() || "N/A"}
+                {orders.map((order) => (
+                    <tr key={order.id} className="hover:bg-gray-100 text-center border-y">
+                        <td className="py-2">{order.id}</td>
+                        <td className="py-2">{order.room?.roomNumber || "-"}</td>
+                        <td className="py-2">{order.table?.number || "-"}</td>
+                        <td className="py-2">{order.menu?.name || "-"}</td>
+                        <td className="py-2">{order.quantity}</td>
+                        <td className="py-2">{order.cost}</td>
+                        <td className="py-2 px-4 cursor-pointer">
+                            <button
+                                onClick={() => handleEditStatus(order)}
+                                className={`w-full flex flex-col gap-1 items-center ${order.orderStatus?.toLowerCase() !== "completed" ? 'text-red-500 font-bold' : ''}`}
+                            >
+                                    <span className='flex flex-row text-sm gap-1 items-center '>
+                                        <MdEdit/> {convertStatusToOrder(order.orderStatus?.toLowerCase())}
                                     </span>
-                                    {order.orderStatus?.toLowerCase() !== "completed" && (
-                                        <div className="text-red-500 text-[10px]">⚠️ désolé, la commande est {order.orderStatus}</div>
-                                    )}
-                                </button>
-                            </td>
-                        </tr>
-                    ))}
+                                {order.orderStatus?.toUpperCase() !== "COMPLETED" && (
+                                    <div className="text-red-500 text-[10px]">⚠️ désolé, la commande
+                                        est {convertStatusToOrder(order.orderStatus?.toLowerCase())}</div>
+                                )}
+                            </button>
+                        </td>
+                        <td className="py-2">{dayjs(order.orderDate).format('MM/DD/YYYY HH:mm:ss')}</td>
+                        <td className="py-2 px-4">{dayjs(order.updatedAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
 
@@ -140,7 +145,7 @@ function MenuOrdersList() {
                                 x
                             </span>
                         </div>
-                        <UpdateStatus
+                        <UpdateStatusOrder
                             onSave={handleUpdateStatus}
                             onCancel={() => setShowEditModal(false)}
                             statuses={statuses}
