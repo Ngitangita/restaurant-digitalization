@@ -1,5 +1,5 @@
 import  { useState } from 'react';
-import { FaAngleRight } from "react-icons/fa";
+import {FaAngleRight, FaRegListAlt} from "react-icons/fa";
 import {Link, useLocation, useNavigate} from "react-router-dom";
 import { RiReservedLine } from "react-icons/ri";
 import { AiOutlineStock } from "react-icons/ai";
@@ -29,6 +29,12 @@ const menuItems = [
     title: "Catégories",
     icon: <RiReservedLine />,
     path: "/categoriesListe",
+    subItems: [],
+  },
+  {
+    title: "Unités",
+    icon: <FaRegListAlt />,
+    path: "/units",
     subItems: [],
   },
   {

@@ -5,10 +5,10 @@ import { MdDelete, MdClear, MdEdit, MdMoreVert } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import EditMenu from './EditMenu';
 import { useNavigate } from 'react-router-dom';
-import UpdateStatus from '../updateStatus/UpdateStatus';
 import dayjs from "dayjs";
 import {truncate} from "../../services/truncate.js";
 import {convertStatusMenu} from "../../services/convertStatus.js";
+import UpdateStatusMenu from "../updateStatus/UpdateStatusMenu.jsx";
 
 const MenuList = () => {
     const [menus, setMenus] = useState([]);
@@ -83,7 +83,7 @@ const MenuList = () => {
 
             setShowEditModal(false);
             setSelectedMenuId(null);
-            fetchMenus();
+            void fetchMenus();
         } catch (error) {
             console.error('Erreur lors de la mise à jour du statut du menu:', error);
         }
@@ -327,7 +327,7 @@ const MenuList = () => {
                                 x
                             </span>
                         </div>
-                        <UpdateStatus
+                        <UpdateStatusMenu
                             onSave={handleUpdateStatus}
                             onCancel={() => setShowEditModal(false)}
                             statuses={statuses}

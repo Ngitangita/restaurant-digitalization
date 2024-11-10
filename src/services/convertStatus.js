@@ -10,3 +10,33 @@ export const convertStatusMenu = (status) => {
             return 'Statut inconnu';
     }
 };
+
+
+export const convertStatusToTable = (status) => {
+    const statusMap = {
+        'AVAILABLE': 'Disponible',
+        'OCCUPIED': 'Occupé',
+        'RESERVED': 'Réservé',
+        'OUT_OF_SERVICE': 'Hors service',
+        'CLEANING': 'Nettoyage'
+    };
+
+    const formattedStatus = statusMap[status.toUpperCase()] || 'Statut inconnu';
+
+    return formattedStatus.toLowerCase();
+};
+
+
+export const convertStatusToRoom = (status) => {
+    const statusMap = {
+        'AVAILABLE': 'Disponible',
+        'OCCUPIED': 'Occupé',
+        'UNDER_MAINTENANCE': 'En maintenance',
+        'RESERVED': 'Réservé',
+        'OUT_OF_SERVICE': 'Hors service'
+    };
+
+    const formattedStatus = statusMap[status.toUpperCase()] || 'Statut inconnu';
+
+    return formattedStatus.toLowerCase();
+};

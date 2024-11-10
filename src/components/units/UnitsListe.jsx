@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { FaRegEdit } from "react-icons/fa";
-import { MdDelete, MdInfoOutline } from "react-icons/md";
+import { MdDelete, MdInfoOutline} from "react-icons/md";
 import { apiUrl, fetchJson } from '../../services/api';
+import dayjs from "dayjs";
+import CreateUnit from "./CreateUnit.jsx";
 
 function UnitsListe() {
     const [units, setUnits] = useState([]);
@@ -10,7 +12,8 @@ function UnitsListe() {
     const [unitName, setUnitName] = useState('');
     const [unitAbbreviation, setUnitAbbreviation] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-    
+    const [isModalOpen, setIsModalOpen] = useState(false);
+
     const fetchUnits = async () => {
         try {
             const data = await fetchJson(apiUrl("/units/all"));
@@ -21,7 +24,7 @@ function UnitsListe() {
     };
 
     useEffect(() => {
-        fetchUnits();
+        void fetchUnits();
     }, []);
 
     const confirmDelete = (id) => {
@@ -67,53 +70,78 @@ function UnitsListe() {
             console.error('Erreur lors de la mise à jour de l\'unité:', error); 
         }
     };
-    
+
+    const toggleModal = () => {
+        setIsModalOpen(!isModalOpen);
+    };
+
+    const handleCreate = async (newUnit) => {
+        setUnits(oldUnits => [
+            ...oldUnits,
+            newUnit
+        ])
+    }
 
     return (
-        <div className="container mx-auto p-4">
-            <table className="min-w-full shadow-md rounded-lg overflow-hidden">
+        <div className="container mx-auto p-4 bg-white">
+            <div className='flex flex-row gap-4'>
+                <button
+                    className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 ml-2"
+                    onClick={toggleModal}
+                >
+                    Créer un unité
+                </button>
+            </div>
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden ingredientTable">
                 <thead>
-                    <tr className="bg-gray-200">
-                        <th className="py-2 px-4">Nom</th>
-                        <th className="py-2 px-4">Abréviation</th>
-                        <th className="py-2 px-4">Action</th>
-                    </tr>
+                <tr className="bg-gray-200">
+                    <th className="py-2 px-4">Id</th>
+                    <th className="py-2 px-4">Nom</th>
+                    <th className="py-2 px-4">Abréviation</th>
+                    <th className="py-2 px-4">Créé le</th>
+                    <th className="py-2 px-4">Modifié le</th>
+                    <th className="py-2 px-4">Action</th>
+                </tr>
                 </thead>
                 <tbody className='ModalListeUnit'>
-                    {units.length === 0 ? (
-                        <tr className="text-center">
-                            <td colSpan="3" className="py-4 text-gray-500">
-                                <div className="flex flex-col items-center justify-center">
-                                    <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
-                                    <p>Aucune unité disponible</p>
-                                </div>
+                {units.length === 0 ? (
+                    <tr className="text-center">
+                        <td colSpan="6" className="py-4 text-gray-500">
+                            <div className="flex flex-col items-center justify-center">
+                                <MdInfoOutline className="text-4xl mb-2 text-gray-400"/>
+                                <p>Aucune unité disponible</p>
+                            </div>
+                        </td>
+                    </tr>
+                ) : (
+                    units.toSorted((a, b) => a.id - b.id).map((unit) => (
+                        <tr key={unit.id} className="hover:bg-gray-100 text-center">
+                            <td className="py-2 px-4">{unit.id}</td>
+                            <td className="py-2 px-4">{unit.name}</td>
+                            <td className="py-2 px-4">{unit.abbreviation}</td>
+                            <td className="py-3 px-4">{dayjs(unit.createdAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                            <td className="py-3 px-4">{dayjs(unit.updatedAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                            <td className="py-2 px-4 w-[120px] flex flex-row gap-2 justify-end">
+                                <button
+                                    className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
+                                    onClick={() => handleEdit(unit)}
+                                >
+                                    <FaRegEdit/>
+                                </button>
+                                <button
+                                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
+                                    onClick={() => confirmDelete(unit.id)}
+                                >
+                                    <MdDelete/>
+                                </button>
                             </td>
                         </tr>
-                    ) : (
-                        units.map((unit) => (
-                            <tr key={unit.id} className="hover:bg-gray-100 text-center">
-                                <td className="py-2 px-4">{unit.name}</td>
-                                <td className="py-2 px-4">{unit.abbreviation}</td>
-                                <td className="py-2 px-4 w-[120px] flex flex-row gap-2 justify-end">
-                                    <button
-                                        className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-                                        onClick={() => handleEdit(unit)}
-                                    >
-                                        <FaRegEdit />
-                                    </button>
-                                    <button
-                                        className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
-                                        onClick={() => confirmDelete(unit.id)}
-                                    >
-                                        <MdDelete />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))
-                    )}
+                    ))
+                )}
                 </tbody>
             </table>
 
+            <CreateUnit isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}onCreate={handleCreate} />
             {/* Modal de confirmation de suppression */}
             {showDeleteModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

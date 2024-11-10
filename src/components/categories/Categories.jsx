@@ -4,6 +4,7 @@ import CreateCategories from './CreateCategories';
 import { MdDelete, MdClear } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import EditModal from './EditModal';
+import dayjs from "dayjs";
 
 const CategoriesList = () => {
     const [categories, setCategories] = useState([]);
@@ -182,24 +183,30 @@ const CategoriesList = () => {
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden categoriesTable">
                 <thead>
                     <tr className="bg-gray-200">
+                        <th className="py-2 px-4">ID</th>
                         <th className="py-2 px-4">Nom</th>
+                        <th className="py-2 px-4">Créé le</th>
+                        <th className="py-2 px-4">Modifié le</th>
                         <th className="py-2 px-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {currentCategories.length > 0 ? currentCategories.map(categorie => (
-                        <tr key={categorie.id} className="hover:bg-gray-100 text-center border-y border-collapse">
-                            <td className="py-2 px-4 ">{categorie.name}</td>
-                            <td className="py-2 px-4">
+                    {currentCategories.length > 0 ? currentCategories.toSorted((a, b) => a.id - b.id).map(category => (
+                        <tr key={category.id} className="hover:bg-gray-100 text-center border-y border-collapse">
+                            <td className="py-3 px-4 ">{category.id}</td>
+                            <td className="py-3 px-4 ">{category.name}</td>
+                            <td className="py-3 px-4">{dayjs(category.createdAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                            <td className="py-3 px-4">{dayjs(category.updatedAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                            <td className="py-3 px-4">
                                 <button
                                     className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
-                                    onClick={() => handleEditCategory(categorie)}
+                                    onClick={() => handleEditCategory(category)}
                                 >
                                     <FaRegEdit />
                                 </button>
                                 <button
                                     className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
-                                    onClick={() => confirmDelete(categorie.id)}
+                                    onClick={() => confirmDelete(category.id)}
                                 >
                                     <MdDelete />
                                 </button>
@@ -207,7 +214,7 @@ const CategoriesList = () => {
                         </tr>
                     )) : (
                         <tr>
-                            <td colSpan="2" className="py-4 text-center">Aucune catégorie trouvée</td>
+                            <td colSpan="5" className="py-4 text-center">Aucune catégorie trouvée</td>
                         </tr>
                     )}
                 </tbody>

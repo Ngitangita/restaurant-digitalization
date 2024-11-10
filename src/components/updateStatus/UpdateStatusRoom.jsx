@@ -1,6 +1,7 @@
+import { convertStatusToRoom} from "../../services/convertStatus.js";
 
 
-const UpdateStatus = ({status, statuses, setStatus,  onSave, onCancel}) => {
+const UpdateStatusRoom = ({status, statuses, setStatus,  onSave, onCancel}) => {
     return (
         <div className="p-8 z-[100]">
             <select
@@ -10,7 +11,7 @@ const UpdateStatus = ({status, statuses, setStatus,  onSave, onCancel}) => {
             >
                 {statuses.map(status => (
                     <option key={status} value={status}>
-                        {status.toLowerCase()}
+                        {convertStatusToRoom(status.toLowerCase())}
                     </option>
                 ))}
             </select>
@@ -32,4 +33,4 @@ const UpdateStatus = ({status, statuses, setStatus,  onSave, onCancel}) => {
     )
 }
 
-export default UpdateStatus
+export default UpdateStatusRoom
