@@ -9,17 +9,20 @@ function MenuOrdersList() {
     const [statuses, setStatuses] = useState([]);
     const [showEditModal, setShowEditModal] = useState(false);
     const [status, setStatus] = useState('');
-    const [selectedOrderId, setSelectedOrderId] = useState(null);
+    const [selectedOrder, setSelectedOrder] = useState(null);
+    const [modalType, setModalType] = useState('');
     const [searchCriteria, setSearchCriteria] = useState({
-        roomId: "", // Suppression de customerId
+        orderDate: "",
+        status: "",
+        roomId: "",
         tableId: ""
     });
     const [isModalOpen, setIsModalOpen] = useState(false);
 
     // Fetch orders based on search criteria
     const fetchOrders = () => {
-        const params = new URLSearchParams(searchCriteria);
-        const url = `${apiUrl("/menu-orders/search")}?${params.toString()}`;
+        const { orderDate, status, roomId, tableId } = searchCriteria;
+        const url = `${apiUrl("/menu-orders/search")}?orderDate=${orderDate}&status=${status}&roomId=${roomId}&tableId=${tableId}`;
 
         fetchJson(url, 'GET')
             .then((data) => {
@@ -37,24 +40,21 @@ function MenuOrdersList() {
             .catch((error) => console.log(error));
     }, []);
 
-    const handleEditStatus = (order) => {
-        setSelectedOrderId(order.id);
-        setStatus(order.status);
-        setShowEditModal(true);
+    const handleEditStatus = (type, order = null) => {
+        setModalType(type);
+        setSelectedOrder(order);
+        setShowEditModal(!showEditModal);
     };
 
     const handleUpdateStatus = async () => {
         try {
-            const url = apiUrl(`/menu-orders/${selectedOrderId}/status?status=${encodeURIComponent(status)}`);
+            const url = apiUrl(`/menu-orders/${selectedOrder.id}/status`);
             await fetch(url, {
                 method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(status),
             });
-
-            setShowEditModal(false);
-            setSelectedOrderId(null);
+            handleEditStatus('');
             fetchOrders();
         } catch (error) {
             console.error('Erreur lors de la mise à jour du statut de la commande:', error);
@@ -75,18 +75,37 @@ function MenuOrdersList() {
             <div className="flex gap-10 my-4">
                 <input
                     type="text"
-                    placeholder="numéro de chambre"
+                    placeholder="Numéro de chambre"
                     value={searchCriteria.roomId}
                     onChange={(e) => setSearchCriteria(prev => ({ ...prev, roomId: e.target.value }))}
                     className="border rounded p-2 outline-none"
                 />
                 <input
                     type="text"
-                    placeholder="numéro de table"
+                    placeholder="Numéro de table"
                     value={searchCriteria.tableId}
                     onChange={(e) => setSearchCriteria(prev => ({ ...prev, tableId: e.target.value }))}
                     className="border rounded p-2 outline-none"
                 />
+                 <input
+                    type="date"
+                    placeholder="Date de commande"
+                    value={searchCriteria.orderDate}
+                    onChange={(e) => setSearchCriteria(prev => ({ ...prev, orderDate: e.target.value }))}
+                    className="border rounded p-2 outline-none"
+                />
+                <select
+                    value={searchCriteria.status}
+                    onChange={(e) => setSearchCriteria(prev => ({ ...prev, status: e.target.value }))}
+                    className="border rounded p-2 outline-none"
+                >
+                    <option value="">Statut</option>
+                    {statuses.map((statusOption) => (
+                        <option key={statusOption} value={statusOption}>
+                            {statusOption.toLowerCase()}
+                        </option>
+                    ))}
+                </select>
             </div>
 
             {/* Table d'affichage des commandes */}
@@ -111,11 +130,12 @@ function MenuOrdersList() {
                             <td className="py-2">{order.menu?.name || "-"}</td>
                             <td className="py-2">{order.quantity}</td>
                             <td className="py-2">{order.cost}</td>
-                            <td className="py-2 px-4 cursor-pointer">
+                            <td  className={`w-full flex flex-col gap-1 items-center 
+                                ${order.orderStatus?.toLowerCase() !== "completed" ? 'text-red-500 font-bold' : ''}`}>
                                 <button
-                                    onClick={() => handleEditStatus(order)}
-                                    className={`w-full flex flex-col gap-1 items-center ${order.orderStatus?.toLowerCase() !== "completed" ? 'text-red-500 font-bold' : ''}`}
-                                >
+                                    onClick={() => handleEditStatus('editStatus', order)}
+                                    className='w-full flex flex-col gap-1 items-center'
+                               >
                                     <span className='flex flex-row gap-1 items-center '>
                                         <MdEdit /> {order.orderStatus?.toLowerCase() || "N/A"}
                                     </span>
@@ -129,20 +149,20 @@ function MenuOrdersList() {
                 </tbody>
             </table>
 
-            {showEditModal && (
+            {showEditModal && modalType === 'editStatus' && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
                     <div className="bg-white rounded-lg shadow-lg EditModal">
                         <div className='flex flex-row justify-between items-center'>
                             <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statut</h2>
                             <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
                             relative bottom-4 text-[30px] hover:text-white cursor-pointer'
-                                onClick={() => setShowEditModal(false)}>
+                                onClick={() => handleEditStatus('')}>
                                 x
                             </span>
                         </div>
                         <UpdateStatus
                             onSave={handleUpdateStatus}
-                            onCancel={() => setShowEditModal(false)}
+                            onCancel={() => handleEditStatus('')}
                             statuses={statuses}
                             setStatus={setStatus}
                             status={status}

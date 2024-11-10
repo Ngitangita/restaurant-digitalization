@@ -8,7 +8,7 @@ function StockList() {
   const [stocks, setStocks] = useState([]);
   const [page, setPage] = useState(1);
   const [size, setSize] = useState(8);
-  const [searchName, setSearchName] = useState("");
+  const [ingredientName, setIngredientName] = useState("");
   const [quantityMin, setQuantityMin] = useState("");
   const [quantityMax, setQuantityMax] = useState("");
   const [startDate, setStartDate] = useState("");
@@ -26,7 +26,7 @@ function StockList() {
 
     setIsLoading(true);
     setError(null);
-    const url = `${apiUrl("/stocks")}?size=${size}&page=${page - 1}&name=${searchName}&quantityMin=${quantityMin}&quantityMax=${quantityMax}&startDate=${startDate}&endDate=${endDate}`;
+    const url = `${apiUrl("/stocks")}?size=${size}&page=${page - 1}&ingredientName=${ingredientName}&quantityMin=${quantityMin}&quantityMax=${quantityMax}&startDate=${startDate}&endDate=${endDate}`;
 
     console.log("Requête API URL:", url);
 
@@ -41,12 +41,12 @@ function StockList() {
         setError("Une erreur s'est produite lors du chargement des stocks.");
         setIsLoading(false);
       });
-  }, [size, page, searchName, quantityMin, quantityMax, startDate, endDate]);
+  }, [size, page, ingredientName, quantityMin, quantityMax, startDate, endDate]);
 
 
   useEffect(() => {
     setPage(1);
-  }, [searchName, quantityMin, quantityMax, startDate, endDate]);
+  }, [ingredientName, quantityMin, quantityMax, startDate, endDate]);
 
   const toggleModal = (stock) => {
     setSelectedStock(stock);
@@ -81,8 +81,8 @@ function StockList() {
         <input
           type="text"
           placeholder="Rechercher par nom"
-          value={searchName}
-          onChange={(e) => setSearchName(e.target.value)}
+          value={ingredientName}
+          onChange={(e) => setIngredientName(e.target.value)}
           className="border border-gray-300 p-2 rounded-md mr-2 outline-none"
         />
         <input

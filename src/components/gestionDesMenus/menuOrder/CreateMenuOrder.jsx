@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback, useEffect, useState } from "react";
 import { apiUrl, fetchJson } from "../../../services/api";
 import MenuItems from "./MenuItems";
-import { MdAddBox, MdDelete } from "react-icons/md";
+import { MdDelete } from "react-icons/md";
 
 // Schéma de validation mis à jour
 const schema = z.object({
@@ -48,7 +48,7 @@ function CreateMenuOrder({ onClose }) {
         try {
             const response = await fetchJson(`${apiUrl("/menu-orders")}`, 'POST', payload);
             console.log('Réponse du serveur:', response);
-            onClose(); // Fermer le modal après une confirmation réussie
+            onClose(); 
         } catch (error) {
             console.log(error);
         }
