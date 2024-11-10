@@ -19,7 +19,7 @@ const IngredientList = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5);
+    const [itemsPerPage] = useState(6);
 
     const { data: units } = useFetch(() => apiUrl("/units/all"));
     const [searchTerm, setSearchTerm] = useState('');
