@@ -34,7 +34,7 @@ const IngredientList = () => {
     };
 
     useEffect(() => {
-        fetchIngredients();
+        void fetchIngredients();
     }, []);
 
     const toggleModal = () => {

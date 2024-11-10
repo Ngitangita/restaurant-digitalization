@@ -3,6 +3,7 @@ import { apiUrl, fetchJson } from "../../services/api";
 import { FaRegEdit } from 'react-icons/fa';
 import OperationDetails from "./OperationDetails";
 import CreateStock from "../../components/addStocks/CreateStock";
+import dayjs from "dayjs";
 
 function StockList() {
   const [stocks, setStocks] = useState([]);
@@ -119,8 +120,9 @@ function StockList() {
         <table className="min-w-full border border-gray-300">
           <thead>
             <tr className="bg-gray-200">
-              <th className="p-2">Créé</th>
-              <th className="p-2">Mis à jour</th>
+              <th className="py-2 px-4">ID</th>
+              <th className="py-2 px-4">Créé le</th>
+              <th className="py-2 px-4">Modifié le</th>
               <th className="p-2">Ingrédient</th>
               <th className="p-2">Quantité</th>
               <th className="p-2">Actions</th>
@@ -129,42 +131,43 @@ function StockList() {
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan="5" className="text-center py-2">Chargement...</td>
+                <td colSpan="7" className="text-center py-2">Chargement...</td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan="5" className="text-center py-2 text-red-500">{error}</td>
+                <td colSpan="7" className="text-center py-2 text-red-500">{error}</td>
               </tr>
             ) : stocks.length > 0 ? (
               stocks.map((stock) => (
-                <tr key={stock.id} className='text-center'>
-                  <td className="border-b p-2">{new Date(stock.createdAt).toLocaleDateString()}</td>
-                  <td className="border-b p-2">{new Date(stock.updatedAt).toLocaleDateString()}</td>
-                  <td className="border-b p-2">{stock.ingredientName}</td>
-                  <td className={`border-b p-2 ${stock.quantity <= 5 ? 'text-red-500 font-bold' : ''}`}>
-                    {stock.quantity}
-                    {stock.quantity <= 5 && (
-                      <div className="text-red-500 text-[10px]">⚠️ Stock faible! Ajoutez du stock.</div>
-                    )}
-                  </td>
-                  <td className="border-b p-2 flex justify-center">
-                    <button
-                      className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
-                      onClick={() => toggleModal(stock)}
-                    >
-                      <FaRegEdit />
-                    </button>
-                    <button
-                      className="bg-green-500 text-white rounded p-2 hover:bg-green-600"
-                      onClick={() => fetchOperationDetails(stock.id)}
-                    >
-                      Voir Détails
-                    </button>
-                  </td>
-                </tr>
+                  <tr key={stock.id} className='text-center'>
+                    <td className="border-b p-2">{stock.id}</td>
+                    <td className="py-3 px-4">{dayjs(stock.createdAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                    <td className="py-3 px-4">{dayjs(stock.updatedAt).format('MM/DD/YYYY HH:mm:ss')}</td>
+                    <td className="border-b p-2">{stock.ingredientName}</td>
+                    <td className={`border-b p-2 ${stock.quantity <= 5 ? 'text-red-500 font-bold' : ''}`}>
+                      {stock.quantity}
+                      {stock.quantity <= 5 && (
+                          <div className="text-red-500 text-[10px]">⚠️ Stock faible! Ajoutez du stock.</div>
+                      )}
+                    </td>
+                    <td className="border-b p-2 flex justify-center">
+                      <button
+                          className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
+                          onClick={() => toggleModal(stock)}
+                      >
+                        <FaRegEdit/>
+                      </button>
+                      <button
+                          className="bg-green-500 text-white rounded p-2 hover:bg-green-600"
+                          onClick={() => fetchOperationDetails(stock.id)}
+                      >
+                        Voir Détails
+                      </button>
+                    </td>
+                  </tr>
               ))
             ) : (
-              <tr>
+                <tr>
                 <td colSpan="5" className="text-center py-4">Aucun stock trouvé</td>
               </tr>
             )}

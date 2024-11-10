@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
 import dayjs from 'dayjs';
+import {truncate} from "../../services/truncate.js";
 
 function PurchaseList() {
   const [purchases, setPurchases] = useState([]);
@@ -45,6 +46,7 @@ function PurchaseList() {
         <table className="min-w-full bg-white shadow-md rounded-lg PurchaseList">
           <thead >
             <tr className="bg-gray-200">
+              <th className="py-2 px-4">ID</th>
               <th className="py-2 px-4">Nom Ingrédient</th>
               <th className="py-2 px-4">Quantité</th>
               <th className="py-2 px-4">Coût</th>
@@ -57,17 +59,18 @@ function PurchaseList() {
             {purchases.length > 0 ? (
               purchases.map((purchase) => (
                 <tr key={purchase.purchaseId} className="border-b border-gray-200">
+                  <td className="py-2 px-4">{purchase.purchaseId}</td>
                   <td className="py-2 px-4">{purchase.ingredientName}</td>
                   <td className="py-2 px-4">{purchase.quantity}</td>
                   <td className="py-2 px-4">{purchase.cost}</td>
-                  <td className="py-2 px-4">{purchase.description}</td>
+                  <td className="py-2 px-4">{truncate(purchase.description, 10)}</td>
                   <td className="py-2 px-4">{dayjs(purchase.createdAt).format('YYYY-MM-DD HH:mm')}</td>
                   <td className="py-2 px-4">{dayjs(purchase.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                 </tr>
               ))
             ) : (
               <tr>
-                <td colSpan="8" className="py-4 text-center text-gray-500">
+                <td colSpan="9" className="py-4 text-center text-gray-500">
                   Aucune donnée disponible
                 </td>
               </tr>
