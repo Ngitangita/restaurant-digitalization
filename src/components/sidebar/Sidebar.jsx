@@ -19,6 +19,7 @@ const menuItems = [
     path: "/",
     subItems: [],
   },
+
   {
     title: "Menus",
     icon: <MdMenuBook />,
@@ -27,34 +28,38 @@ const menuItems = [
   },
   {
     title: "Catégories",
-    icon: <RiReservedLine />,
+    icon: <MdMenuBook />,
     path: "/categoriesListe",
-    subItems: [],
+    subItems: [ ],
   },
   {
     title: "Ingredients",
-    icon: <MdOutlineSettings />,
+    icon: <MdMenuBook />,
     path: "/ingredients",
-    subItems: [],
+    subItems: [ ],
   },
+
   {
     title: "Tables",
-    icon: <MdOutlineCalendarMonth />,
     path: "/tableList",
+    icon: <MdMenuBook />,
     subItems: [],
   },
+
   {
-    title: "Chambres",
-    icon: <AiOutlineStock />,
+    title: "Chambres ",
     path: "/roomList",
+    icon: <MdMenuBook />,
     subItems: [],
   },
+
   {
-    title: "Étages",
-    icon: <RiReservedLine />,
+    title: "ètages",
     path: "/floorList",
+    icon: <MdMenuBook />,
     subItems: [],
   },
+
   {
     title: "Commandes",
     icon: <MdKeyboardCommandKey />,
@@ -75,9 +80,9 @@ const menuItems = [
   },
   {
     title: "Achat des Stocks",
-    icon: <AiOutlineStock />,
     path: "/purchaseList",
-    subItems: [],
+    icon: <AiOutlineStock />,
+    subItems: [ ],
   },
   {
     title: "Réservations",
