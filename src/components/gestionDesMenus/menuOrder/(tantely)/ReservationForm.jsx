@@ -22,7 +22,7 @@ function ReservationForm() {
     const [tables, setTables] = useState([]);
     const [rooms, setRooms] = useState([]);
 
-    const findById = (number, type) => {
+    const findByNumber = (number, type) => {
         if (type === 'table') {
             return tables.find((table) => table.number === number);
         } else if (type === 'room') {
@@ -40,8 +40,8 @@ function ReservationForm() {
     
         setMenuError("");
 
-        const table = findById(data.tableId, 'table')
-        const room = findById(data.roomId, 'room')
+        const table = findByNumber(data.tableId, 'table')
+        const room = findByNumber(data.roomId, 'room')
         const payload = {
             customerId: data.customerId ? Number(data.customerId) : null,
             roomId: room ? Number(room.id) : null,
