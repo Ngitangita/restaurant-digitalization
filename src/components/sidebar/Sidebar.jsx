@@ -19,7 +19,6 @@ const menuItems = [
     path: "/",
     subItems: [],
   },
-
   {
     title: "Menus",
     icon: <MdMenuBook />,
@@ -28,38 +27,34 @@ const menuItems = [
   },
   {
     title: "Catégories",
-    icon: <MdMenuBook />,
+    icon: <RiReservedLine />,
     path: "/categoriesListe",
-    subItems: [ ],
+    subItems: [],
   },
   {
     title: "Ingredients",
-    icon: <MdMenuBook />,
+    icon: <MdOutlineSettings />,
     path: "/ingredients",
-    subItems: [ ],
+    subItems: [],
   },
-
   {
     title: "Tables",
+    icon: <MdOutlineCalendarMonth />,
     path: "/tableList",
-    icon: <MdMenuBook />,
     subItems: [],
   },
-
   {
-    title: "Chambres ",
+    title: "Chambres",
+    icon: <AiOutlineStock />,
     path: "/roomList",
-    icon: <MdMenuBook />,
     subItems: [],
   },
-
   {
-    title: "ètages",
+    title: "Étages",
+    icon: <RiReservedLine />,
     path: "/floorList",
-    icon: <MdMenuBook />,
     subItems: [],
   },
-
   {
     title: "Commandes",
     icon: <MdKeyboardCommandKey />,
@@ -80,9 +75,9 @@ const menuItems = [
   },
   {
     title: "Achat des Stocks",
-    path: "/purchaseList",
     icon: <AiOutlineStock />,
-    subItems: [ ],
+    path: "/purchaseList",
+    subItems: [],
   },
   {
     title: "Réservations",
@@ -97,6 +92,7 @@ const menuItems = [
     subItems: [],
   },
 ];
+
 
 export const SidebarToggleButton = ({ handleSidebarToggle, openSidebar }) => (
   <button
