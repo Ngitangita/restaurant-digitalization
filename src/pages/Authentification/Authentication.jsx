@@ -5,6 +5,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { axiosConf } from "../../services/api";
+import {useAuthStore} from "../../stores/useAuthStore.js";
 
 const LoginSchema = z.object({
   email: z.string().email({ message: "Adresse e-mail invalide" }),
@@ -21,10 +22,11 @@ const SignupSchema = z.object({
   path: ["confirmePassword"],
 });
 
-export default function Authentification({ onAuth }) {
+export default function Authentication() {
+  const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
   const [type, setType] = useState("userIconSingin");
   const [signupError, setSignupError] = useState("");
-  const [isLoading, setIsLoading] = useState(false); // État pour le loader
+  const [isLoading, setIsLoading] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -57,8 +59,11 @@ export default function Authentification({ onAuth }) {
         email: data.email,
         password: data.password,
       });
-      onAuth(response.data);
-      navigate("/"); 
+      if (response?.status >= 200 && response.status < 300 && response.data) {
+        setIsAuthenticated(true);
+        navigate("/");
+      }
+      navigate("/");
     } catch (error) {
       console.error("Échec de la connexion :", error);
     }
@@ -74,8 +79,10 @@ export default function Authentification({ onAuth }) {
         email: data.email,
         password: data.password,
       });
-      onAuth(response.data);
-      navigate("/"); 
+      if (response?.status >= 200 && response.status < 300 && response.data) {
+        setIsAuthenticated(true);
+        navigate("/");
+      }
     } catch (error) {
       if (error.response && error.response.status === 409) {
         if (error.response.data.message.includes("email")) {

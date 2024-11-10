@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FaAngleRight } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import { RiReservedLine } from "react-icons/ri";
 import { AiOutlineStock } from "react-icons/ai";
 import { RiMenuUnfold4Line } from "react-icons/ri";
@@ -10,6 +10,7 @@ import {
   MdMenu, MdOutlineLogin
 } from "react-icons/md";
 import { useTitleStore } from '../../stores/useTitleStore';
+import {useAuthStore} from "../../stores/useAuthStore.js";
 
 const menuItems = [
   {
@@ -103,6 +104,8 @@ export const SidebarToggleButton = ({ handleSidebarToggle, openSidebar }) => (
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate()
+  const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
   const [activeTab, setActiveTab] = useState(null);
   const [isToggleSubmenu, setIsToggleSubmenu] = useState({});
   const [openSidebar, setOpenSidebar] = useState(false);
@@ -127,6 +130,14 @@ export default function Sidebar() {
       setOpenSidebar(false);
     }
   };
+
+  const  logout = () => {
+    if (window.innerWidth < 1024) {
+      setOpenSidebar(false);
+    }
+    setIsAuthenticated(false)
+    navigate("/authentification")
+  }
 
   return (
     <>
@@ -196,14 +207,13 @@ export default function Sidebar() {
         </ul>
 
         <div className="Authentification p-4 bg-white">
-          <Link
-            to="/authentification"
+          <button
             className={`button flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/authentification' ? '' : ''}`}
-            onClick={handleCloseSidebar}
+            onClick={logout}
           >
             <MdOutlineLogin className="text-gray-500 text-xl" />
             <span className="ml-2 text-gray-700">Authentification</span>
-          </Link>
+          </button>
         </div>
       </div>
 
