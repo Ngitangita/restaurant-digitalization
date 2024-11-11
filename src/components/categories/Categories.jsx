@@ -29,7 +29,7 @@ const CategoriesList = () => {
             const query = new URLSearchParams({
                 name: searchTerm,
                 page: currentPage -1 > 0 ? currentPage -1 : 0,
-                size: 1
+                size: 5
             }).toString();
             const data = await fetchJson(apiUrl(`/categories?${query}`));
             setCategories(data.items || []);
