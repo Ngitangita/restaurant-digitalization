@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import {truncate} from "../../services/truncate.js";
 import {convertStatusMenu} from "../../services/convertStatus.js";
 import UpdateStatusMenu from "../updateStatus/UpdateStatusMenu.jsx";
+import useToast from "./menuOrder/(tantely)/hooks/useToast.jsx";
 
 const MenuList = () => {
     const [menus, setMenus] = useState([]);
@@ -27,6 +28,7 @@ const MenuList = () => {
     const [menuToDelete, setMenuToDelete] = useState(null);
     const [detailsVisible, setDetailsVisible] = useState({});
     const navigate = useNavigate();
+    const {showSuccess, showError} = useToast()
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
@@ -54,6 +56,7 @@ const MenuList = () => {
             setStatuses(statusesData);
         } catch (err) {
             setError(err.message);
+            showError("Erreur lors de la récupération des données.");
         } finally {
             setIsLoading(false);
         }
@@ -82,8 +85,9 @@ const MenuList = () => {
             setShowEditModal(false);
             setSelectedMenuId(null);
             void fetchMenus();
-        } catch (error) {
-            console.error('Erreur lors de la mise à jour du statut du menu:', error);
+            showSuccess("Statut mis à jour avec succès.");
+        } catch {
+            showError("Erreur lors de la mise à jour du statut.");
         }
     };
 
@@ -93,9 +97,8 @@ const MenuList = () => {
     };
 
     const handleUpdateMenu = async () => {
-        console.log('Mise à jour du menu:', menuToEdit);
         if (!menuToEdit || !menuToEdit.name || !menuToEdit.price || !menuToEdit.categoryId) {
-            console.error('Les informations du menu sont incomplètes.');
+            showError('Les informations du menu sont incomplètes.');
             return;
         }
 
@@ -114,9 +117,10 @@ const MenuList = () => {
             }
 
             setShowEditMenuModal(false);
-            fetchMenus();
-        } catch (error) {
-            console.error('Erreur lors de la mise à jour du menu:', error);
+            showSuccess('Menu mis à jour avec succès.');
+            void fetchMenus();
+        } catch  {
+            showError('Erreur lors de la mise à jour du menu.');
         }
     };
 
@@ -127,8 +131,9 @@ const MenuList = () => {
             });
             setShowDeleteModal(false);
             void fetchMenus();
-        } catch (error) {
-            console.error('Erreur lors de la suppression du menu:', error);
+            showSuccess('Menu supprimé avec succès.');
+        } catch {
+            showError('Erreur lors de la suppression du menu.');
         }
     };
 
@@ -356,21 +361,22 @@ const MenuList = () => {
 
             {showDeleteModal && (
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg 
+                    <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg
                     w-full max-w-md DeleteModal">
                         <p>Voulez-vous vraiment supprimer le menu {menuToDelete?.name} ?</p>
-                        <div className="mt-4">
+                        <div className="mt-4 flex justify-between">
+
                             <button
-                                className="bg-red-500 text-white rounded p-2 hover:bg-red-600 mr-2"
-                                onClick={handleDelete}
-                            >
-                                Oui
-                            </button>
-                            <button
-                                className="bg-gray-300 text-black rounded p-2 hover:bg-gray-400"
+                                className="bg-red-300 text-black rounded p-2 hover:bg-red-400"
                                 onClick={cancelDelete}
                             >
                                 Non
+                            </button>
+                            <button
+                                className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
+                                onClick={handleDelete}
+                            >
+                                Oui
                             </button>
                         </div>
                     </div>

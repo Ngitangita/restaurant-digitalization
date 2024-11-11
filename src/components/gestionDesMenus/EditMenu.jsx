@@ -35,17 +35,19 @@ const EditMenu = ({ menuToEdit, setMenuToEdit, categories, onSave, onCancel }) =
                 ))}
             </select>
             <div className="flex justify-between">
-                <button
-                    className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-                    onClick={onSave}
-                >
-                    Enregistrer
-                </button>
+
                 <button
                     className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
                     onClick={onCancel}
                 >
                     Annuler
+                </button>
+
+                <button
+                    className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                    onClick={onSave}
+                >
+                    Enregistrer
                 </button>
             </div>
         </div>
