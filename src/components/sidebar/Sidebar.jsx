@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
-import { FaAngleRight } from "react-icons/fa";
-import { Link, useLocation } from "react-router-dom";
+import  { useState } from 'react';
+import {FaAngleRight, FaRegListAlt} from "react-icons/fa";
+import {Link, useLocation, useNavigate} from "react-router-dom";
 import { RiReservedLine } from "react-icons/ri";
 import { AiOutlineStock } from "react-icons/ai";
 import { RiMenuUnfold4Line } from "react-icons/ri";
@@ -10,6 +10,7 @@ import {
   MdMenu, MdOutlineLogin
 } from "react-icons/md";
 import { useTitleStore } from '../../stores/useTitleStore';
+import {useAuthStore} from "../../stores/useAuthStore.js";
 
 const menuItems = [
   {
@@ -19,40 +20,49 @@ const menuItems = [
     subItems: [],
   },
   {
-    title: "Gestion des menus",
+    title: "Menus",
     icon: <MdMenuBook />,
-    subItems: [
-      {
-        title: "List des menus",
-        path: "/menuList",
-      },
-      {
-        title: "Liste des catégories",
-        path: "/categoriesListe",
-      },
-      {
-        title: "Ingredients",
-        path: "/ingredients",
-      },
-    ],
+    path: "/menuList",
+    subItems: [],
   },
   {
-    title: "Tables & chambres & étages",
-    subItems: [
-      {
-        title: "List des tables",
-        path: "/tableList",
-      }, {
-        title: "List des chambres",
-        path: "/roomList",
-      }, {
-        title: "List des étages",
-        path: "/floorList",
-      }
-    ],
+    title: "Catégories",
+    icon: <RiReservedLine />,
+    path: "/categoriesListe",
+    subItems: [],
   },
   {
-    title: "Liste des commandes",
+    title: "Unités",
+    icon: <FaRegListAlt />,
+    path: "/units",
+    subItems: [],
+  },
+  {
+    title: "Ingredients",
+    icon: <MdOutlineSettings />,
+    path: "/ingredients",
+    subItems: [],
+  },
+  {
+    title: "Tables",
+    icon: <MdOutlineCalendarMonth />,
+    path: "/tableList",
+    subItems: [],
+  },
+  {
+    title: "Chambres",
+    icon: <AiOutlineStock />,
+    path: "/roomList",
+    subItems: [],
+  },
+  {
+    title: "Étages",
+    icon: <RiReservedLine />,
+    path: "/floorList",
+    subItems: [],
+  },
+  {
+    title: "Commandes",
     icon: <MdKeyboardCommandKey />,
     path: "/commandes",
     subItems: [],
@@ -64,18 +74,16 @@ const menuItems = [
     subItems: [],
   },
   {
-    title: "Géstion du stocks",
+    title: "Stocks",
     icon: <AiOutlineStock />,
-    subItems: [
-      {
-        title: "Stocks",
-        path: "/stocks",
-      },
-      {
-        title: "Liste d'achat des Stocks",
-        path: "/purchaseList",
-      }
-    ],
+    path: "/stocks",
+    subItems: [],
+  },
+  {
+    title: "Achat des Stocks",
+    icon: <AiOutlineStock />,
+    path: "/purchaseList",
+    subItems: [],
   },
   {
     title: "Réservations",
@@ -91,6 +99,7 @@ const menuItems = [
   },
 ];
 
+
 export const SidebarToggleButton = ({ handleSidebarToggle, openSidebar }) => (
   <button
     className="fixed top-4 left-20 z-50 rounded-full p-3 bg-slate-100 text-2xl flex 
@@ -103,6 +112,8 @@ export const SidebarToggleButton = ({ handleSidebarToggle, openSidebar }) => (
 
 export default function Sidebar() {
   const location = useLocation();
+  const navigate = useNavigate()
+  const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
   const [activeTab, setActiveTab] = useState(null);
   const [isToggleSubmenu, setIsToggleSubmenu] = useState({});
   const [openSidebar, setOpenSidebar] = useState(false);
@@ -127,6 +138,14 @@ export default function Sidebar() {
       setOpenSidebar(false);
     }
   };
+
+  const  logout = () => {
+    if (window.innerWidth < 1024) {
+      setOpenSidebar(false);
+    }
+    setIsAuthenticated(false)
+    navigate("/authentification")
+  }
 
   return (
     <>
@@ -196,14 +215,13 @@ export default function Sidebar() {
         </ul>
 
         <div className="Authentification p-4 bg-white">
-          <Link
-            to="/authentification"
+          <button
             className={`button flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/authentification' ? '' : ''}`}
-            onClick={handleCloseSidebar}
+            onClick={logout}
           >
             <MdOutlineLogin className="text-gray-500 text-xl" />
             <span className="ml-2 text-gray-700">Authentification</span>
-          </Link>
+          </button>
         </div>
       </div>
 

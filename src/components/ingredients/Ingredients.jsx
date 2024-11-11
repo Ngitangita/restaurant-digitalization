@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import  { useCallback, useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
 import CreateIngredient from './CreateIngredient';
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete, MdInfoOutline, MdClear } from "react-icons/md";
 import useFetch from '../../hooks/useFetch';
 import EditIngredients from './EditIngredients';
+import dayjs from "dayjs";
 
 const IngredientList = () => {
     const [ingredients, setIngredients] = useState([]);
@@ -18,7 +19,7 @@ const IngredientList = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5);
+    const [itemsPerPage] = useState(6);
 
     const { data: units } = useFetch(() => apiUrl("/units/all"));
     const [searchTerm, setSearchTerm] = useState('');
@@ -27,13 +28,13 @@ const IngredientList = () => {
         try {
             const data = await fetchJson(apiUrl("/ingredients/all"));
             setIngredients(data);
-        } catch (err) {
+        } catch  {
             setError('Erreur lors de la récupération des ingrédients');
         }
     };
 
     useEffect(() => {
-        fetchIngredients();
+        void fetchIngredients();
     }, []);
 
     const toggleModal = () => {
@@ -42,7 +43,7 @@ const IngredientList = () => {
 
     const handleModalOpen = useCallback((data) => {
         setIsModalOpen(data);
-        fetchIngredients();
+        void fetchIngredients();
     }, []);
 
     const handleDelete = async () => {
@@ -51,7 +52,7 @@ const IngredientList = () => {
                 method: 'DELETE',
             });
             setShowDeleteModal(false);
-            fetchIngredients();
+            void fetchIngredients();
         } catch (error) {
             console.error('Erreur lors de la suppression de l\'ingredients:', error);
         }
@@ -90,7 +91,7 @@ const IngredientList = () => {
             setShowEditModal(false);
             setSelectedIngredient(null);
             fetchIngredients();
-        } catch (error) {
+        } catch {
             setError('Erreur lors de la mise à jour de l\'ingrédient');
         }
     };
@@ -178,15 +179,18 @@ const IngredientList = () => {
 
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden ingredientTable">
                 <thead>
-                    <tr className="bg-gray-200">
-                        <th className="py-2 px-4">Nom</th>
-                        <th className="py-2 px-4">Actions</th>
-                    </tr>
+                <tr className="bg-gray-200">
+                    <th className="py-2 px-4">Id</th>
+                    <th className="py-2 px-4">Nom</th>
+                    <th className="py-2 px-4">Créé le</th>
+                    <th className="py-2 px-4">Modifié le</th>
+                    <th className="py-2 px-4">Actions</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {currentIngredients.length === 0 ? (
+                {currentIngredients.length === 0 ? (
                         <tr className="text-center">
-                            <td colSpan="3" className="py-4 text-gray-500">
+                            <td colSpan="5" className="py-4 text-gray-500">
                                 <div className="flex flex-col items-center justify-center">
                                     <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
                                     <p>Aucun ingrédient disponible</p>
@@ -194,26 +198,29 @@ const IngredientList = () => {
                             </td>
                         </tr>
                     ) : (
-                        currentIngredients.map(ingredient => (
+                        currentIngredients.toSorted((a, b) => a.id - b.id).map(ingredient => (
                             <tr key={ingredient.id} className="hover:bg-gray-100 text-center border-y">
+                                <td className="py-2 px-4">{ingredient.id}</td>
                                 <td className="py-2 px-4">{ingredient.name}</td>
+                                <td className="py-3 px-4">{dayjs(ingredient.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                                <td className="py-3 px-4">{dayjs(ingredient.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                                 <td className="py-2 px-4 flex flex-row gap-2 justify-center">
                                     <button
                                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                                         onClick={() => handleEdit(ingredient)}
                                     >
-                                        <FaRegEdit />
+                                        <FaRegEdit/>
                                     </button>
                                     <button
                                         className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
                                         onClick={() => confirmDelete(ingredient.id)}
                                     >
-                                        <MdDelete />
+                                        <MdDelete/>
                                     </button>
                                 </td>
                             </tr>
                         ))
-                    )}
+                )}
                 </tbody>
             </table>
 

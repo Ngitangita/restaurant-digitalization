@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { apiUrl } from '../../services/api';
+import {convertStatusMenu} from "../../services/convertStatus.js";
 
 const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
     const [name, setName] = useState('');
@@ -131,7 +132,7 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
                     {statuses && statuses.length > 0 ? (
                         statuses.map(status => (
                             <option key={status} value={status}>
-                                {status}
+                                {convertStatusMenu(status.toLowerCase())}
                             </option>
                         ))
                     ) : (

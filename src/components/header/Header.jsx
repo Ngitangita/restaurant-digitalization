@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { MdOutlineLightMode, MdNightlightRound } from "react-icons/md";
 import Breadcrumb from '../Breadcrumbs/Breadcrumb';

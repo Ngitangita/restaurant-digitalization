@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
 import CreateCategories from './CreateCategories';
 import { MdDelete, MdClear } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import EditModal from './EditModal';
+import dayjs from "dayjs";
 
 const CategoriesList = () => {
     const [categories, setCategories] = useState([]);
@@ -14,18 +15,27 @@ const CategoriesList = () => {
     const [categoryToEdit, setCategoryToEdit] = useState(null);
     const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(5);
+    const [totalPages, setTotalPages] = useState(0);
+    const [hasNext, setHasNext] = useState(false);
+    const [hasPrevious, setHasPrevious] = useState(false);
 
     useEffect(() => {
-        fetchCategories();
-    }, []);
+        void fetchCategories();
+    }, [currentPage, searchTerm]);
 
     const fetchCategories = async () => {
         try {
-            const data = await fetchJson(apiUrl("/categories/all"));
-            setCategories(data);
+            const query = new URLSearchParams({
+                name: searchTerm,
+                page: currentPage -1 > 0 ? currentPage -1 : 0,
+                size: 5
+            }).toString();
+            const data = await fetchJson(apiUrl(`/categories?${query}`));
+            setCategories(data.items || []);
+            setTotalPages(data?.pageInfo.totalPages || 0);
+            setHasNext(data?.pageInfo?.hasNext || false);
+            setHasPrevious(data?.pageInfo?.hasPrevious || false);
         } catch (err) {
             const errorMsg = err.message || 'Erreur lors de la récupération des catégories';
             setError(errorMsg);
@@ -37,7 +47,7 @@ const CategoriesList = () => {
     };
 
     const handleCategoryCreated = () => {
-        fetchCategories();
+        void fetchCategories();
         setIsModalOpen(false);
     };
 
@@ -47,15 +57,15 @@ const CategoriesList = () => {
                 method: 'DELETE',
             });
             setShowDeleteModal(false);
-            fetchCategories();
+            void fetchCategories();
         } catch (error) {
             console.error('Erreur lors de la suppression de la catégorie', error);
         }
     };
 
     const confirmDelete = (categorieId) => {
-        const categorie = categories.find(c => c.id === categorieId);
-        setCategoryToDelete(categorie);
+        const category = categories.find(c => c.id === categorieId);
+        setCategoryToDelete(category);
         setShowDeleteModal(true);
     };
 
@@ -94,43 +104,33 @@ const CategoriesList = () => {
             }
 
             setShowEditCategoryModal(false);
-            fetchCategories();
+            void fetchCategories();
         } catch (error) {
             console.error('Erreur lors de la mise à jour de la catégorie:', error);
         }
     };
 
-    const filteredCategories = categories.filter(categorie =>
-        categorie.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    const indexOfLastCategory = currentPage * itemsPerPage;
-    const indexOfFirstCategory = indexOfLastCategory - itemsPerPage;
-    const currentCategories = filteredCategories.slice(indexOfFirstCategory, indexOfLastCategory);
-
-    const totalPages = Math.ceil(filteredCategories.length / itemsPerPage);
 
     const handleNextPage = () => {
-        if (currentPage < totalPages) setCurrentPage(prevPage => prevPage + 1);
+        if (currentPage < totalPages)
+            setCurrentPage(prevPage => prevPage + 1);
     };
 
     const handlePrevPage = () => {
-        if (currentPage > 1) setCurrentPage(prevPage => prevPage - 1);
+        if (currentPage > 1)
+            setCurrentPage(prevPage => prevPage - 1);
     };
 
     const handlePageInputChange = (e) => {
-        const page = Number(e.target.value);
+        let value = parseInt(e.target.value);
 
-        if (!isNaN(page)) {
-            if (page >= 1 && page <= totalPages) {
-                setCurrentPage(page);
-            } else if (page < 1) {
-                setCurrentPage(1);
-            } else if (page > totalPages) {
-                setCurrentPage(totalPages);
-            }
+        if (!isNaN(value)) {
+            setCurrentPage(value);
+        } else {
+            setCurrentPage(1);
         }
     };
+
 
     return (
         <div className="container mx-auto p-4 categories bg-white">
@@ -182,24 +182,30 @@ const CategoriesList = () => {
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden categoriesTable">
                 <thead>
                     <tr className="bg-gray-200">
+                        <th className="py-2 px-4">ID</th>
                         <th className="py-2 px-4">Nom</th>
+                        <th className="py-2 px-4">Créé le</th>
+                        <th className="py-2 px-4">Modifié le</th>
                         <th className="py-2 px-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {currentCategories.length > 0 ? currentCategories.map(categorie => (
-                        <tr key={categorie.id} className="hover:bg-gray-100 text-center border-y border-collapse">
-                            <td className="py-2 px-4 ">{categorie.name}</td>
-                            <td className="py-2 px-4">
+                    {categories.length > 0 ? categories.toSorted((a, b) => a.id - b.id).map(category => (
+                        <tr key={category.id} className="hover:bg-gray-100 text-center border-y border-collapse">
+                            <td className="py-3 px-4 ">{category.id}</td>
+                            <td className="py-3 px-4 ">{category.name}</td>
+                            <td className="py-3 px-4">{dayjs(category.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                            <td className="py-3 px-4">{dayjs(category.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
+                            <td className="py-3 px-4">
                                 <button
                                     className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
-                                    onClick={() => handleEditCategory(categorie)}
+                                    onClick={() => handleEditCategory(category)}
                                 >
                                     <FaRegEdit />
                                 </button>
                                 <button
                                     className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
-                                    onClick={() => confirmDelete(categorie.id)}
+                                    onClick={() => confirmDelete(category.id)}
                                 >
                                     <MdDelete />
                                 </button>
@@ -207,7 +213,7 @@ const CategoriesList = () => {
                         </tr>
                     )) : (
                         <tr>
-                            <td colSpan="2" className="py-4 text-center">Aucune catégorie trouvée</td>
+                            <td colSpan="5" className="py-4 text-center">Aucune catégorie trouvée</td>
                         </tr>
                     )}
                 </tbody>
@@ -218,18 +224,19 @@ const CategoriesList = () => {
                     <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center DeleteModal">
                         <div>
                             <p className="mb-6">Êtes-vous sûr de vouloir supprimer le catégorie {categoryToDelete?.name} ?</p>
-                            <div className="flex justify-around">
+                            <div className="flex justify-between">
+
                                 <button
-                                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                                    onClick={handleDelete}
-                                >
-                                    Oui
-                                </button>
-                                <button
-                                    className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
+                                    className="bg-red-300 text-gray-800 px-4 py-2 rounded hover:bg-red-400"
                                     onClick={cancelDelete}
                                 >
                                     Non
+                                </button>
+                                <button
+                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                    onClick={handleDelete}
+                                >
+                                    Oui
                                 </button>
                             </div>
                         </div>
@@ -262,8 +269,8 @@ const CategoriesList = () => {
             <div className="flex justify-between mt-4 items-center">
                 <button
                     onClick={handlePrevPage}
-                    className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-                    disabled={currentPage === 1}
+                    className={`${hasPrevious ? "bg-blue-500 hover:bg-blue-600 ": "bg-gray-500 hover:bg-gray-600 "} text-white px-4 py-2 rounded `}
+                    disabled={!hasPrevious}
                 >
                     Précédent
                 </button>
@@ -272,7 +279,9 @@ const CategoriesList = () => {
                     <input
                         type="number"
                         value={currentPage}
-                        onChange={handlePageInputChange} // Met à jour la page courante directement
+                        onChange={handlePageInputChange}
+                        onBlur={handlePageInputChange}
+                        onKeyDown={(e) => e.key === 'Enter' && handlePageInputChange(e)}
                         min={1}
                         max={totalPages}
                         className="border border-gray-300 rounded-md px-2 py-1 outline-none w-20"
@@ -280,8 +289,8 @@ const CategoriesList = () => {
                 </div>
                 <button
                     onClick={handleNextPage}
-                    className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
-                    disabled={currentPage === totalPages}
+                    className={`${hasNext ? "bg-blue-500 hover:bg-blue-600 ": "bg-gray-500 hover:bg-gray-600 "} text-white px-4 py-2 rounded `}
+                    disabled={!hasNext}
                 >
                     Suivant
                 </button>

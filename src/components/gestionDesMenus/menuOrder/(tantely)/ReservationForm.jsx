@@ -22,6 +22,16 @@ function ReservationForm() {
     const [tables, setTables] = useState([]);
     const [rooms, setRooms] = useState([]);
 
+    const findByNumber = (number, type) => {
+        if (type === 'table') {
+            return tables.find((table) => table.number === number);
+        } else if (type === 'room') {
+            return rooms.find((room) => room.roomNumber === number);
+        } else {
+            return null;
+        }
+    };
+
     const handleConfirm = async (data) => {
         if (menuRequest.length === 0) {
             setMenuError("Veuillez ajouter au moins un élément de menu.");
@@ -29,11 +39,13 @@ function ReservationForm() {
         }
     
         setMenuError("");
-    
+
+        const table = findByNumber(data.tableId, 'table')
+        const room = findByNumber(data.roomId, 'room')
         const payload = {
             customerId: data.customerId ? Number(data.customerId) : null,
-            roomId: data.roomId ? Number(data.roomId) : null,
-            tableId: data.tableId ? Number(data.tableId) : null,
+            roomId: room ? Number(room.id) : null,
+            tableId: table ? Number(table.id) : null,
             menuItems: menuRequest,
         };
     
@@ -149,7 +161,7 @@ function ReservationForm() {
                         type="button"
                         className="bg-red-300 text-gray-800 rounded px-4 py-2 hover:bg-red-400"
                         onClick={() => {
-                            // Logique d'annulation si nécessaire
+
                         }} 
                     >
                         Annuler

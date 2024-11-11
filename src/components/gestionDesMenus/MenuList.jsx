@@ -5,7 +5,10 @@ import { MdDelete, MdClear, MdEdit, MdMoreVert } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import EditMenu from './EditMenu';
 import { useNavigate } from 'react-router-dom';
-import UpdateStatus from '../updateStatus/UpdateStatus';
+import dayjs from "dayjs";
+import {truncate} from "../../services/truncate.js";
+import {convertStatusMenu} from "../../services/convertStatus.js";
+import UpdateStatusMenu from "../updateStatus/UpdateStatusMenu.jsx";
 
 const MenuList = () => {
     const [menus, setMenus] = useState([]);
@@ -23,8 +26,6 @@ const MenuList = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [menuToDelete, setMenuToDelete] = useState(null);
     const [detailsVisible, setDetailsVisible] = useState({});
-    const [page, setPage] = useState(1);
-    const [size, setSize] = useState(8);
     const navigate = useNavigate();
 
     const toggleModal = () => {
@@ -35,7 +36,7 @@ const MenuList = () => {
         setIsLoading(true);
         try {
             const [menusResponse, categoriesResponse, statusesResponse] = await Promise.all([
-                fetch(apiUrl(`/menus/all?size=${size}&page=${page - 1}`)),
+                fetch(apiUrl(`/menus/all`)),
                 fetch(apiUrl('/categories/all')),
                 fetch(apiUrl('/menus/status'))
             ]);
@@ -59,8 +60,8 @@ const MenuList = () => {
     };
 
     useEffect(() => {
-        fetchMenus();
-    }, [size, page]);
+        void fetchMenus();
+    }, []);
 
     const handleEditStatus = (menu) => {
         setSelectedMenuId(menu.id);
@@ -80,7 +81,7 @@ const MenuList = () => {
 
             setShowEditModal(false);
             setSelectedMenuId(null);
-            fetchMenus();
+            void fetchMenus();
         } catch (error) {
             console.error('Erreur lors de la mise à jour du statut du menu:', error);
         }
@@ -125,7 +126,7 @@ const MenuList = () => {
                 method: 'DELETE',
             });
             setShowDeleteModal(false);
-            fetchMenus();
+            void fetchMenus();
         } catch (error) {
             console.error('Erreur lors de la suppression du menu:', error);
         }
@@ -149,7 +150,9 @@ const MenuList = () => {
     const menusByCategory = categories.reduce((acc, category) => {
         acc[category.id] = {
             categoryName: category.name,
-            menus: filteredMenus.filter(menu => menu.categoryId === category.id),
+            menus: filteredMenus
+                .filter(menu => menu.categoryId === category.id)
+                .toSorted((a, b) => a.id - b.id),
         };
         return acc;
     }, {});
@@ -218,74 +221,88 @@ const MenuList = () => {
             <table className="min-w-full bg-white MenuList shadow-md rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-200">
+                        <th className="py-2 px-4">Id</th>
                         <th className="py-2 px-4">Nom</th>
                         <th className="py-2 px-4">Prix</th>
                         <th className="py-2 px-4">Description</th>
                         <th className="py-2 px-4">Statut</th>
+                        <th className="py-2 px-4">Créé le</th>
+                        <th className="py-2 px-4">Modifié le</th>
                         <th className="py-2 px-4">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
                     {isLoading ? (
                         <tr>
-                            <td colSpan="6" className="text-center py-2">Chargement...</td>
+                            <td colSpan="9" className="text-center py-2">Chargement...</td>
                         </tr>
                     ) : (
-                        Object.entries(menusByCategory).map(([_, { categoryName, menus }]) => (
+                        Object.entries(menusByCategory).map(([, { categoryName, menus }]) => (
                             menus.length > 0 && (
                                 <React.Fragment key={categoryName}>
                                     <tr className='text-center'>
-                                        <td colSpan="6" className="font-bold text-lg pt-10">{categoryName}</td>
+                                        <td colSpan="9" className="font-bold text-lg pt-10">{categoryName}</td>
                                     </tr>
 
                                     {menus.map(menu => (
                                         <tr key={menu.id}
                                             className="hover:bg-gray-100 text-center border-y"
                                         >
+                                            <td className="py-2 px-4">{menu.id}</td>
                                             <td className="py-2 px-4">{menu.name}</td>
                                             <td className="py-2 px-4">{menu.price}</td>
-                                            <td className="py-2 px-4">{menu.description}</td>
+                                            <td className="py-2 px-4">{truncate(menu.description, 20)}</td>
                                             <td className={`py-2 px-4 cursor-pointer ${menu.status.toLowerCase() !== "active" ? 'text-red-500 font-bold' : ''}`}>
                                                 <button
                                                     onClick={() => handleEditStatus(menu)}
-                                                    className='w-full flex flex-col gap-1 items-center '
+                                                    className='w-full flex flex-row gap-1 items-center '
                                                 >
-                                                    <span className='flex flex-row gap-1 items-center '>
-                                                        <MdEdit /> {menu.status.toLowerCase()}
-                                                    </span>
-                                                    {menu.status.toLowerCase() !== "active" && (
-                                                        <div className="text-red-500 text-[10px]">⚠️ désolé ce menu est {menu.status}</div>
+
+                                                    <span className='flex text-sm flex-row gap-1 items-center '>
+                                                        <MdEdit/>  {menu.status.toLowerCase() !== "active" && (
+                                                        <span className="text-red-500 text-[10px]">⚠️</span>
                                                     )}
+                                                        {convertStatusMenu(menu.status.toLowerCase())}
+                                                    </span>
+
                                                 </button>
                                             </td>
+
+                                            <td className="py-2 px-4">{dayjs(menu.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                                            <td className="py-2 px-4">{dayjs(menu.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
+
                                             <td className="py-2 px-4 flex flex-row justify-center gap-2">
                                                 <button
                                                     className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                                                     onClick={() => handleEditMenu(menu)}
                                                 >
-                                                    <FaRegEdit />
+                                                    <FaRegEdit/>
                                                 </button>
                                                 <button
                                                     className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
                                                     onClick={() => confirmDelete(menu.id)}
                                                 >
-                                                    <MdDelete />
+                                                    <MdDelete/>
                                                 </button>
-                                                <button className="relative">
-                                                    <button onClick={() => toggleDetails(menu.id)}
-                                                        className="detail focus:outline-none rounded p-2 bg-gray-200">
-                                                        <MdMoreVert />
+                                                <div className="relative">
+                                                    <button
+                                                        onClick={() => toggleDetails(menu.id)}
+                                                        className="detail focus:outline-none rounded p-2 bg-gray-200"
+                                                    >
+                                                        <MdMoreVert/>
                                                     </button>
                                                     {detailsVisible[menu.id] && (
-                                                        <div className="absolute text-start right-[1px] bottom-9 w-72 bg-gray-300 shadow-md rounded-md z-50 ">
-                                                            <button onClick={() => handleClickRow(menu.id)}
-                                                                className="detail block text-start px-4 py-2 hover:bg-gray-100 w-full
-                                                            border-y border-white">
+                                                        <div
+                                                            className="absolute text-start right-[1px] bottom-9 w-72 bg-gray-300 shadow-md rounded-md z-50">
+                                                            <button
+                                                                onClick={() => handleClickRow(menu.id)}
+                                                                className="detail block text-start px-4 py-2 hover:bg-gray-100 w-full border-y border-white"
+                                                            >
                                                                 Voir détail
                                                             </button>
                                                         </div>
                                                     )}
-                                                </button>
+                                                </div>
 
                                             </td>
                                         </tr>
@@ -300,7 +317,7 @@ const MenuList = () => {
             {showEditModal && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
                     <div className="bg-white rounded-lg shadow-lg max-w-sm EditModal">
-                        <div className='flex flex-row justify-between items-center'>
+                    <div className='flex flex-row justify-between items-center'>
                             <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statut</h2>
                             <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
                             relative bottom-4 text-[30px] hover:text-white cursor-pointer'
@@ -308,7 +325,7 @@ const MenuList = () => {
                                 x
                             </span>
                         </div>
-                        <UpdateStatus
+                        <UpdateStatusMenu
                             onSave={handleUpdateStatus}
                             onCancel={() => setShowEditModal(false)}
                             statuses={statuses}
@@ -360,21 +377,6 @@ const MenuList = () => {
                 </div>
             )}
 
-            <div className="flex justify-between mt-4">
-                <button
-                    onClick={() => setPage((p) => p - 1)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
-                    disabled={page <= 1}
-                >
-                    Previous
-                </button>
-                <button
-                    onClick={() => setPage((p) => p + 1)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                >
-                    Next
-                </button>
-            </div>
         </div>
     );
 };

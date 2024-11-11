@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import{ useEffect, useState } from 'react';
 import { apiUrl } from '../../services/api';
 import { MdClear, MdDelete, MdEdit } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import CreateRoom from './CreateRoom';
-import UpdateStatus from '../updateStatus/UpdateStatus';
 import EditRoom from './EditRoom';
+import dayjs from "dayjs";
+import {convertStatusToRoom} from "../../services/convertStatus.js";
+import UpdateStatusRoom from "../updateStatus/UpdateStatusRoom.jsx";
 
 const RoomList = () => {
     const [rooms, setRooms] = useState([]);
@@ -65,7 +67,7 @@ const RoomList = () => {
                 body: JSON.stringify(status),
             });
             toggleModal('');
-            fetchRooms();
+            void fetchRooms();
         } catch (error) {
             console.error('Erreur lors de la mise à jour du statut de la salle:', error);
         }
@@ -138,54 +140,61 @@ const RoomList = () => {
             ) : (
                 <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden RoomList">
                     <thead>
-                        <tr className="bg-gray-200">
-                            <th className="py-2 px-4">Numéro de Salle</th>
-                            <th className="py-2 px-4">Capacité</th>
-                            <th className="py-2 px-4">Prix (Ar)</th>
-                            <th className="py-2 px-4">Statut</th>
-                            <th className="py-2 px-4">Actions</th>
-                        </tr>
+                    <tr className="bg-gray-200">
+                        <th className="py-2 px-4">Id</th>
+                        <th className="py-2 px-4">Numéro de Salle</th>
+                        <th className="py-2 px-4">Capacité (en personnes)</th>
+                        <th className="py-2 px-4">Prix (en Ar)</th>
+                        <th className="py-2 px-4">Statut</th>
+                        <th className="py-2 px-4">Créé le</th>
+                        <th className="py-2 px-4">Modifié le</th>
+                        <th className="py-2 px-4">Actions</th>
+                    </tr>
                     </thead>
                     <tbody>
-                        {filteredRooms.length > 0 ? (
+                    {filteredRooms.length > 0 ? (
                             filteredRooms.map((room) => (
                                 <tr key={room.id} className="hover:bg-gray-100 text-center border-y border-collapse">
+                                    <td className="py-2 px-4">{room.id}</td>
                                     <td className="py-2 px-4">{room.roomNumber}</td>
-                                    <td className="py-2 px-4">{room.capacity} personnes</td>
-                                    <td className="py-2 px-4">{room.price} Ar</td>
+                                    <td className="py-2 px-4">{room.capacity}</td>
+                                    <td className="py-2 px-4">{room.price}</td>
                                     <td className={`py-2 px-4 cursor-pointer ${room.status.toLowerCase() !== "available" ? 'text-red-500 font-bold' : ''}`}>
                                         <button
                                             onClick={() => toggleModal('editStatus', room)}
-                                            className='w-full flex flex-col gap-1 items-center'
+                                            className='w-full flex flex-row gap-1 items-center'
                                         >
-                                            <span className='flex flex-row gap-1 items-center '>
-                                                <MdEdit /> {room.status.toLowerCase()}
+                                            <span className='flex flex-row gap-1 text-[11px] items-center '>
+                                                {room.status.toLowerCase() !== "available" && (
+                                                    <span className="text-red-500 text-[10px]">⚠️</span>
+                                                )}
+                                                <MdEdit/> {convertStatusToRoom(room.status.toLowerCase())}
                                             </span>
-                                            {room.status.toLowerCase() !== "available" && (
-                                                <div className="text-red-500 text-[10px]">⚠️ désolé cette chambre est {room.status}</div>
-                                            )}
+
                                         </button>
                                     </td>
+                                    <td className="py-3 px-4">{dayjs(room.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                                    <td className="py-3 px-4">{dayjs(room.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                                     <td className="py-2 px-4">
                                         <button
                                             className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                                             onClick={() => toggleModal('editRoom', room)}
                                         >
-                                            <FaRegEdit />
+                                            <FaRegEdit/>
                                         </button>
                                         <button
                                             className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
                                             onClick={() => toggleModal('delete', room)}
                                         >
-                                            <MdDelete />
+                                            <MdDelete/>
                                         </button>
                                     </td>
                                 </tr>
                             ))
-                        ) : (
-                            <tr>
-                                <td colSpan="5" className="py-4 text-center">Aucune salle trouvée</td>
-                            </tr>
+                    ) : (
+                        <tr>
+                            <td colSpan="8" className="py-4 text-center">Aucune salle trouvée</td>
+                        </tr>
                         )}
                     </tbody>
                 </table>
@@ -222,7 +231,7 @@ const RoomList = () => {
                                 x
                             </span>
                         </div>
-                        <UpdateStatus
+                        <UpdateStatusRoom
                             onSave={handleUpdateStatus}
                             onCancel={() => toggleModal('')}
                             statuses={statuses}

@@ -4,6 +4,8 @@ import { MdDelete, MdClear } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import CreateFloor from './CreateFloor';
 import EditFloor from './EditFloor';
+import dayjs from "dayjs";
+import {truncate} from "../../services/truncate.js";
 
 const FloorsList = () => {
   const [floors, setFloors] = useState([]);
@@ -16,7 +18,7 @@ const FloorsList = () => {
   const [floorToDelete, setFloorToDelete] = useState(null);
 
   useEffect(() => {
-    fetchFloors();
+    void fetchFloors();
   }, []);
 
   const fetchFloors = async () => {
@@ -35,7 +37,7 @@ const FloorsList = () => {
   };
 
   const handleFloorCreated = () => {
-    fetchFloors();
+    void fetchFloors();
     setIsModalOpen(false);
   };
 
@@ -63,11 +65,11 @@ const FloorsList = () => {
       });
 
       if (!response.ok) {
-        throw new Error(`Erreur lors de la mise à jour de l'\étage: ${response.statusText}`);
+        throw new Error(`error lors de la mise à jour de l'étage: ${response.statusText}`);
       }
 
       setShowEditFloorModal(false);
-      fetchFloors();
+     void fetchFloors();
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'étage:', error);
     }
@@ -79,7 +81,7 @@ const FloorsList = () => {
         method: 'DELETE',
       });
       setShowDeleteModal(false);
-      fetchFloors();
+      void fetchFloors();
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'étage:', error);
     }
@@ -132,38 +134,44 @@ const FloorsList = () => {
 
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden categoriesTable">
         <thead>
-          <tr className="bg-gray-200">
-            <th className="py-2 px-4">N° de l'étage</th>
-            <th className="py-2 px-4">Description</th>
-            <th className="py-2 px-4">Action</th>
-          </tr>
+        <tr className="bg-gray-200">
+          <th className="py-2 px-4">Id</th>
+          <th className="py-2 px-4">N° de l'étage</th>
+          <th className="py-2 px-4">Description</th>
+          <th className="py-2 px-4">Créé le</th>
+          <th className="py-2 px-4">Modifié le</th>
+          <th className="py-2 px-4">Action</th>
+        </tr>
         </thead>
         <tbody>
-          {floors.length > 0 ? (
-            floors.map(floor => (
-              <tr key={floor.id} className="hover:bg-gray-100 text-center border-y border-collapse">
-                <td className="py-2 px-4">{floor.floorNumber}</td>
-                <td className="py-2 px-4">{floor.description}</td>
-                <td className="py-2 px-4">
-                  <button
-                    className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-                    onClick={() => handleEditFloor(floor)}
-                  >
-                    <FaRegEdit />
-                  </button>
-                  <button
-                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
-                    onClick={() => confirmDelete(floor.id)}
-                  >
-                    <MdDelete />
-                  </button>
-                </td>
-              </tr>
+        {floors.length > 0 ? (
+            floors.toSorted((a, b) => a.id - b.id).map(floor => (
+                <tr key={floor.id} className="hover:bg-gray-100 text-center border-y border-collapse">
+                  <td className="py-2 px-4">{floor.id}</td>
+                  <td className="py-2 px-4">{floor.floorNumber}</td>
+                  <td className="py-2 px-4">{truncate(floor.description, 40)}</td>
+                  <td className="py-3 px-4">{dayjs(floor.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                  <td className="py-3 px-4">{dayjs(floor.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
+                  <td className="py-2 px-4">
+                    <button
+                        className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
+                        onClick={() => handleEditFloor(floor)}
+                    >
+                      <FaRegEdit/>
+                    </button>
+                    <button
+                        className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
+                        onClick={() => confirmDelete(floor.id)}
+                    >
+                      <MdDelete/>
+                    </button>
+                  </td>
+                </tr>
             ))
           ) : (
-            <tr>
-              <td colSpan="3" className="py-4 text-center">Aucun étage trouvé</td>
-            </tr>
+              <tr>
+                <td colSpan="3" className="py-4 text-center">Aucun étage trouvé</td>
+              </tr>
           )}
         </tbody>
       </table>

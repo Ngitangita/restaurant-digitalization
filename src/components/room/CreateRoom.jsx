@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { apiUrl } from '../../services/api';
+import {convertStatusToRoom} from "../../services/convertStatus.js";
 
 const CreateRoom = ({ onCreate, createRoomModal, closeModal, statuses = [], floors = [] }) => {
     const [price, setPrice] = useState('');
@@ -126,7 +127,7 @@ const CreateRoom = ({ onCreate, createRoomModal, closeModal, statuses = [], floo
                     <option value="">Sélectionnez un statut</option>
                     {statuses.map(status => (
                         <option key={status} value={status}>
-                            {status}
+                            {convertStatusToRoom(status.toLowerCase())}
                         </option>
                     ))}
                 </select>

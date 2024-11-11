@@ -1,8 +1,9 @@
+import {convertStatusToOrder} from "../../services/convertStatus.js";
 
 
-const UpdateStatus = ({status, statuses, setStatus,  onSave, onCancel}) => {
+const UpdateStatusOrder = ({status, statuses, setStatus,  onSave, onCancel}) => {
     return (
-        <div className="p-8">
+        <div className="p-8 z-[100]">
             <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
@@ -10,7 +11,7 @@ const UpdateStatus = ({status, statuses, setStatus,  onSave, onCancel}) => {
             >
                 {statuses.map(status => (
                     <option key={status} value={status}>
-                        {status}
+                        {convertStatusToOrder(status.toLowerCase())}
                     </option>
                 ))}
             </select>
@@ -32,4 +33,4 @@ const UpdateStatus = ({status, statuses, setStatus,  onSave, onCancel}) => {
     )
 }
 
-export default UpdateStatus
+export default UpdateStatusOrder

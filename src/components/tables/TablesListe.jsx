@@ -3,6 +3,8 @@ import { apiUrl, fetchJson } from '../../services/api';
 import { FaRegEdit } from 'react-icons/fa';
 import { MdDelete, MdClear, MdEdit } from 'react-icons/md';
 import EditTable from './EditTable';
+import dayjs from "dayjs";
+import {convertStatusToTable} from "../../services/convertStatus.js";
 
 function TablesListe() {
     const [tables, setTables] = useState([]);
@@ -184,23 +186,27 @@ function TablesListe() {
 
             <table className="min-w-full shadow-md rounded-lg overflow-hidden bg-white TableTbl">
                 <thead>
-                    <tr className="bg-gray-200">
-                        <th className="py-2 px-4">Numéro</th>
-                        <th className="py-2 px-4">Capacité</th>
-                        <th className="py-2 px-4">Statut</th>
-                        <th className="py-2 px-4">Action</th>
-                    </tr>
+                <tr className="bg-gray-200">
+                    <th className="py-2 px-4">ID</th>
+                    <th className="py-2 px-4">Numéro</th>
+                    <th className="py-2 px-4">Capacité</th>
+                    <th className="py-2 px-4">Statut</th>
+                    <th className="py-2 px-4">Créé le</th>
+                    <th className="py-2 px-4">Modifié le</th>
+                    <th className="py-2 px-4">Action</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {filteredTables.length === 0 ? (
+                {filteredTables.length === 0 ? (
                         <tr className="text-center">
-                            <td colSpan="4" className="py-4 text-gray-500">
+                            <td colSpan="7" className="py-4 text-gray-500">
                                 Aucune table disponible
                             </td>
                         </tr>
                     ) : (
                         filteredTables.map((table) => (
                             <tr key={table.id} className="hover:bg-gray-100 text-center border-y">
+                                <td className="py-2 px-4">{table.id}</td>
                                 <td className="py-2 px-4">{table.number}</td>
                                 <td className="py-2 px-4">{table.capacity}</td>
                                 <td className={`py-2 px-4 cursor-pointer ${table.status.toLowerCase() !== "available" ? 'text-red-500 font-bold' : ''}`}>
@@ -209,25 +215,28 @@ function TablesListe() {
                                         className='w-full flex flex-col gap-1 items-center '
                                     >
                                         <span className='flex flex-row gap-1 items-center '>
-                                            <MdEdit /> {table.status.toLowerCase()}
+                                            <MdEdit/> {convertStatusToTable(table.status.toLowerCase())}
                                         </span>
                                         {table.status.toLowerCase() !== "available" && (
-                                            <div className="text-red-500 text-[10px]">⚠️ désolé cette table est {table.status}</div>
+                                            <span className="text-red-500 text-[10px]">⚠️ désolé cette table
+                                                est {convertStatusToTable(table.status)}</span>
                                         )}
                                     </button>
                                 </td>
+                                <td className="py-3 px-4">{dayjs(table.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                                <td className="py-3 px-4">{dayjs(table.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                                 <td className="py-2 px-4 flex flex-row gap-4 justify-center">
                                     <button
                                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                                         onClick={() => handleEditTable(table)}
                                     >
-                                        <FaRegEdit />
+                                        <FaRegEdit/>
                                     </button>
                                     <button
                                         className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
                                         onClick={() => confirmDelete(table.id)}
                                     >
-                                        <MdDelete />
+                                        <MdDelete/>
                                     </button>
                                 </td>
                             </tr>
@@ -291,7 +300,7 @@ function TablesListe() {
                             >
                                 <option value="" disabled>Sélectionner le statut</option>
                                 {tableStatuses.map((status) => (
-                                    <option key={status} value={status}>{status}</option>
+                                    <option key={status} value={status}>{convertStatusToTable(status)}</option>
                                 ))}
                             </select>
                             <div className="flex justify-around">
@@ -331,7 +340,7 @@ function TablesListe() {
                                 className="border border-gray-300 p-2 mb-4 w-full"
                             >
                                 {tableStatuses.map((status) => (
-                                    <option key={status} value={status}>{status}</option>
+                                    <option key={status} value={status}>{convertStatusToTable(status)}</option>
                                 ))}
                             </select>
                             <div className="flex justify-around">
