@@ -26,8 +26,6 @@ const MenuList = () => {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [menuToDelete, setMenuToDelete] = useState(null);
     const [detailsVisible, setDetailsVisible] = useState({});
-    const [page, setPage] = useState(1);
-    const [size, ] = useState(8);
     const navigate = useNavigate();
 
     const toggleModal = () => {
@@ -38,7 +36,7 @@ const MenuList = () => {
         setIsLoading(true);
         try {
             const [menusResponse, categoriesResponse, statusesResponse] = await Promise.all([
-                fetch(apiUrl(`/menus/all?size=${size}&page=${page - 1}`)),
+                fetch(apiUrl(`/menus/all`)),
                 fetch(apiUrl('/categories/all')),
                 fetch(apiUrl('/menus/status'))
             ]);
@@ -63,7 +61,7 @@ const MenuList = () => {
 
     useEffect(() => {
         void fetchMenus();
-    }, [size, page]);
+    }, []);
 
     const handleEditStatus = (menu) => {
         setSelectedMenuId(menu.id);
@@ -128,7 +126,7 @@ const MenuList = () => {
                 method: 'DELETE',
             });
             setShowDeleteModal(false);
-            fetchMenus();
+            void fetchMenus();
         } catch (error) {
             console.error('Erreur lors de la suppression du menu:', error);
         }
@@ -379,21 +377,6 @@ const MenuList = () => {
                 </div>
             )}
 
-            <div className="flex justify-between mt-4">
-                <button
-                    onClick={() => setPage((p) => p - 1)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
-                    disabled={page <= 1}
-                >
-                    Previous
-                </button>
-                <button
-                    onClick={() => setPage((p) => p + 1)}
-                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                >
-                    Next
-                </button>
-            </div>
         </div>
     );
 };
