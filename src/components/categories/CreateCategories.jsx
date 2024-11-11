@@ -27,12 +27,15 @@ const CreateCategories = ({ onClose, onCategoryCreated }) => {
                 />
                 {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
             </div>
-            <div className='flex flex-row gap-4'>
+            <div className='flex flex-row justify-between gap-4'>
+
+                <button type="button" onClick={onClose}
+                        className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">
+                    Annuler
+                </button>
+
                 <button type="submit" className="bg-blue-500 text-white p-2 px-4 rounded-md hover:bg-blue-600">
                     Créer
-                </button>
-                <button type="button" onClick={onClose} className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400">
-                    Annuler
                 </button>
             </div>
         </form>
