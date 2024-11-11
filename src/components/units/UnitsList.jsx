@@ -1,11 +1,12 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FaRegEdit } from "react-icons/fa";
-import { MdDelete, MdInfoOutline} from "react-icons/md";
+import { MdDelete, MdInfoOutline } from "react-icons/md";
 import { apiUrl, fetchJson } from '../../services/api';
 import dayjs from "dayjs";
 import CreateUnit from "./CreateUnit.jsx";
+import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
-function UnitsListe() {
+function UnitsList() {
     const [units, setUnits] = useState([]);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedUnit, setSelectedUnit] = useState(null);
@@ -13,13 +14,14 @@ function UnitsListe() {
     const [unitAbbreviation, setUnitAbbreviation] = useState('');
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const { showSuccess, showError } = useToast();
 
     const fetchUnits = async () => {
         try {
             const data = await fetchJson(apiUrl("/units/all"));
             setUnits(data);
         } catch (error) {
-            console.error('Erreur lors de la récupération des unités:', error);
+            showError('Erreur lors de la récupération des unités: ' + error.message);
         }
     };
 
@@ -37,9 +39,10 @@ function UnitsListe() {
             await fetchJson(apiUrl(`/units/${selectedUnit}`), 'DELETE');
             setShowDeleteModal(false);
             setSelectedUnit(null);
-            fetchUnits();
+            void fetchUnits();
+            showSuccess('Unité supprimée avec succès');
         } catch (error) {
-            console.error('Erreur lors de la suppression de l\'unité:', error);
+            showError('Erreur lors de la suppression de l\'unité: ' + error.message);
         }
     };
 
@@ -57,7 +60,6 @@ function UnitsListe() {
 
     const handleUpdateUnit = async () => {
         try {
-            console.log('Mise à jour de l\'unité:', selectedUnit, { name: unitName, abbreviation: unitAbbreviation }); // Debug
             await fetchJson(apiUrl(`/units`), 'PUT', {
                 id: selectedUnit,
                 name: unitName,
@@ -66,8 +68,9 @@ function UnitsListe() {
             setShowEditModal(false);
             setSelectedUnit(null);
             fetchUnits();
+            showSuccess('Unité mise à jour avec succès');
         } catch (error) {
-            console.error('Erreur lors de la mise à jour de l\'unité:', error); 
+            showError('Erreur lors de la mise à jour de l\'unité: ' + error.message);
         }
     };
 
@@ -79,7 +82,8 @@ function UnitsListe() {
         setUnits(oldUnits => [
             ...oldUnits,
             newUnit
-        ])
+        ]);
+        showSuccess('Unité créée avec succès');
     }
 
     return (
@@ -108,7 +112,7 @@ function UnitsListe() {
                     <tr className="text-center">
                         <td colSpan="6" className="py-4 text-gray-500">
                             <div className="flex flex-col items-center justify-center">
-                                <MdInfoOutline className="text-4xl mb-2 text-gray-400"/>
+                                <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
                                 <p>Aucune unité disponible</p>
                             </div>
                         </td>
@@ -126,13 +130,13 @@ function UnitsListe() {
                                     className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                                     onClick={() => handleEdit(unit)}
                                 >
-                                    <FaRegEdit/>
+                                    <FaRegEdit />
                                 </button>
                                 <button
                                     className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
                                     onClick={() => confirmDelete(unit.id)}
                                 >
-                                    <MdDelete/>
+                                    <MdDelete />
                                 </button>
                             </td>
                         </tr>
@@ -141,31 +145,29 @@ function UnitsListe() {
                 </tbody>
             </table>
 
-            <CreateUnit isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen}onCreate={handleCreate} />
-            {/* Modal de confirmation de suppression */}
+            <CreateUnit isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} onCreate={handleCreate} />
             {showDeleteModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
                         <p className="mb-6">Êtes-vous sûr de vouloir supprimer cette unité ?</p>
-                        <div className="flex justify-around">
+                        <div className="flex justify-between">
                             <button
-                                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                                onClick={handleDelete}
-                            >
-                                Oui
-                            </button>
-                            <button
-                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
+                                className="bg-red-300 text-gray-800 py-2 px-4 rounded-md hover:bg-red-400"
                                 onClick={cancelDelete}
                             >
                                 Non
+                            </button>
+                            <button
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                onClick={handleDelete}
+                            >
+                                Oui
                             </button>
                         </div>
                     </div>
                 </div>
             )}
 
-            {/* Modal d'édition d'unité */}
             {showEditModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="EditModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
@@ -184,18 +186,18 @@ function UnitsListe() {
                             placeholder="Abréviation de l'unité"
                             className="border border-gray-300 p-2 mb-4 w-full"
                         />
-                        <div className="flex justify-around">
-                            <button
-                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                                onClick={handleUpdateUnit}
-                            >
-                                Enregistrer
-                            </button>
+                        <div className="flex justify-between">
                             <button
                                 className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
                                 onClick={() => setShowEditModal(false)}
                             >
                                 Annuler
+                            </button>
+                            <button
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                onClick={handleUpdateUnit}
+                            >
+                                Enregistrer
                             </button>
                         </div>
                     </div>
@@ -205,4 +207,4 @@ function UnitsListe() {
     );
 }
 
-export default UnitsListe;
+export default UnitsList;

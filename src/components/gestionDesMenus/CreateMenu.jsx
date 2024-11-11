@@ -1,26 +1,29 @@
 import  { useState } from 'react';
 import { apiUrl } from '../../services/api';
 import {convertStatusMenu} from "../../services/convertStatus.js";
+import useToast from "./menuOrder/(tantely)/hooks/useToast.jsx";
 
 const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
     const [price, setPrice] = useState('');
     const [categoryId, setCategoryId] = useState('');
-    const [status, setStatus] = useState(''); // Nouveau champ pour le statut
+    const [status, setStatus] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+    const {showSuccess, showError} = useToast()
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Validation des champs
         if (!name || !price || !categoryId || !status) {
             setErrorMessage('Tous les champs doivent être remplis.');
+            showError('Tous les champs doivent être remplis.');
             return;
         }
 
         if (isNaN(price) || parseFloat(price) <= 0) {
             setErrorMessage('Le prix doit être un nombre positif.');
+            showError('Le prix doit être un nombre positif.');
             return;
         }
 
@@ -29,7 +32,7 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
             description,
             price: parseFloat(price),
             categoryId: parseInt(categoryId, 10),
-            status // Assurez-vous que le statut est inclus dans l'objet
+            status
         };
 
         try {
@@ -44,20 +47,20 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
             if (response.ok) {
                 const createdMenu = await response.json();
                 onCreate(createdMenu);
-                // Réinitialiser les champs
+                showSuccess('Menu créé avec succès!');
                 setName('');
                 setDescription('');
                 setPrice('');
                 setCategoryId('');
-                setStatus(''); // Réinitialiser le statut
+                setStatus('');
                 setErrorMessage('');
             } else {
-                console.error('Erreur lors de la création du menu');
                 setErrorMessage('Erreur lors de la création du menu.');
+                showError('Erreur lors de la création du menu.');
             }
-        } catch (error) {
-            console.error('Erreur lors de l\'envoi des données:', error);
+        } catch {
             setErrorMessage('Erreur lors de l\'envoi des données.');
+            showError('Erreur lors de l\'envoi des données.');
         }
     };
 
@@ -144,9 +147,11 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
 
             <div className="flex flex-row gap-52 relative top-4">
-                <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">Créer</button>
-                <button type="button" onClick={createMenuModal} 
-                className="ml-2 bg-gray-300 text-gray-800 rounded px-4 py-2 hover:bg-gray-400">Annuler</button>
+                <button type="button" onClick={createMenuModal}
+                        className="ml-2 bg-gray-300 text-gray-800 rounded px-4 py-2 hover:bg-gray-400">Annuler
+                </button>
+                <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">Créer
+                </button>
             </div>
         </form>
     );

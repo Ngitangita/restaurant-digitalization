@@ -19,7 +19,8 @@ import PurchaseList from "../pages/Stocks/PurchaseList";
 import RoomList from "../components/room/RoomList";
 import FloorList from "../components/floor/FloorList";
 import MenuOrdersList from "../components/gestionDesMenus/menuOrder/MenuOrdersList";
-import UnitsListe from "../components/units/UnitsListe.jsx";
+import UnitsList from "../components/units/UnitsList.jsx";
+import {ToastContainer} from "react-toastify";
 
 function ProtectedRoute() {
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -47,7 +48,7 @@ function AppRouter() {
                         <Route index element={<Home/>}/>
                         <Route path="ingredients" element={<Ingredients/>}/>
                         <Route path="menuList" element={<MenuList/>}/>
-                        <Route path="units" element={<UnitsListe/>}/>
+                        <Route path="units" element={<UnitsList/>}/>
                         <Route path="menu-ingredients/menu/:menuId" element={<MenuWithIngredients/>}/>
                         <Route path="categoriesListe" element={<CategoriesList/>}/>
                         <Route path="roomList" element={<RoomList/>}/>
@@ -63,6 +64,7 @@ function AppRouter() {
                     </Route>
                 </Route>
             </Routes>
+            <ToastContainer />
         </BrowserRouter>
     );
 }
