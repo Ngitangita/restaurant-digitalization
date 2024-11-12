@@ -1,18 +1,20 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { apiUrl } from '../../services/api';
+import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
 const CreateFloor = ({ onCreate, closeModal }) => {
     const [floorNumber, setFloorNumber] = useState('');
     const [description, setDescription] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const {showSuccess, showError}= useToast()
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Validation des champs
         if (!floorNumber || !description) {
             setErrorMessage('Tous les champs doivent être remplis.');
+            showError('Tous les champs doivent être remplis.');
             return;
         }
 
@@ -20,7 +22,7 @@ const CreateFloor = ({ onCreate, closeModal }) => {
             floorNumber,
             description,
         };
-
+        setIsLoading(true);
         try {
             const response = await fetch(apiUrl('/floors'), {
                 method: 'POST',
@@ -36,13 +38,18 @@ const CreateFloor = ({ onCreate, closeModal }) => {
                 setFloorNumber('');
                 setDescription('');
                 setErrorMessage('');
+                showSuccess('L\'étage a été créé avec succès !');
             } else {
                 console.error('Erreur lors de la création du floor');
                 setErrorMessage('Erreur lors de la création du floor.');
+                showError('Erreur lors de la création du floor.');
             }
         } catch (error) {
             console.error('Erreur lors de l\'envoi des données:', error);
             setErrorMessage('Erreur lors de l\'envoi des données.');
+            showError('Erreur lors de l\'envoi des données.');
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -55,7 +62,7 @@ const CreateFloor = ({ onCreate, closeModal }) => {
                     value={floorNumber}
                     onChange={(e) => setFloorNumber(e.target.value)}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                 />
             </div>
             <div className="mb-4">
@@ -65,17 +72,19 @@ const CreateFloor = ({ onCreate, closeModal }) => {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                     required
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 border outline-none focus:border-blue-500 py-2  border-gray-300 rounded"
                 />
             </div>
             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
             {isLoading && <p>Loading...</p>}
             <div className="flex justify-between mt-4">
+
+                <button type="button" onClick={closeModal}
+                        className="bg-red-500 text-white rounded px-4 py-2 hover:bg-red-600">
+                    Annuler
+                </button>
                 <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">
                     Créer
-                </button>
-                <button type="button" onClick={closeModal} className="bg-gray-500 text-white rounded px-4 py-2 hover:bg-gray-600">
-                    Annuler
                 </button>
             </div>
         </form>

@@ -73,7 +73,7 @@ const CreateRoom = ({ onCreate, closeModal, statuses = [], floors = [] }) => {
                     placeholder="Numéro de la salle"
                     value={roomNumber}
                     onChange={(e) => setRoomNumber(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                     required
                 />
             </div>
@@ -85,7 +85,7 @@ const CreateRoom = ({ onCreate, closeModal, statuses = [], floors = [] }) => {
                     placeholder="Capacity de la salle"
                     value={capacity}
                     onChange={(e) => setCapacity(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                     required
                 />
             </div>
@@ -96,7 +96,7 @@ const CreateRoom = ({ onCreate, closeModal, statuses = [], floors = [] }) => {
                     type="number"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                     required
                 />
             </div>
@@ -108,7 +108,7 @@ const CreateRoom = ({ onCreate, closeModal, statuses = [], floors = [] }) => {
                     id="floorId"
                     value={floorId}
                     onChange={(e) => setFloorId(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                     required
                 >
                     <option value="">Sélectionnez une étage</option>
@@ -126,7 +126,7 @@ const CreateRoom = ({ onCreate, closeModal, statuses = [], floors = [] }) => {
                     id="status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                     required
                 >
                     <option value="">Sélectionnez un statut</option>

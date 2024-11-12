@@ -180,7 +180,7 @@ const MenuList = () => {
                     <input
                         type="text"
                         placeholder="Rechercher un menu"
-                        className="pr-10 p-2 border rounded-md outline-none"
+                        className="pr-10 p-2 border outline-none focus:border-blue-500 rounded-md outline-none"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />

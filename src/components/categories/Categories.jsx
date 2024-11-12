@@ -153,7 +153,7 @@ const CategoriesList = () => {
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         placeholder="Rechercher une catégorie"
-                        className="p-2 pr-8 border border-gray-300 rounded-md outline-none"
+                        className="p-2 pr-8   focus:border-blue-500 border border-gray-300 rounded-md outline-none"
                     />
                     {searchTerm && (
                         <button className="relative right-5" onClick={handleClearSearch}>

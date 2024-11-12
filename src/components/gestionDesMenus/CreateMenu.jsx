@@ -73,7 +73,7 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
                     type="text"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full outline-none focus:border-blue-500 px-3 py-2 border border-gray-300 rounded"
                     required
                 />
             </div>
@@ -84,7 +84,7 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full  px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                 />
             </div>
 
@@ -95,7 +95,7 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
                     type="number"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                     required
                 />
             </div>
@@ -106,7 +106,7 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
                     id="categoryId"
                     value={categoryId}
                     onChange={(e) => setCategoryId(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 border outline-none focus:border-blue-500 py-2 border-gray-300 rounded"
                     required
                 >
                     <option value="">Sélectionnez une catégorie</option>
@@ -128,7 +128,7 @@ const CreateMenu = ({ onCreate, createMenuModal, categories, statuses }) => {
                     id="status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full border outline-none focus:border-blue-500 px-3 py-2  border-gray-300 rounded"
                     required
                 >
                     <option value="">Sélectionnez un statut</option>

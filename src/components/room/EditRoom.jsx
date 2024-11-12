@@ -12,7 +12,7 @@ const EditRoom = ({ roomToEdit, setRoomToEdit, floors, onSave, onCancel }) => {
                     placeholder="Numéro de la salle"
                     value={roomToEdit.roomNumber || ''}
                     onChange={(e) => setRoomToEdit({ ...roomToEdit, roomNumber: e.target.value })}
-                    className="mb-4 border rounded-md p-2 w-full"
+                    className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
                 />
             </div>
             <div>
@@ -23,7 +23,7 @@ const EditRoom = ({ roomToEdit, setRoomToEdit, floors, onSave, onCancel }) => {
                     placeholder="capacité"
                     value={roomToEdit.capacity || ''}
                     onChange={(e) => setRoomToEdit({ ...roomToEdit, capacity: e.target.value })}
-                    className="mb-4 border rounded-md p-2 w-full"
+                    className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
                 />
             </div>
             <div>
@@ -34,7 +34,7 @@ const EditRoom = ({ roomToEdit, setRoomToEdit, floors, onSave, onCancel }) => {
                     placeholder="Prix"
                     value={roomToEdit.price || ''}
                     onChange={(e) => setRoomToEdit({ ...roomToEdit, price: e.target.value })}
-                    className="mb-4 border rounded-md p-2 w-full"
+                    className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
                 />
             </div>
             <div>
@@ -45,7 +45,7 @@ const EditRoom = ({ roomToEdit, setRoomToEdit, floors, onSave, onCancel }) => {
                     onChange={(e) => {
                         setRoomToEdit({ ...roomToEdit, floorId: e.target.value })
                     }}
-                    className="mb-4 border rounded-md p-2 w-full"
+                    className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
                 >
                     <option value="">Sélectionner une étage</option>
                     {floors.map(floor => (

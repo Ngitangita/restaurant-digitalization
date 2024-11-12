@@ -23,7 +23,7 @@ const CreateCategories = ({ onClose, onCategoryCreated }) => {
                     id="name"
                     type="text"
                     {...register("name", { required: 'Le nom est requis' })}
-                    className={`mt-1 block w-full p-2 outline-none border rounded-md ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
+                    className={`mt-1 border outline-none focus:border-blue-500 block w-full p-2 rounded-md ${errors.name ? 'border-red-500' : 'border-gray-300'}`}
                 />
                 {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
             </div>

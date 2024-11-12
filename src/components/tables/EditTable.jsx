@@ -9,14 +9,14 @@ const EditTable = ({ tableToEdit, setTableToEdit, onSave, onCancel }) => {
                 placeholder="Numéro de la table"
                 value={tableToEdit.number || ''}
                 onChange={(e) => setTableToEdit({ ...tableToEdit, number: e.target.value })}
-                className="mb-4 border outline-none rounded-md p-2 w-full"
+                className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
             />
             <input
                 type="number"
                 placeholder="Capacité de la table"
                 value={tableToEdit.capacity || ''}
                 onChange={(e) => setTableToEdit({ ...tableToEdit, capacity: e.target.value })}
-                className="mb-4 border rounded-md outline-none p-2 w-full"
+                className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
             />
 
             <div className="flex justify-between">

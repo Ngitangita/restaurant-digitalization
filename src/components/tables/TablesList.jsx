@@ -299,19 +299,19 @@ function TablesList() {
                                 value={tableNumber}
                                 onChange={(e) => setTableNumber(e.target.value)}
                                 placeholder="Numéro de la table"
-                                className="border border-gray-300 p-2 mb-4 w-full"
+                                className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
                             />
                             <input
                                 type="number"
                                 value={tableCapacity}
                                 onChange={(e) => setTableCapacity(e.target.value)}
                                 placeholder="Capacité de la table"
-                                className="border border-gray-300 p-2 mb-4 w-full"
+                                className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
                             />
                             <select
                                 value={tableStatus}
                                 onChange={(e) => setTableStatus(e.target.value)}
-                                className="border border-gray-300 p-2 mb-4 w-full"
+                                className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
                             >
                                 <option value="" disabled>Sélectionner le statut</option>
                                 {tableStatuses.map((status) => (
@@ -354,7 +354,7 @@ function TablesList() {
                             <select
                                 value={tableStatus}
                                 onChange={(e) => setTableStatus(e.target.value)}
-                                className="border border-gray-300 p-2 mb-4 w-full"
+                                className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
                             >
                                 {tableStatuses.map((status) => (
                                     <option key={status} value={status}>{convertStatusToTable(status)}</option>

@@ -7,7 +7,7 @@ const UpdateStatusOrder = ({status, statuses, setStatus,  onSave, onCancel}) => 
             <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value)}
-                className="border p-2 rounded-md w-full mb-4"
+                className="border outline-none focus:border-blue-500 p-2 rounded-md w-full mb-4"
             >
                 {statuses.map(status => (
                     <option key={status} value={status}>
