@@ -5,6 +5,7 @@ import { MdDelete, MdClear } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import EditModal from './EditModal';
 import dayjs from "dayjs";
+import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
 const CategoriesList = () => {
     const [categories, setCategories] = useState([]);
@@ -19,6 +20,7 @@ const CategoriesList = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [hasNext, setHasNext] = useState(false);
     const [hasPrevious, setHasPrevious] = useState(false);
+    const {showSuccess, showError} = useToast()
 
     useEffect(() => {
         void fetchCategories();
@@ -39,6 +41,7 @@ const CategoriesList = () => {
         } catch (err) {
             const errorMsg = err.message || 'Erreur lors de la récupération des catégories';
             setError(errorMsg);
+            showError('Erreur lors de la récupération des catégories');
         }
     };
 
@@ -49,6 +52,7 @@ const CategoriesList = () => {
     const handleCategoryCreated = () => {
         void fetchCategories();
         setIsModalOpen(false);
+        showSuccess('Catégorie créée avec succès');
     };
 
     const handleDelete = async () => {
@@ -58,7 +62,9 @@ const CategoriesList = () => {
             });
             setShowDeleteModal(false);
             void fetchCategories();
+            showSuccess('Catégorie supprimée avec succès');
         } catch (error) {
+            showError('Erreur lors de la suppression de la catégorie');
             console.error('Erreur lors de la suppression de la catégorie', error);
         }
     };
@@ -86,6 +92,7 @@ const CategoriesList = () => {
     const handleSaveEdit = async () => {
         if (!categoryToEdit || !categoryToEdit.id || !categoryToEdit.name) {
             console.error('Les informations de la catégorie sont incomplètes.');
+            showError('Les informations de la catégorie sont incomplètes.');
             return;
         }
 
@@ -105,7 +112,9 @@ const CategoriesList = () => {
 
             setShowEditCategoryModal(false);
             void fetchCategories();
+            showSuccess('Catégorie mise à jour avec succès');
         } catch (error) {
+            showError('Erreur lors de la mise à jour de la catégorie');
             console.error('Erreur lors de la mise à jour de la catégorie:', error);
         }
     };

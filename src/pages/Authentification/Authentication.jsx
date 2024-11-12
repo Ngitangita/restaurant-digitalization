@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {useEffect, useState} from "react";
+import {Navigate, useNavigate} from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,6 +24,7 @@ const SignupSchema = z.object({
 
 export default function Authentication() {
   const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
+  const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [type, setType] = useState("userIconSingin");
   const [signupError, setSignupError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -31,6 +32,7 @@ export default function Authentication() {
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
+
 
   const {
     register: loginRegister,
@@ -52,6 +54,13 @@ export default function Authentication() {
     mode: "onSubmit",
   });
 
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(-1);
+    }
+  }, [isAuthenticated, navigate]);
+
+
   const handleLogin = async (data) => {
     setIsLoading(true); 
     try {
@@ -67,12 +76,12 @@ export default function Authentication() {
     } catch (error) {
       console.error("Échec de la connexion :", error);
     }
-    setIsLoading(false); // Masque le loader
+    setIsLoading(false);
     resetLogin();
   };
 
   const handleSignup = async (data) => {
-    setIsLoading(true); // Affiche le loader
+    setIsLoading(true);
     try {
       const response = await axiosConf.post("/sign-up", {
         username: data.name,
@@ -98,6 +107,10 @@ export default function Authentication() {
     resetSignup();
   };
 
+
+  if (isAuthenticated) {
+    return null;
+  }
   return (
     <div className="overflow-hidden LoginbgImg h-screen w-screen">
       <div className="bg-black/80 h-screen flex flex-col justify-center items-center p-4 md:p-8 lg:p-16">
