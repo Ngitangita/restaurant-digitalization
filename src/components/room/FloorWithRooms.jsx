@@ -1,15 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { apiUrl } from '../../services/api';
+import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
 const FloorWithRooms = ({ floorId }) => {
     const [floor, setFloor] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
-
+    const {showError } = useToast();
     useEffect(() => {
         const fetchFloorWithRooms = async () => {
-            // Vérifiez si floorId est valide
             if (!floorId || isNaN(floorId)) {
-                setErrorMessage('ID de l\'étage invalide.');
+                const message = 'ID de l\'étage invalide.';
+                setErrorMessage(message);
+                showError(message);
                 return;
             }
 
@@ -20,14 +22,18 @@ const FloorWithRooms = ({ floorId }) => {
                     setFloor(data);
                 } else {
                     const errorData = await response.json();
-                    setErrorMessage(errorData.message || 'Erreur lors de la récupération de l\'étage.');
+                    const message = errorData.message || 'Erreur lors de la récupération de l\'étage.';
+                    setErrorMessage(message);
+                    showError(message);
                 }
-            } catch (error) {
-                setErrorMessage('Erreur lors de la récupération de l\'étage.');
+            } catch  {
+                const message = 'Erreur lors de la récupération de l\'étage.';
+                setErrorMessage(message);
+                showError(message);
             }
         };
 
-        fetchFloorWithRooms();
+        void fetchFloorWithRooms();
     }, [floorId]);
 
     if (errorMessage) return <p className="text-red-500">{errorMessage}</p>;
