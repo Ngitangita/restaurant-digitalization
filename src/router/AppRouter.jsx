@@ -13,7 +13,7 @@ import ReservationList from "../pages/reservations/Reservation";
 import Stocks from "../pages/Stocks/Stocks";
 import MenuList from "../components/gestionDesMenus/MenuList";
 import CategoriesList from "../components/categories/Categories";
-import TablesListe from "../components/tables/TablesListe";
+import TablesList from "../components/tables/TablesList.jsx";
 import MenuWithIngredients from "../components/gestionDesMenus/menuIngredients/MenuWithIngredients";
 import PurchaseList from "../pages/Stocks/PurchaseList";
 import RoomList from "../components/room/RoomList";
@@ -52,7 +52,7 @@ function AppRouter() {
                         <Route path="menu-ingredients/menu/:menuId" element={<MenuWithIngredients/>}/>
                         <Route path="categoriesListe" element={<CategoriesList/>}/>
                         <Route path="roomList" element={<RoomList/>}/>
-                        <Route path="tableList" element={<TablesListe/>}/>
+                        <Route path="tableList" element={<TablesList/>}/>
                         <Route path="floorList" element={<FloorList/>}/>
                         <Route path="calendar" element={<TheCalendar/>}/>
                         <Route path="commandes" element={<MenuOrdersList/>}/>
