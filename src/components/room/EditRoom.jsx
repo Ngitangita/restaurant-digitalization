@@ -12,7 +12,7 @@ const EditRoom = ({ roomToEdit, setRoomToEdit, floors, onSave, onCancel }) => {
                     placeholder="Numéro de la salle"
                     value={roomToEdit.roomNumber || ''}
                     onChange={(e) => setRoomToEdit({ ...roomToEdit, roomNumber: e.target.value })}
-                    className="mb-4 border rounded-md p-2 w-full"
+                    className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
                 />
             </div>
             <div>
@@ -23,7 +23,7 @@ const EditRoom = ({ roomToEdit, setRoomToEdit, floors, onSave, onCancel }) => {
                     placeholder="capacité"
                     value={roomToEdit.capacity || ''}
                     onChange={(e) => setRoomToEdit({ ...roomToEdit, capacity: e.target.value })}
-                    className="mb-4 border rounded-md p-2 w-full"
+                    className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
                 />
             </div>
             <div>
@@ -34,7 +34,7 @@ const EditRoom = ({ roomToEdit, setRoomToEdit, floors, onSave, onCancel }) => {
                     placeholder="Prix"
                     value={roomToEdit.price || ''}
                     onChange={(e) => setRoomToEdit({ ...roomToEdit, price: e.target.value })}
-                    className="mb-4 border rounded-md p-2 w-full"
+                    className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
                 />
             </div>
             <div>
@@ -45,7 +45,7 @@ const EditRoom = ({ roomToEdit, setRoomToEdit, floors, onSave, onCancel }) => {
                     onChange={(e) => {
                         setRoomToEdit({ ...roomToEdit, floorId: e.target.value })
                     }}
-                    className="mb-4 border rounded-md p-2 w-full"
+                    className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
                 >
                     <option value="">Sélectionner une étage</option>
                     {floors.map(floor => (
@@ -54,17 +54,18 @@ const EditRoom = ({ roomToEdit, setRoomToEdit, floors, onSave, onCancel }) => {
                 </select>
             </div>
             <div className="flex justify-between">
+
+                <button
+                    className="bg-red-300 text-gray-800 py-2 px-4 rounded-md hover:bg-red-400"
+                    onClick={onCancel}
+                >
+                    Annuler
+                </button>
                 <button
                     className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
                     onClick={onSave}
                 >
                     Enregistrer
-                </button>
-                <button
-                    className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
-                    onClick={onCancel}
-                >
-                    Annuler
                 </button>
             </div>
         </div>

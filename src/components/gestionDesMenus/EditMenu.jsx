@@ -9,25 +9,25 @@ const EditMenu = ({ menuToEdit, setMenuToEdit, categories, onSave, onCancel }) =
                 placeholder="Nom"
                 value={menuToEdit.name || ''}
                 onChange={(e) => setMenuToEdit({ ...menuToEdit, name: e.target.value })}
-                className="mb-4 border rounded-md p-2 w-full"
+                className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
             />
             <input
                 type="number"
                 placeholder="Prix"
                 value={menuToEdit.price || ''}
                 onChange={(e) => setMenuToEdit({ ...menuToEdit, price: e.target.value })}
-                className="mb-4 border rounded-md p-2 w-full"
+                className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
             />
             <textarea
                 placeholder="Description"
                 value={menuToEdit.description || ''}
                 onChange={(e) => setMenuToEdit({ ...menuToEdit, description: e.target.value })}
-                className="mb-4 border rounded-md p-2 w-full"
+                className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
             />
             <select
                 value={menuToEdit.categoryId || ''}
                 onChange={(e) => setMenuToEdit({ ...menuToEdit, categoryId: e.target.value })}
-                className="mb-4 border rounded-md p-2 w-full"
+                className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
             >
                 <option value="">Sélectionner une catégorie</option>
                 {categories.map(category => (

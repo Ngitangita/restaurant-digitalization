@@ -1,25 +1,28 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { apiUrl } from '../../services/api';
 import {convertStatusToRoom} from "../../services/convertStatus.js";
+import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
-const CreateRoom = ({ onCreate, createRoomModal, closeModal, statuses = [], floors = [] }) => {
+const CreateRoom = ({ onCreate, closeModal, statuses = [], floors = [] }) => {
     const [price, setPrice] = useState('');
     const [status, setStatus] = useState('');
     const [floorId, setFloorId] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [roomNumber, setRoomNumber] = useState('');
     const [capacity, setCapacity] = useState('');
-
+    const {  showError , showSuccess} = useToast();
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         if (!roomNumber || !price || !capacity || !status || !floorId) {
             setErrorMessage('Tous les champs doivent être remplis.');
+            showError('Tous les champs doivent être remplis.');
             return;
         }
 
-        if (isNaN(price) || parseFloat(price) <= 0) {
+        if (isNaN(parseFloat(price)) || parseFloat(price) <= 0) {
             setErrorMessage('Le prix doit être un nombre positif.');
+            showError('Le prix doit être un nombre positif.');
             return;
         }
 
@@ -42,19 +45,21 @@ const CreateRoom = ({ onCreate, createRoomModal, closeModal, statuses = [], floo
                 const createdRoom = await response.json();
                 onCreate(createdRoom);
 
-                // Reset fields
                 setRoomNumber('');
                 setCapacity('');
                 setPrice('');
                 setStatus('');
                 setFloorId('');
                 setErrorMessage('');
-                createRoomModal();
+                showSuccess('La salle a été créée avec succès.');
             } else {
                 setErrorMessage('Erreur lors de la création du room.');
+                showError('Erreur lors de la création du room.');
+
             }
-        } catch (error) {
+        } catch  {
             setErrorMessage('Erreur lors de l\'envoi des données.');
+            showError('Erreur lors de l\'envoi des données.');
         }
     };
 
@@ -68,7 +73,7 @@ const CreateRoom = ({ onCreate, createRoomModal, closeModal, statuses = [], floo
                     placeholder="Numéro de la salle"
                     value={roomNumber}
                     onChange={(e) => setRoomNumber(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                     required
                 />
             </div>
@@ -80,7 +85,7 @@ const CreateRoom = ({ onCreate, createRoomModal, closeModal, statuses = [], floo
                     placeholder="Capacity de la salle"
                     value={capacity}
                     onChange={(e) => setCapacity(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                     required
                 />
             </div>
@@ -91,7 +96,7 @@ const CreateRoom = ({ onCreate, createRoomModal, closeModal, statuses = [], floo
                     type="number"
                     value={price}
                     onChange={(e) => setPrice(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                     required
                 />
             </div>
@@ -103,7 +108,7 @@ const CreateRoom = ({ onCreate, createRoomModal, closeModal, statuses = [], floo
                     id="floorId"
                     value={floorId}
                     onChange={(e) => setFloorId(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                     required
                 >
                     <option value="">Sélectionnez une étage</option>
@@ -121,7 +126,7 @@ const CreateRoom = ({ onCreate, createRoomModal, closeModal, statuses = [], floo
                     id="status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
                     required
                 >
                     <option value="">Sélectionnez un statut</option>
@@ -134,15 +139,17 @@ const CreateRoom = ({ onCreate, createRoomModal, closeModal, statuses = [], floo
             </div>
 
             {errorMessage && <p className="text-red-500">{errorMessage}</p>}
-            <div className="flex flex-row gap-4 relative top-4">
-                <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">Créer</button>
+            <div className="flex flex-row gap-4 justify-between relative top-4">
                 <button
                     type="button"
                     onClick={closeModal}
-                    className="ml-2 bg-gray-300 text-gray-800 rounded px-4 py-2 hover:bg-gray-400"
+                    className="ml-2 bg-red-300 text-gray-800 rounded px-4 py-2 hover:bg-red-400"
                 >
                     Annuler
                 </button>
+                <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">Créer
+                </button>
+
 
             </div>
         </form>

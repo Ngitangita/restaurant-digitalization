@@ -177,14 +177,14 @@ function UnitsList() {
                             value={unitName}
                             onChange={(e) => setUnitName(e.target.value)}
                             placeholder="Nom de l'unité"
-                            className="border border-gray-300 p-2 mb-4 w-full"
+                            className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
                         />
                         <input
                             type="text"
                             value={unitAbbreviation}
                             onChange={(e) => setUnitAbbreviation(e.target.value)}
                             placeholder="Abréviation de l'unité"
-                            className="border border-gray-300 p-2 mb-4 w-full"
+                            className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
                         />
                         <div className="flex justify-between">
                             <button

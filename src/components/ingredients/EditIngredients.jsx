@@ -13,7 +13,7 @@ const EditIngredients = ({units, ingredientName, setIngredientName, unitId, setU
         className="border p-2 rounded w-full mb-4"
       >
         <option value="">Sélectionner une unité</option>
-        {units && units.map((unit) => (  // Ajout de la condition ici
+        {units && units.map((unit) => (
           <option key={unit.id} value={unit.id}>
             {unit.abbreviation}
           </option>
@@ -21,16 +21,16 @@ const EditIngredients = ({units, ingredientName, setIngredientName, unitId, setU
       </select>
       {error && <p className="text-red-500 mb-4">{error}</p>}
 
-      <div className="flex justify-end">
-        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-2" 
-        onClick={onSave}>
-          Mettre à jour
-        </button>
-        <button className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400" 
-        onClick={onCancel}>
-          Annuler
-        </button>
-      </div>
+        <div className="flex justify-between">
+            <button className="bg-red-300 text-gray-700 px-4 py-2 rounded hover:bg-red-400"
+                    onClick={onCancel}>
+                Annuler
+            </button>
+            <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 mr-2"
+                    onClick={onSave}>
+                Mettre à jour
+            </button>
+        </div>
     </div>
   )
 }

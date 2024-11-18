@@ -45,7 +45,7 @@ function CreateUnit({isModalOpen, setIsModalOpen, onCreate}) {
                             id="unitName"
                             type="text"
                             {...registerUnit("name")}
-                            className={`mt-1 block w-full p-2 outline-none border rounded-md ${unitErrors.name ? 'border-red-500' : 'border-gray-300'}`}
+                            className={`mt-1 block  focus:border-blue-500 w-full p-2 outline-none border rounded-md ${unitErrors.name ? 'border-red-500' : 'border-gray-300'}`}
                         />
                         {unitErrors.name && <p className="text-red-500 text-sm">{unitErrors.name.message}</p>}
                     </div>
@@ -56,7 +56,7 @@ function CreateUnit({isModalOpen, setIsModalOpen, onCreate}) {
                             id="abbreviation"
                             type="text"
                             {...registerUnit("abbreviation")}
-                            className={`mt-1 block w-full p-2 outline-none border rounded-md ${unitErrors.abbreviation ? 'border-red-500' : 'border-gray-300'}`}
+                            className={`mt-1 block w-full p-2 border outline-none focus:border-blue-500 rounded-md ${unitErrors.abbreviation ? 'border-red-500' : 'border-gray-300'}`}
                         />
                         {unitErrors.abbreviation &&
                             <p className="text-red-500 text-sm">{unitErrors.abbreviation.message}</p>}

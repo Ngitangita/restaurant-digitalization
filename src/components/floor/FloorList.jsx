@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
-import { MdDelete, MdClear } from 'react-icons/md';
+import { MdDelete } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import CreateFloor from './CreateFloor';
 import EditFloor from './EditFloor';
 import dayjs from "dayjs";
 import {truncate} from "../../services/truncate.js";
+import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
 const FloorsList = () => {
   const [floors, setFloors] = useState([]);
@@ -16,6 +17,7 @@ const FloorsList = () => {
   const [floorToEdit, setFloorToEdit] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [floorToDelete, setFloorToDelete] = useState(null);
+  const {showSuccess, showError}= useToast()
 
   useEffect(() => {
     void fetchFloors();
@@ -24,10 +26,11 @@ const FloorsList = () => {
   const fetchFloors = async () => {
     try {
       const data = await fetchJson(apiUrl("/floors"));
-      setFloors(data);
+      setFloors(data.toSorted((a, b) => a.id - b.id));;
     } catch (err) {
       const errorMsg = err.message || 'Erreur lors de la récupération des étages';
       setError(errorMsg);
+      showError(errorMsg);
     }
   };
 
@@ -51,11 +54,13 @@ const FloorsList = () => {
     console.log('Mise à jour de l\'étage:', floorToEdit);
     if (!floorToEdit || !floorToEdit.floorNumber || !floorToEdit.description) {
       console.error('Les informations du menu sont incomplètes.');
+      showError('Les informations du menu sont incomplètes.');
       return;
     }
 
     try {
-      const url = apiUrl(`/floors/${id}`);
+      console.log(floorToEdit)
+      const url = apiUrl(`/floors/${floorToEdit.id}`);
       const response = await fetch(url, {
         method: 'PUT',
         headers: {
@@ -70,8 +75,10 @@ const FloorsList = () => {
 
       setShowEditFloorModal(false);
      void fetchFloors();
+      showSuccess('Étage mis à jour avec succès');
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'étage:', error);
+      showError('Erreur lors de la mise à jour de l\'étage');
     }
   };
 
@@ -82,8 +89,10 @@ const FloorsList = () => {
       });
       setShowDeleteModal(false);
       void fetchFloors();
+      showSuccess('Étage supprimé avec succès');
     } catch (error) {
       console.error('Erreur lors de la suppression de l\'étage:', error);
+      showError('Erreur lors de la suppression de l\'étage');
     }
   };
 
@@ -170,7 +179,7 @@ const FloorsList = () => {
             ))
           ) : (
               <tr>
-                <td colSpan="3" className="py-4 text-center">Aucun étage trouvé</td>
+                <td colSpan="6" className="py-4 text-center">Aucun étage trouvé</td>
               </tr>
           )}
         </tbody>
@@ -195,18 +204,20 @@ const FloorsList = () => {
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
           <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md DeleteModal">
             <p>Voulez-vous vraiment supprimer l'étage n°{floorToDelete?.floorNumber} ?</p>
-            <div className="mt-4">
+            <div className="mt-4 flex justify-between items-center">
+
               <button
-                className="bg-red-500 text-white rounded p-2 hover:bg-red-600 mr-2"
-                onClick={handleDelete}
-              >
-                Oui
-              </button>
-              <button
-                className="bg-gray-300 text-black rounded p-2 hover:bg-gray-400"
-                onClick={cancelDelete}
+                  className="bg-red-300 text-black rounded p-2 hover:bg-red-400"
+                  onClick={cancelDelete}
               >
                 Non
+              </button>
+
+              <button
+                  className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
+                  onClick={handleDelete}
+              >
+                Oui
               </button>
             </div>
           </div>

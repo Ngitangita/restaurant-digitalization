@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 
 const EditModal = ({onSave, onCancel, setCategoryToEdit, categoryToEdit }) => {
 
@@ -8,7 +8,7 @@ const EditModal = ({onSave, onCancel, setCategoryToEdit, categoryToEdit }) => {
                 type="text"
                 value={categoryToEdit.name || ''}
                 onChange={(e) => setCategoryToEdit({...categoryToEdit, name: e.target.value})}
-                className="p-2 border border-gray-300 rounded-md w-full mb-4"
+                className="p-2 border outline-none focus:border-blue-500  border-gray-300 rounded-md w-full mb-4"
             />
             <div className="flex justify-between">
 

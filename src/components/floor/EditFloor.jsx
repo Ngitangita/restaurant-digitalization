@@ -12,7 +12,7 @@ const EditFloor = ({ floorToEdit, setFloorToEdit, onSave, onCancel }) => {
                     placeholder="Numéro de l'étage"
                     value={floorToEdit.floorNumber || ''}
                     onChange={(e) => setFloorToEdit({ ...floorToEdit, floorNumber: e.target.value })}
-                    className="mb-4 border rounded-md p-2 w-full"
+                    className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
                 />
             </div>
             <div>
@@ -23,22 +23,24 @@ const EditFloor = ({ floorToEdit, setFloorToEdit, onSave, onCancel }) => {
                     placeholder="description"
                     value={floorToEdit.description || ''}
                     onChange={(e) => setFloorToEdit({ ...floorToEdit, description: e.target.value })}
-                    className="mb-4 border rounded-md p-2 w-full"
+                    className="mb-4 border outline-none focus:border-blue-500 rounded-md p-2 w-full"
                 />
             </div>
-            
+
             <div className="flex justify-between">
+
+                <button
+                    className="bg-red-300 text-gray-800 py-2 px-4 rounded-md hover:bg-red-400"
+                    onClick={onCancel}
+                >
+                    Annuler
+                </button>
+
                 <button
                     className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
                     onClick={onSave}
                 >
                     Enregistrer
-                </button>
-                <button
-                    className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
-                    onClick={onCancel}
-                >
-                    Annuler
                 </button>
             </div>
         </div>

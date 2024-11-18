@@ -98,7 +98,7 @@ function OperationStatistics() {
                 onFocus={handleFocus}
                 onBlur={handleBlur}
                 placeholder="Nom de l'ingrédient"
-                className="border border-gray-300 p-2 rounded-lg w-full"
+                className="border outline-none focus:border-blue-500 border-gray-300 p-2 rounded-lg w-full "
             />
             {isFocused && filteredIngredients.length > 0 && (
                 <ul className="absolute z-[2220] left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-auto">
@@ -120,7 +120,7 @@ function OperationStatistics() {
               value={minTotalQuantity || ""}
               onChange={(e) => setMinTotalQuantity(e.target.value ? Number(e.target.value) : "")}
               placeholder="Quantité min"
-              className="border border-gray-300 p-2 rounded-lg"
+              className="border  outline-none focus:border-blue-500 border-gray-300 p-2 rounded-lg"
           />
 
           <input
@@ -128,13 +128,13 @@ function OperationStatistics() {
               value={maxTotalQuantity || ""}
               onChange={(e) => setMaxTotalQuantity(e.target.value ? Number(e.target.value) : "")}
               placeholder="Quantité max"
-              className="border border-gray-300 p-2 rounded-lg"
+              className="border outline-none focus:border-blue-500 border-gray-300 p-2 rounded-lg"
           />
           <input
               type="date"
               value={date || ""}
               onChange={(e) => setDate(e.target.value)}
-              className="border border-gray-300 p-2 rounded-lg"
+              className="border outline-none focus:border-blue-500 border-gray-300 p-2 rounded-lg"
           />
         </div>
         {/* Chart section */}

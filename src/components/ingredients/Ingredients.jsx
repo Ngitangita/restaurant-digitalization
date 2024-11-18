@@ -6,6 +6,7 @@ import { MdDelete, MdInfoOutline, MdClear } from "react-icons/md";
 import useFetch from '../../hooks/useFetch';
 import EditIngredients from './EditIngredients';
 import dayjs from "dayjs";
+import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
 const IngredientList = () => {
     const [ingredients, setIngredients] = useState([]);
@@ -17,7 +18,7 @@ const IngredientList = () => {
     const [ingredientName, setIngredientName] = useState(null);
     const [unitId, setUnitId] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false);
-
+    const {showSuccess, showError} = useToast()
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage] = useState(6);
 
@@ -29,6 +30,7 @@ const IngredientList = () => {
             const data = await fetchJson(apiUrl("/ingredients/all"));
             setIngredients(data);
         } catch  {
+            showError('Erreur lors de la récupération des ingrédients');
             setError('Erreur lors de la récupération des ingrédients');
         }
     };
@@ -52,8 +54,10 @@ const IngredientList = () => {
                 method: 'DELETE',
             });
             setShowDeleteModal(false);
+            showSuccess('Ingrédient supprimé avec succès');
             void fetchIngredients();
         } catch (error) {
+            showError('Erreur lors de la suppression de l\'ingrédient');
             console.error('Erreur lors de la suppression de l\'ingredients:', error);
         }
     };
@@ -78,7 +82,9 @@ const IngredientList = () => {
 
     const handleUpdateIngredient = async () => {
         if (!ingredientName || !unitId) {
-            setError('Veuillez fournir un nom et sélectionner une unité');
+            const errorMessage = 'Veuillez fournir un nom et sélectionner une unité';
+            showError(errorMessage);
+            setError(errorMessage);
             return;
         }
 
@@ -90,9 +96,12 @@ const IngredientList = () => {
             });
             setShowEditModal(false);
             setSelectedIngredient(null);
-            fetchIngredients();
+            void fetchIngredients();
+            showSuccess('Ingrédient mis à jour avec succès');
         } catch {
-            setError('Erreur lors de la mise à jour de l\'ingrédient');
+            const errorMessage = 'Erreur lors de la mise à jour de l\'ingrédient';
+            showError(errorMessage);
+            setError(errorMessage);
         }
     };
 
@@ -226,8 +235,12 @@ const IngredientList = () => {
 
             <div className="flex justify-between mt-4">
                 <button
-                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
                     onClick={handlePrevPage}
+                    className={`px-4 py-2 rounded ${
+                        currentPage === 1
+                            ? 'bg-gray-500 text-white cursor-not-allowed'
+                            : 'bg-blue-300 text-gray-700 hover:bg-blue-400'
+                    }`}
                     disabled={currentPage === 1}
                 >
                     Précédent
@@ -244,7 +257,11 @@ const IngredientList = () => {
                     />
                 </div>
                 <button
-                    className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                    className={`px-4 py-2 rounded ${
+                        currentPage === totalPages
+                            ? 'bg-gray-500 text-white cursor-not-allowed'
+                            : 'bg-blue-300 text-gray-700 hover:bg-blue-400'
+                    }`}
                     onClick={handleNextPage}
                     disabled={currentPage === totalPages}
                 >
@@ -256,9 +273,13 @@ const IngredientList = () => {
                 <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
                     <div className="bg-white p-8 rounded-lg shadow-lg DeleteModal">
                         <p>Êtes-vous sûr de vouloir supprimer l'ingrédient {ingredientToDelete?.name} ?</p>
-                        <div className="flex justify-end mt-4">
-                            <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mr-2" onClick={handleDelete}>Oui</button>
-                            <button className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400" onClick={cancelDelete}>Non</button>
+                        <div className="flex justify-between mt-4">
+                            <button className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+                                    onClick={cancelDelete}>Non
+                            </button>
+                            <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mr-2"
+                                    onClick={handleDelete}>Oui
+                            </button>
                         </div>
                     </div>
                 </div>

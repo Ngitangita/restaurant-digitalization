@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
 import { FaRegEdit } from 'react-icons/fa';
 import { MdDelete, MdClear, MdEdit } from 'react-icons/md';
 import EditTable from './EditTable';
 import dayjs from "dayjs";
 import {convertStatusToTable} from "../../services/convertStatus.js";
+import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
-function TablesListe() {
+function TablesList() {
     const [tables, setTables] = useState([]);
     const [showCreateModal, setShowCreateModal] = useState(false);
     const [tableNumber, setTableNumber] = useState('');
@@ -20,6 +21,7 @@ function TablesListe() {
     const [searchTerm, setSearchTerm] = useState('');
     const [showEditTableModal, setShowEditTableModal] = useState(false);
     const [tableToEdit, setTableToEdit] = useState(null);
+    const {showSuccess, showError} = useToast()
 
 
     const fetchTables = async () => {
@@ -28,6 +30,7 @@ function TablesListe() {
             setTables(data);
         } catch (error) {
             console.error('Erreur lors de la récupération des tables:', error);
+            showError("Erreur lors de la récupération des tables.");
         }
     };
 
@@ -37,12 +40,13 @@ function TablesListe() {
             setTableStatuses(data);
         } catch (error) {
             console.error('Erreur lors de la récupération des statuts de table:', error);
+            showError("Erreur lors de la récupération des statuts de table.");
         }
     };
 
     useEffect(() => {
-        fetchTables();
-        fetchTableStatuses();
+        void fetchTables();
+        void fetchTableStatuses();
     }, []);
 
     const handleCreateTable = async () => {
@@ -55,10 +59,12 @@ function TablesListe() {
 
             await fetchJson(apiUrl(`/tables`), 'POST', tableData);
             setShowCreateModal(false);
+            showSuccess("Table créée avec succès.");
             resetForm();
-            fetchTables();
+            void fetchTables();
         } catch (error) {
-            console.error('Erreur lors de la création de la table:', error);
+            console.error('Erreur lors de la création de la table:', error)
+            showError("Erreur lors de la création de la table.");
         }
     };
 
@@ -74,9 +80,11 @@ function TablesListe() {
                 method: 'DELETE',
             });
             setShowDeleteModal(false);
-            fetchTables();
+            void fetchTables();
+            showSuccess("Table supprimée avec succès.");
         } catch (error) {
             console.error('Erreur lors de la suppression de la table:', error);
+            showError("Erreur lors de la suppression de la table.");
         }
     };
 
@@ -107,9 +115,12 @@ function TablesListe() {
             await fetchJson(apiUrl(`/tables/status`), 'PUT', updateData);
             setShowEditModal(false);
             setSelectedTableId(null);
-            fetchTables();
+            void fetchTables();
+            showSuccess("Statut de la table mis à jour avec succès.");
         } catch (error) {
             console.error('Erreur lors de la mise à jour du statut de la table:', error);
+            showError("Erreur lors de la mise à jour du statut de la table.");
+
         }
     };
 
@@ -133,6 +144,7 @@ function TablesListe() {
         console.log('Mise à jour du table:', tableToEdit);
         if (!tableToEdit || !tableToEdit.number || !tableToEdit.capacity) {
             console.error('Les informations du table sont incomplètes.');
+            showError("Les informations du table sont incomplètes.");
             return;
         }
 
@@ -151,9 +163,11 @@ function TablesListe() {
             }
 
             setShowEditTableModal(false);
-            fetchTables();
+            void fetchTables();
+            showSuccess("Table mise à jour avec succès.");
         } catch (error) {
             console.error('Erreur lors de la mise à jour du table:', error);
+            showError("Erreur lors de la mise à jour du table.");
         }
     };
 
@@ -204,7 +218,7 @@ function TablesListe() {
                             </td>
                         </tr>
                     ) : (
-                        filteredTables.map((table) => (
+                        filteredTables.toSorted((a, b) => a.id - b.id).map((table) => (
                             <tr key={table.id} className="hover:bg-gray-100 text-center border-y">
                                 <td className="py-2 px-4">{table.id}</td>
                                 <td className="py-2 px-4">{table.number}</td>
@@ -249,18 +263,19 @@ function TablesListe() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center DeleteModal">
                         <p className="mb-6">Êtes-vous sûr de vouloir supprimer la table n°{tableToDelete?.number} ?</p>
-                        <div className="flex justify-around">
+                        <div className="flex justify-between">
+
                             <button
-                                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                                onClick={handleDelete}
-                            >
-                                Oui
-                            </button>
-                            <button
-                                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
+                                className="bg-red-300 text-gray-800 py-2 px-4 rounded-md hover:bg-red-400"
                                 onClick={cancelDelete}
                             >
                                 Non
+                            </button>
+                            <button
+                                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                onClick={handleDelete}
+                            >
+                                Oui
                             </button>
                         </div>
                     </div>
@@ -284,37 +299,39 @@ function TablesListe() {
                                 value={tableNumber}
                                 onChange={(e) => setTableNumber(e.target.value)}
                                 placeholder="Numéro de la table"
-                                className="border border-gray-300 p-2 mb-4 w-full"
+                                className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
                             />
                             <input
                                 type="number"
                                 value={tableCapacity}
                                 onChange={(e) => setTableCapacity(e.target.value)}
                                 placeholder="Capacité de la table"
-                                className="border border-gray-300 p-2 mb-4 w-full"
+                                className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
                             />
                             <select
                                 value={tableStatus}
                                 onChange={(e) => setTableStatus(e.target.value)}
-                                className="border border-gray-300 p-2 mb-4 w-full"
+                                className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
                             >
                                 <option value="" disabled>Sélectionner le statut</option>
                                 {tableStatuses.map((status) => (
                                     <option key={status} value={status}>{convertStatusToTable(status)}</option>
                                 ))}
                             </select>
-                            <div className="flex justify-around">
+                            <div className="flex justify-between">
+
+                                <button
+                                    className="bg-red-300 text-gray-800 py-2 px-4 rounded-md hover:bg-re-400"
+                                    onClick={() => setShowCreateModal(false)}
+                                >
+                                    Annuler
+                                </button>
+
                                 <button
                                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                                     onClick={handleCreateTable}
                                 >
                                     Créer
-                                </button>
-                                <button
-                                    className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
-                                    onClick={() => setShowCreateModal(false)}
-                                >
-                                    Annuler
                                 </button>
                             </div>
                         </div>
@@ -337,24 +354,25 @@ function TablesListe() {
                             <select
                                 value={tableStatus}
                                 onChange={(e) => setTableStatus(e.target.value)}
-                                className="border border-gray-300 p-2 mb-4 w-full"
+                                className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
                             >
                                 {tableStatuses.map((status) => (
                                     <option key={status} value={status}>{convertStatusToTable(status)}</option>
                                 ))}
                             </select>
-                            <div className="flex justify-around">
+                            <div className="flex justify-between">
+
+                                <button
+                                    className="bg-red-300 text-gray-800 px-4 py-2 rounded hover:bg-red-400"
+                                    onClick={() => setShowEditModal(false)}
+                                >
+                                    Annuler
+                                </button>
                                 <button
                                     className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
                                     onClick={handleUpdateStatus}
                                 >
                                     Mettre à jour
-                                </button>
-                                <button
-                                    className="bg-gray-300 text-gray-800 px-4 py-2 rounded hover:bg-gray-400"
-                                    onClick={() => setShowEditModal(false)}
-                                >
-                                    Annuler
                                 </button>
                             </div>
                         </div>
@@ -383,4 +401,4 @@ function TablesListe() {
     );
 }
 
-export default TablesListe;
+export default TablesList;

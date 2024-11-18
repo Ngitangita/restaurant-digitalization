@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { apiUrl } from '../../services/api';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable'; // Importation du plugin autoTable
+import 'jspdf-autotable';
 
 const FactureList = () => {
     const [tables, setTables] = useState([]);
@@ -31,12 +31,9 @@ const FactureList = () => {
             setRooms(roomsData);
             setTables(tablesData);
 
-            // Assurez-vous que `menuOrdersData` est bien un tableau
             const ordersArray = Array.isArray(menuOrdersData) ? menuOrdersData : menuOrdersData.data || [];
-
             setMenuOrders(ordersArray);
 
-            // Générer les factures à partir des commandes de menu
             const generatedFactures = ordersArray.map(order => {
                 const room = roomsData.find(r => r.id === order.roomId) || {};
                 const table = tablesData.find(t => t.id === order.tableId) || {};
@@ -66,58 +63,61 @@ const FactureList = () => {
         void fetchData();
     }, []);
 
-    // Fonction pour générer et télécharger le PDF
     const generatePDF = () => {
         const doc = new jsPDF();
-
-        // Ajouter l'en-tête
-        doc.text("Facture", 14, 10);
+    
+        // Header section
+        doc.setFontSize(16);
+        doc.text("UTOPIA", 14, 10);
+        doc.setFontSize(12);
         doc.text("By Sooatel", 14, 20);
-        doc.text("Ankasina Antananarivo", 14, 30);
-        doc.text("Tel: 038 96 373 43", 14, 40);
-
-        // Ajouter les informations de la chambre et de la table
-        const room = rooms.find(r => r.roomNumber) || {};
-        const table = tables.find(t => t.number) || {};
-
-        doc.text(`N° de la chambre: ${room.roomNumber || '-'}`, 14, 50);
-        doc.text(`N° de la table: ${table.number || '-'}`, 14, 60);
-
-        // Préparer les données du tableau
-        const tableData = factures.map((facture) => [
-            new Date(facture.date).toLocaleDateString(),
-            facture.commandId,
-            facture.menuName,
+        doc.text("Ankasina Antananarivo", 14, 26);
+        doc.text("Tel: 038 96 373 43", 14, 32);
+    
+        // Invoice title
+        doc.setFontSize(14);
+        doc.text("FACTURE", 105, 40, { align: "center" });
+        
+        // Additional details
+        doc.setFontSize(10);
+        const currentDate = new Date().toLocaleDateString();  // Use today's date or fetch dynamically
+        doc.text(`Date: ${currentDate}`, 14, 50);
+        doc.text("N° de table: ...........", 14, 56);
+        doc.text("Chambre: ...........", 14, 62);
+    
+        // Table headers
+        const tableColumnHeaders = ["Qtés", "Désignation", "P.U.", "Montant"];
+        const tableData = factures.map(facture => [
             facture.quantity,
+            facture.menuName,
             `${facture.price} €`,
             `${facture.cost} €`
         ]);
-
-        // Définir les colonnes pour le tableau
-        const columns = [
-            { header: 'Date', dataKey: 'date' },
-            { header: 'Numéro de Commande', dataKey: 'commandId' },
-            { header: 'Désignation', dataKey: 'menuName' },
-            { header: 'Quantité', dataKey: 'quantity' },
-            { header: 'Prix U', dataKey: 'price' },
-            { header: 'Montant', dataKey: 'cost' }
-        ];
-
-        // Générer le tableau dans le PDF
-        doc.autoTable(columns, tableData);
-
-        // Ajouter la somme totale (à adapter selon votre logique)
-        const totalAmount = factures.reduce((sum, facture) => sum + facture.cost, 0);
-        doc.text(`Montant total: ${totalAmount.toFixed(2)} €`, 14, doc.lastAutoTable.finalY + 10);
-
-        // Ajouter la signature
-        doc.text('Lersponsable:', 14, doc.lastAutoTable.finalY + 30);
-        doc.text('Client:', 14, doc.lastAutoTable.finalY + 40);
-
-        // Sauvegarder le PDF
-        doc.save('facture.pdf');
+    
+        // Add table to the PDF
+        doc.autoTable({
+            head: [tableColumnHeaders],
+            body: tableData,
+            startY: 70,
+            theme: 'grid',
+            headStyles: { fillColor: [147, 197, 253] },
+        });
+    
+        // Footer section
+        const totalAmount = factures.reduce((sum, facture) => sum + facture.cost, 0).toFixed(2);
+        const finalY = doc.lastAutoTable.finalY + 10;
+    
+        doc.text(`Montant total: ${totalAmount} €`, 14, finalY);
+        doc.text("Somme arrêtée à la présente liste de .............", 14, finalY + 10);
+    
+        // Signatures
+        doc.text("Le responsable", 14, finalY + 30);
+        doc.text("Le client", 150, finalY + 30);
+    
+        // Save the PDF
+        doc.save("facture.pdf");
     };
-
+    
     return (
         <div className="container flex justify-center items-center">
             <div className="w-full bg-white rounded p-5 flex flex-col gap-5">
@@ -125,16 +125,16 @@ const FactureList = () => {
                     <div className="flex flex-row gap-36 items-center">
                         <div className="flex flex-row gap-3 items-center">
                             <img src="../public/UTOPIA-B.png" alt="UTOPIA-B" className="w-16 h-16 rounded-full" />
-                            <div className='flex flex-col'>
-                                <span className='text-2xl font-bold'>By Sooatel</span>
-                                <span className='text-xs'>Ankasina Antananarivo <br /> Tel: 038 96 373 43</span>
+                            <div className="flex flex-col">
+                                <span className="text-2xl font-bold">By Sooatel</span>
+                                <span className="text-xs">Ankasina Antananarivo <br /> Tel: 038 96 373 43</span>
                             </div>
                         </div>
-                        <div className='flex flex-col gap-5'>
-                            <h1 className="text-2xl fontold underline">Facture</h1>
+                        <div className="flex flex-col gap-5">
+                            <h1 className="text-2xl font-bold underline">Facture</h1>
                             <div>
-                                <p className="py-2 px-4">N° de la chambre: {rooms.roomNumber}</p>
-                                <p className="py-2 px-4">N° du table: {tables.number}</p>
+                                <p className="py-2 px-4">N° de la chambre: {rooms[0]?.roomNumber || '-'}</p>
+                                <p className="py-2 px-4">N° de la table: {tables[0]?.number || '-'}</p>
                             </div>
                         </div>
                     </div>
@@ -172,11 +172,11 @@ const FactureList = () => {
                 </div>
                 <div className="flex flex-col gap-6">
                     <div className="flex flex-col gap-2">
-                        <span>Montant total: ................</span>
-                        <p>Somme arrêtée à la présente liste de ................</p>
+                        <span>Montant total: {factures.reduce((sum, facture) => sum + facture.cost, 0).toFixed(2)} €</span>
+                        <p>Somme arrêtée à la présente liste de {factures.reduce((sum, facture) => sum + facture.cost, 0).toFixed(2)} €</p>
                     </div>
                     <div className="flex flex-row gap-40">
-                        <span className="underline">Lersponsable</span>
+                        <span className="underline">Responsable</span>
                         <span className="underline">Client</span>
                     </div>
                 </div>
@@ -193,4 +193,4 @@ const FactureList = () => {
     );
 };
 
-export default FactureList;
+export default FactureList;  

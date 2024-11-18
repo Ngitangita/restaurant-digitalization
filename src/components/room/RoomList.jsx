@@ -7,6 +7,7 @@ import EditRoom from './EditRoom';
 import dayjs from "dayjs";
 import {convertStatusToRoom} from "../../services/convertStatus.js";
 import UpdateStatusRoom from "../updateStatus/UpdateStatusRoom.jsx";
+import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
 const RoomList = () => {
     const [rooms, setRooms] = useState([]);
@@ -19,6 +20,7 @@ const RoomList = () => {
     const [error, setError] = useState(null);
     const [status, setStatus] = useState('');
     const [selectedRoom, setSelectedRoom] = useState(null);
+    const { showSuccess, showError } = useToast();
 
     const fetchRooms = async () => {
         setIsLoading(true);
@@ -38,13 +40,14 @@ const RoomList = () => {
             setFloors(await floorsResponse.json());
         } catch (err) {
             setError(err.message);
+            showError("Erreur lors du chargement des données.");
         } finally {
             setIsLoading(false);
         }
     };
 
     useEffect(() => {
-        fetchRooms();
+        void fetchRooms();
     }, []);
 
     const toggleModal = (type, room = null) => {
@@ -67,9 +70,11 @@ const RoomList = () => {
                 body: JSON.stringify(status),
             });
             toggleModal('');
+            showSuccess("Statut mis à jour avec succès.");
             void fetchRooms();
         } catch (error) {
             console.error('Erreur lors de la mise à jour du statut de la salle:', error);
+            showError("Erreur lors de la mise à jour du statut.");
         }
     };
 
@@ -86,9 +91,11 @@ const RoomList = () => {
                 throw new Error(errorData.message || response.statusText);
             }
             toggleModal('');
-            fetchRooms();
+            void fetchRooms();
+            showSuccess("Salle mise à jour avec succès.");
         } catch (error) {
             console.error('Erreur lors de la mise à jour de la chambre:', error);
+            showError("Erreur lors de la mise à jour de la salle.");
         }
     };
 
@@ -96,16 +103,20 @@ const RoomList = () => {
         try {
             await fetch(apiUrl(`/rooms/${selectedRoom.id}`), { method: 'DELETE' });
             toggleModal('');
-            fetchRooms();
+            void fetchRooms();
+            showSuccess("Salle supprimée avec succès.");
         } catch (error) {
             console.error('Erreur lors de la suppression du room:', error);
+            showError("Erreur lors de la suppression de la salle.");
         }
     };
 
-    // Filtrer les salles en fonction du terme de recherche
-    const filteredRooms = rooms.filter((room) =>
-        room.roomNumber.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredRooms = rooms.filter((room) => {
+        if (searchTerm) {
+            return room.roomNumber === parseInt(searchTerm, 10);
+        }
+        return true;
+    })
 
     return (
         <div className="container mx-auto p-4 bg-white RoomList">
@@ -153,9 +164,9 @@ const RoomList = () => {
                     </thead>
                     <tbody>
                     {filteredRooms.length > 0 ? (
-                            filteredRooms.map((room) => (
+                            filteredRooms.toSorted((a, b) => a.id - b.id).map((room) => (
                                 <tr key={room.id} className="hover:bg-gray-100 text-center border-y border-collapse">
-                                    <td className="py-2 px-4">{room.id}</td>
+                                    <td className="py-2 px-2">{room.id}</td>
                                     <td className="py-2 px-4">{room.roomNumber}</td>
                                     <td className="py-2 px-4">{room.capacity}</td>
                                     <td className="py-2 px-4">{room.price}</td>
@@ -175,7 +186,7 @@ const RoomList = () => {
                                     </td>
                                     <td className="py-3 px-4">{dayjs(room.createdAt).format('YYYY-MM-DD HH:mm')}</td>
                                     <td className="py-3 px-4">{dayjs(room.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
-                                    <td className="py-2 px-4">
+                                    <td className="p-6 flex justify-between items-center">
                                         <button
                                             className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                                             onClick={() => toggleModal('editRoom', room)}
@@ -202,11 +213,11 @@ const RoomList = () => {
 
             {isModalOpen && modalType === 'create' && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-                    <div className="bg-white rounded-lg shadow-lg EditModal w-auto">
+                    <div className="bg-white rounded-lg shadow-lg EditModal w-1/3 py-2">
                         <div className='flex flex-row justify-between items-center'>
                             <h2 className="text-xl pl-8 pt-8">Ajouter le numéro du chambre</h2>
                             <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
-                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                            relative bottom-2  text-center text-[30px] hover:text-white cursor-pointer'
                                 onClick={() => toggleModal('')}>
                                 x
                             </span>
@@ -222,7 +233,7 @@ const RoomList = () => {
             )}
             {isModalOpen && modalType === 'editStatus' && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-                    <div className="bg-white rounded-lg shadow-lg max-w-sm EditModal">
+                    <div className="bg-white rounded-lg shadow-lg max-w-sm EditModal w-1/2">
                         <div className='flex flex-row justify-between items-center'>
                             <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statue</h2>
                             <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
@@ -262,12 +273,14 @@ const RoomList = () => {
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
                     <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm EditModal">
                         <p>Êtes-vous sûr de vouloir supprimer cette salle n°{selectedRoom?.roomNumber} ?</p>
-                        <div className="mt-4 flex justify-end">
-                            <button className="bg-red-500 text-white rounded px-4 py-2" onClick={handleDelete}>
-                                Oui
-                            </button>
-                            <button className="bg-gray-300 text-gray-700 rounded px-4 py-2 ml-2" onClick={() => toggleModal('')}>
+                        <div className="mt-4 flex justify-between">
+
+                            <button className="bg-red-300 text-gray-700 rounded px-4 py-2 ml-2"
+                                    onClick={() => toggleModal('')}>
                                 Non
+                            </button>
+                            <button className="bg-blue-500 text-white rounded px-4 py-2" onClick={handleDelete}>
+                                Oui
                             </button>
                         </div>
                     </div>

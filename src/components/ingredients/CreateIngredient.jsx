@@ -4,6 +4,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { apiUrl, fetchJson } from '../../services/api';
 import {useNavigate} from "react-router-dom";
+import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
 const schema = z.object({
   name: z.string().min(1, "Le nom est requis"),
@@ -14,11 +15,11 @@ const schema = z.object({
 
 function CreateIngredient({ onModalOpen, onToggle }) {
   const [units, setUnits] = useState([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const {showSuccess, showError} = useToast()
 
   const {
     register,
-    handleSubmit,
+    handleSubmit, reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
@@ -34,11 +35,12 @@ function CreateIngredient({ onModalOpen, onToggle }) {
       setUnits(data);
     } catch (error) {
       console.error('Erreur lors de la récupération des unités:', error);
+      showError('Impossible de charger les unités');
     }
   };
 
   useEffect(() => {
-    fetchUnits();
+    void fetchUnits();
   }, []);
 
   const onSubmit = async (data) => {
@@ -48,9 +50,12 @@ function CreateIngredient({ onModalOpen, onToggle }) {
         unitId: parseInt(data.unit, 10)
       });
       onModalOpen(false);
+      showSuccess('Ingrédient créé avec succès');
       console.log('Ingrédient créé avec succès:', data);
+      reset();
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
+      showError('Erreur lors de la création de l\'ingrédient');
     }
   };
 
@@ -90,15 +95,15 @@ function CreateIngredient({ onModalOpen, onToggle }) {
           </div>
 
           <div className="flex flex-row gap-44 mt-4">
-            <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
-              Soumettre
-            </button>
             <button
-              type="button"
-              onClick={onToggle}
-              className="mr-2 bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400"
+                type="button"
+                onClick={onToggle}
+                className="mr-2 bg-red-300 text-gray-700 py-2 px-4 rounded-md hover:bg-red-400"
             >
               Annuler
+            </button>
+            <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
+              Soumettre
             </button>
           </div>
         </div>

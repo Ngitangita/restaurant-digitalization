@@ -11,8 +11,7 @@ function MenuOrdersList() {
     const [statuses, setStatuses] = useState([]);
     const [showEditModal, setShowEditModal] = useState(false);
     const [status, setStatus] = useState('');
-    const [selectedOrder, setSelectedOrder] = useState(null);
-    const [modalType, setModalType] = useState('');
+    const [selectedOrderId, setSelectedOrderId] = useState(null);
     const [searchCriteria, setSearchCriteria] = useState({
         roomId: "",
         tableId: ""
@@ -21,8 +20,8 @@ function MenuOrdersList() {
 
 
     const fetchOrders = () => {
-        const { orderDate, status, roomId, tableId } = searchCriteria;
-        const url = `${apiUrl("/menu-orders/search")}?orderDate=${orderDate}&status=${status}&roomId=${roomId}&tableId=${tableId}`;
+        const params = new URLSearchParams(searchCriteria);
+        const url = `${apiUrl("/menu-orders/search")}?${params.toString()}`;
 
         fetchJson(url, 'GET')
             .then((data) => {
@@ -39,15 +38,14 @@ function MenuOrdersList() {
             .catch((error) => console.log(error));
     }, []);
 
-    const handleEditStatus = (type, order = null) => {
-        setModalType(type);
-        setSelectedOrder(order);
-        setShowEditModal(!showEditModal);
+    const handleEditStatus = (order) => {
+        setSelectedOrderId(order.id);
+        setStatus(order.status);
+        setShowEditModal(true);
     };
 
     const handleUpdateStatus = async () => {
         try {
-
             const url = apiUrl(`/menu-orders/${selectedOrderId}/status`);
             await fetch(url, {
                 method: 'PATCH',
@@ -55,9 +53,10 @@ function MenuOrdersList() {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                
             });
-            handleEditStatus('');
+
+            setShowEditModal(false);
+            setSelectedOrderId(null);
             fetchOrders();
         } catch (error) {
             console.error('Erreur lors de la mise à jour du statut de la commande:', error);
@@ -77,37 +76,18 @@ function MenuOrdersList() {
             <div className="flex gap-10 my-4">
                 <input
                     type="text"
-                    placeholder="Numéro de chambre"
+                    placeholder="numéro de chambre"
                     value={searchCriteria.roomId}
                     onChange={(e) => setSearchCriteria(prev => ({ ...prev, roomId: e.target.value }))}
                     className="border rounded p-2 outline-none"
                 />
                 <input
                     type="text"
-                    placeholder="Numéro de table"
+                    placeholder="numéro de table"
                     value={searchCriteria.tableId}
                     onChange={(e) => setSearchCriteria(prev => ({ ...prev, tableId: e.target.value }))}
                     className="border rounded p-2 outline-none"
                 />
-                 <input
-                    type="date"
-                    placeholder="Date de commande"
-                    value={searchCriteria.orderDate}
-                    onChange={(e) => setSearchCriteria(prev => ({ ...prev, orderDate: e.target.value }))}
-                    className="border rounded p-2 outline-none"
-                />
-                <select
-                    value={searchCriteria.status}
-                    onChange={(e) => setSearchCriteria(prev => ({ ...prev, status: e.target.value }))}
-                    className="border rounded p-2 outline-none"
-                >
-                    <option value="">Statut</option>
-                    {statuses.map((statusOption) => (
-                        <option key={statusOption} value={statusOption}>
-                            {statusOption.toLowerCase()}
-                        </option>
-                    ))}
-                </select>
             </div>
 
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden mt-4 menuOrdersList">
@@ -155,20 +135,20 @@ function MenuOrdersList() {
                 </tbody>
             </table>
 
-            {showEditModal && modalType === 'editStatus' && (
+            {showEditModal && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
                     <div className="bg-white rounded-lg shadow-lg EditModal">
                         <div className='flex flex-row justify-between items-center'>
                             <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statut</h2>
                             <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
                             relative bottom-4 text-[30px] hover:text-white cursor-pointer'
-                                onClick={() => handleEditStatus('')}>
+                                onClick={() => setShowEditModal(false)}>
                                 x
                             </span>
                         </div>
                         <UpdateStatusOrder
                             onSave={handleUpdateStatus}
-                            onCancel={() => handleEditStatus('')}
+                            onCancel={() => setShowEditModal(false)}
                             statuses={statuses}
                             setStatus={setStatus}
                             status={status}
