@@ -1,117 +1,109 @@
 import React, { useState, useEffect } from 'react';
 import PaymentList from '../../pages/payments/PaymentList';
+import useToast from '../gestionDesMenus/menuOrder/(tantely)/hooks/useToast';
+import { convertStatusToPayment } from '../../services/convertStatus';
+import { apiUrl } from '../../services/api';
+import { truncate } from '../../services/truncate';
 
-const CreatePayment = () => {
+const CreatePayment = ({onCreate, annulerModal }) => {
     const [reservationId, setReservationId] = useState('');
     const [paymentDate, setPaymentDate] = useState('');
     const [amount, setAmount] = useState('');
     const [paymentMethod, setPaymentMethod] = useState('');
     const [status, setStatus] = useState('');
     const [description, setDescription] = useState('');
-    const [methods, setMethods] = useState([]);
-    const [statuses, setStatuses] = useState([]);
-    const [payments, setPayments] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("")
+    const { showSuccess, showError } = useToast()
+    const [reservations, setReservations] = useState([])
+    const [methods, setMethods] = useState([])
+    const [statuses, setStatuses] = useState([])
 
-    const apiUrl = (path) => `http://localhost:8080${path}`;
 
-    useEffect(() => {
-        fetchPaymentMethods();
-        fetchPaymentStatuses();
-        fetchPayments();
-    }, []);
-
-    const fetchPaymentMethods = async () => {
+    const fetchData = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(apiUrl('/payments/method'));
-            if (response.ok) {
-                const data = await response.json();
-                setMethods(data);
-            } else {
-                console.error('Failed to fetch payment methods');
-            }
-        } catch (error) {
-            console.error('Error fetching payment methods:', error);
+          const [reservationsResponse, paymentMethodResponse, statusPaymentResponse] = await Promise.all([
+            fetch(apiUrl(`/reservations`)),
+            fetch(apiUrl(`/payments/method`)),
+            fetch(apiUrl(`/payments/status`))
+          ]);
+    
+          if (!reservationsResponse.ok || !paymentMethodResponse.ok || !statusPaymentResponse.ok) {
+            throw new Error('Erreur lors de la récupération des reservations, methodes, status');
+          }
+    
+          const reservationsData = await reservationsResponse.json();
+          const paymentMethodData = await paymentMethodResponse.json();
+          const paymentStatusData = await statusPaymentResponse.json();
+    
+          setReservations(reservationsData);
+          setStatuses(paymentStatusData)
+          setMethods(paymentMethodData)
+        } catch (err) {
+          showError("Erreur lors de la récupération des données.");
         } finally {
-            setIsLoading(false);
+          setIsLoading(false);
         }
-    };
+      };
+    
+      useEffect(() => {
+        void fetchData();
+      }, []);
 
-    const fetchPaymentStatuses = async () => {
-        setIsLoading(true);
-        try {
-            const response = await fetch(apiUrl('/payments/status'));
-            if (response.ok) {
-                const data = await response.json();
-                setStatuses(data);
-            } else {
-                console.error('Failed to fetch payment statuses');
-            }
-        } catch (error) {
-            console.error('Error fetching payment statuses:', error);
-        } finally {
-            setIsLoading(false);
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+
+        if (!reservationId || !amount || !paymentMethod || !status) {
+            setErrorMessage('Tous les champs doivent être remplis.');
+            showError('Tous les champs doivent être remplis.');
+            return;
         }
-    };
 
-    const fetchPayments = async () => {
-        setIsLoading(true);
-        try {
-            const response = await fetch(apiUrl('/payments'));
-            if (response.ok) {
-                const data = await response.json();
-                setPayments(data);
-            } else {
-                console.error('Failed to fetch payments');
-            }
-        } catch (error) {
-            console.error('Error fetching payments:', error);
-        } finally {
-            setIsLoading(false);
+        if (isNaN(amount) || parseFloat(amount) <= 0) {
+            setErrorMessage('Le prix doit être un nombre positif.');
+            showError('Le prix doit être un nombre positif.');
+            return;
         }
-    };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        const paymentData = {
-            reservationId: parseInt(reservationId),
-            paymentDate,
-            amount: parseFloat(amount),
+        const nouveauPayment = {
             paymentMethod,
-            status,
             description,
+            paymentDate: new Date(paymentDate).toISOString(),
+            amount: parseFloat(amount),
+            reservationId: parseInt(reservationId, 10),
+            status
         };
+        
 
         try {
             const response = await fetch(apiUrl('/payments'), {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(paymentData),
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(nouveauPayment),
             });
-
+            const createdPayment = await response.json();
+            
             if (response.ok) {
-                console.log('Payment saved successfully');
-                fetchPayments(); // Refresh payments list after save
-            } else {
-                console.error('Failed to save payment');
-            }
-        } catch (error) {
-            console.error('Error:', error);
-        }
-    };
+                await onCreate(createdPayment);
 
-    const handleDelete = async (id) => {
-        try {
-            const response = await fetch(apiUrl(`/payments/delete/${id}`), { method: 'DELETE' });
-            if (response.ok) {
-                setPayments(payments.filter((payment) => payment.id !== id));
-                console.log('Payment deleted successfully');
+                showSuccess('Payment créé avec succès!');
+                setPaymentMethod('');
+                setDescription('');
+                setAmount('');
+                setReservationId('');
+                setStatus('');
+                setErrorMessage('');
             } else {
-                console.error('Failed to delete payment');
+                setErrorMessage('Erreur lors de la création du payment.');
+                showError('Erreur lors de la création du payment.');
             }
-        } catch (error) {
-            console.error('Failed to delete payment:', error);
+        } catch (e){
+            console.log(e);
+            setErrorMessage('Erreur lors de l\'envoi des données.');
+            showError('Erreur lors de l\'envoi des données.');
         }
     };
 
@@ -119,16 +111,27 @@ const CreatePayment = () => {
         <div className="max-w-md mx-auto p-4 bg-white shadow-md rounded">
             <h2 className="text-xl font-semibold mb-4">Payment Form</h2>
             <form onSubmit={handleSubmit} className="mb-6">
-                <div className="mb-4">
-                    <label className="block text-gray-700">Reservation ID:</label>
-                    <input
-                        type="number"
-                        value={reservationId}
-                        onChange={(e) => setReservationId(e.target.value)}
-                        className="w-full px-3 py-2 border rounded"
-                        required
-                    />
-                </div>
+                <div>
+                <label htmlFor="reservationId">Reservation:</label>
+                <select
+                    id="reservationId"
+                    value={reservationId}
+                    onChange={(e) => setReservationId(e.target.value)}
+                    className="w-full px-3 border outline-none focus:border-blue-500 py-2 border-gray-300 rounded"
+                    required
+                >
+                    <option value="">Sélectionnez une Reservation</option>
+                    {reservations && reservations.length > 0 ? (
+                        reservations.map(reservation => (
+                            <option key={reservation.id} value={reservation.id}>
+                                {reservation.id} {reservation.customer.lastName}
+                            </option>
+                        ))
+                    ) : (
+                        <option value="">Aucune reservation disponible</option>
+                    )}
+                </select>
+            </div>
                 <div className="mb-4">
                     <label className="block text-gray-700">Payment Date:</label>
                     <input
@@ -149,36 +152,48 @@ const CreatePayment = () => {
                         required
                     />
                 </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700">Payment Method:</label>
+
+                <div>
+                    <label htmlFor="paymentMethod">Payment method:</label>
                     <select
+                        id="paymentMethod"
                         value={paymentMethod}
                         onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="w-full px-3 py-2 border rounded"
+                        className="w-full border outline-none focus:border-blue-500 px-3 py-2  border-gray-300 rounded"
                         required
                     >
-                        <option value="">Select a method</option>
-                        {methods.map((method) => (
-                            <option key={method} value={method}>
-                                {method}
-                            </option>
-                        ))}
+                        <option value="">Sélectionnez payment method</option>
+                        {methods && methods.length > 0 ? (
+                            methods.map(method => (
+                                <option key={method} value={method}>
+                                    {method.toLowerCase()}
+                                </option>
+                            ))
+                        ) : (
+                            <option value="">Aucun method disponible</option>
+                        )}
                     </select>
                 </div>
-                <div className="mb-4">
-                    <label className="block text-gray-700">Status:</label>
+
+                <div>
+                    <label htmlFor="status">Statut:</label>
                     <select
+                        id="status"
                         value={status}
                         onChange={(e) => setStatus(e.target.value)}
-                        className="w-full px-3 py-2 border rounded"
+                        className="w-full border outline-none focus:border-blue-500 px-3 py-2  border-gray-300 rounded"
                         required
                     >
-                        <option value="">Select a status</option>
-                        {statuses.map((stat) => (
-                            <option key={stat} value={stat}>
-                                {stat}
-                            </option>
-                        ))}
+                        <option value="">Sélectionnez un statut</option>
+                        {statuses && statuses.length > 0 ? (
+                            statuses.map(status => (
+                                <option key={status} value={status}>
+                                    {convertStatusToPayment(status.toLowerCase())}
+                                </option>
+                            ))
+                        ) : (
+                            <option value="">Aucun statut disponible</option>
+                        )}
                     </select>
                 </div>
                 <div className="mb-4">
@@ -190,13 +205,16 @@ const CreatePayment = () => {
                         rows="3"
                     />
                 </div>
-                <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded">
-                    Submit Payment
-                </button>
+                <div className="flex flex-row gap-52 relative top-4">
+                    <button type="button" onClick={annulerModal}
+                        className="ml-2 bg-gray-300 text-gray-800 rounded px-4 py-2 hover:bg-gray-400">
+                        Annuler
+                    </button>
+                    <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">
+                        Submit Payment
+                    </button>
+                </div>
             </form>
-
-            {/* Ajoutez ici le composant PaymentList */}
-            <PaymentList payments={payments} onDelete={handleDelete} />
         </div>
     );
 };

@@ -86,6 +86,8 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
                 quantity,
             })),
         };
+        console.log(menuIngredientsData);
+        
 
         try {
             const response = await fetch(apiUrl('/menus/add-ingredients'), {
@@ -95,6 +97,7 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
                 },
                 body: JSON.stringify(menuIngredientsData),
             });
+
 
             if (response.ok) {
                 onAddIngredients();
@@ -153,14 +156,13 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
                 </div>
 
                 <div>
-                    <label htmlFor="quantity">Quantité (g):</label>
+                    <label htmlFor="quantity">Quantité :</label>
                     <input
                         id="quantity"
                         type="number"
                         value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
                         className="w-full px-3 py-2 border border-gray-300 rounded outline-none"
-                        required
                     />
                 </div>
 
@@ -188,7 +190,7 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
                                     onChange={() => toggleDeleteMode(ingredient.ingredientId)}
                                 />
                             )}
-                            {ingredient.name} - Quantité: {ingredient.quantity} g
+                            {ingredient.name} - Quantité: {ingredient.quantity} 
                         </li>
                     ))}
                 </ul>

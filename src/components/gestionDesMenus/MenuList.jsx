@@ -180,7 +180,7 @@ const MenuList = () => {
                     <input
                         type="text"
                         placeholder="Rechercher un menu"
-                        className="pr-10 p-2 border outline-none focus:border-blue-500 rounded-md outline-none"
+                        className="pr-10 p-2 border focus:border-blue-500 rounded-md outline-none"
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                     />
@@ -226,13 +226,10 @@ const MenuList = () => {
             <table className="min-w-full bg-white MenuList shadow-md rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-200">
-                        <th className="py-2 px-4">Id</th>
                         <th className="py-2 px-4">Nom</th>
                         <th className="py-2 px-4">Prix</th>
                         <th className="py-2 px-4">Description</th>
                         <th className="py-2 px-4">Statut</th>
-                        <th className="py-2 px-4">Créé le</th>
-                        <th className="py-2 px-4">Modifié le</th>
                         <th className="py-2 px-4">Actions</th>
                     </tr>
                 </thead>
@@ -251,9 +248,7 @@ const MenuList = () => {
 
                                     {menus.map(menu => (
                                         <tr key={menu.id}
-                                            className="hover:bg-gray-100 text-center border-y"
-                                        >
-                                            <td className="py-2 px-4">{menu.id}</td>
+                                            className="hover:bg-gray-100 text-center border-y">
                                             <td className="py-2 px-4">{menu.name}</td>
                                             <td className="py-2 px-4">{menu.price}</td>
                                             <td className="py-2 px-4">{truncate(menu.description, 20)}</td>
@@ -272,10 +267,6 @@ const MenuList = () => {
 
                                                 </button>
                                             </td>
-
-                                            <td className="py-2 px-4">{dayjs(menu.createdAt).format('YYYY-MM-DD HH:mm')}</td>
-                                            <td className="py-2 px-4">{dayjs(menu.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
-
                                             <td className="py-2 px-4 flex flex-row justify-center gap-2">
                                                 <button
                                                     className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"

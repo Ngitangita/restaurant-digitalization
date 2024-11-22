@@ -119,7 +119,7 @@ const RoomList = () => {
     })
 
     return (
-        <div className="container mx-auto p-4 bg-white RoomList">
+        <div className="container mx-auto p-4 bg-white RoomList pr-14">
             <h2 className="text-2xl font-bold mb-4">Liste des Salles</h2>
             <div className="flex flex-row gap-4 mb-4">
                 <div className="relative flex items-center w-64">
@@ -152,13 +152,10 @@ const RoomList = () => {
                 <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden RoomList">
                     <thead>
                     <tr className="bg-gray-200">
-                        <th className="py-2 px-4">Id</th>
                         <th className="py-2 px-4">Numéro de Salle</th>
                         <th className="py-2 px-4">Capacité (en personnes)</th>
                         <th className="py-2 px-4">Prix (en Ar)</th>
                         <th className="py-2 px-4">Statut</th>
-                        <th className="py-2 px-4">Créé le</th>
-                        <th className="py-2 px-4">Modifié le</th>
                         <th className="py-2 px-4">Actions</th>
                     </tr>
                     </thead>
@@ -166,11 +163,10 @@ const RoomList = () => {
                     {filteredRooms.length > 0 ? (
                             filteredRooms.toSorted((a, b) => a.id - b.id).map((room) => (
                                 <tr key={room.id} className="hover:bg-gray-100 text-center border-y border-collapse">
-                                    <td className="py-2 px-2">{room.id}</td>
-                                    <td className="py-2 px-4">{room.roomNumber}</td>
-                                    <td className="py-2 px-4">{room.capacity}</td>
-                                    <td className="py-2 px-4">{room.price}</td>
-                                    <td className={`py-2 px-4 cursor-pointer ${room.status.toLowerCase() !== "available" ? 'text-red-500 font-bold' : ''}`}>
+                                    <td className="p-2">{room.roomNumber}</td>
+                                    <td className="p-2 ">{room.capacity}</td>
+                                    <td className="p-2 ">{room.price}</td>
+                                    <td className={`p-2 cursor-pointer ${room.status.toLowerCase() !== "available" ? 'text-red-500 font-bold' : ''}`}>
                                         <button
                                             onClick={() => toggleModal('editStatus', room)}
                                             className='w-full flex flex-row gap-1 items-center'
@@ -184,9 +180,7 @@ const RoomList = () => {
 
                                         </button>
                                     </td>
-                                    <td className="py-3 px-4">{dayjs(room.createdAt).format('YYYY-MM-DD HH:mm')}</td>
-                                    <td className="py-3 px-4">{dayjs(room.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
-                                    <td className="p-6 flex justify-between items-center">
+                                      <td className="p-2 flex justify-center items-center">
                                         <button
                                             className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                                             onClick={() => toggleModal('editRoom', room)}

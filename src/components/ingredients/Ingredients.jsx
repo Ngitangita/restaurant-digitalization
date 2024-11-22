@@ -189,7 +189,6 @@ const IngredientList = () => {
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden ingredientTable">
                 <thead>
                 <tr className="bg-gray-200">
-                    <th className="py-2 px-4">Id</th>
                     <th className="py-2 px-4">Nom</th>
                     <th className="py-2 px-4">Créé le</th>
                     <th className="py-2 px-4">Modifié le</th>
@@ -209,7 +208,6 @@ const IngredientList = () => {
                     ) : (
                         currentIngredients.toSorted((a, b) => a.id - b.id).map(ingredient => (
                             <tr key={ingredient.id} className="hover:bg-gray-100 text-center border-y">
-                                <td className="py-2 px-4">{ingredient.id}</td>
                                 <td className="py-2 px-4">{ingredient.name}</td>
                                 <td className="py-3 px-4">{dayjs(ingredient.createdAt).format('YYYY-MM-DD HH:mm')}</td>
                                 <td className="py-3 px-4">{dayjs(ingredient.updatedAt).format('YYYY-MM-DD HH:mm')}</td>

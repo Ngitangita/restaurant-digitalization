@@ -1,10 +1,11 @@
-import  { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { apiUrl, fetchJson } from "../../../services/api";
 import CreateMenuOrder from "./CreateMenuOrder";
-import { MdAddBox, MdEdit } from "react-icons/md";
+import { MdAddBox, MdEdit, MdClear } from "react-icons/md";
 import UpdateStatusOrder from "../../updateStatus/UpdateStatusOrder.jsx";
 import dayjs from "dayjs";
-import {convertStatusToOrder} from "../../../services/convertStatus.js";
+import { convertStatusToOrder } from "../../../services/convertStatus.js";
+import useToast from "./(tantely)/hooks/useToast.jsx";
 
 function MenuOrdersList() {
     const [orders, setOrders] = useState([]);
@@ -12,25 +13,42 @@ function MenuOrdersList() {
     const [showEditModal, setShowEditModal] = useState(false);
     const [status, setStatus] = useState('');
     const [selectedOrderId, setSelectedOrderId] = useState(null);
-    const [searchCriteria, setSearchCriteria] = useState({
-        roomId: "",
-        tableId: ""
-    });
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [hasPrevious, setHasPrevious] = useState(false);
+    const [hasNext, setHasNext] = useState(false);
+    const { showError } = useToast();
 
+    useEffect(() => {
+        void fetchOrders();
+    }, [currentPage, searchTerm]);
 
-    const fetchOrders = () => {
-        const params = new URLSearchParams(searchCriteria);
-        const url = `${apiUrl("/menu-orders/search")}?${params.toString()}`;
-
-        fetchJson(url, 'GET')
-            .then((data) => {
-                setOrders(data.items || []);
-            })
-            .catch((error) => console.log(error));
+    const fetchOrders = async () => {
+        setIsLoading(true);
+        setError(null);
+        try {
+            const query = new URLSearchParams({
+                page: currentPage - 1 > 0 ? currentPage - 1 : 0,
+                size: 5
+            }).toString();
+            const data = await fetchJson(apiUrl(`/menu-orders/search?${query}`));
+            setOrders(data.items || []);
+            setIsLoading(false);
+            setTotalPages(data?.pageInfo.totalPages || 0);
+            setHasNext(data?.pageInfo?.hasNext || false);
+            setHasPrevious(data?.pageInfo?.hasPrevious || false);
+        } catch (err) {
+            const errorMsg = err.message || 'Erreur lors de la récupération des menus order';
+            setError(errorMsg);
+            showError('Une erreur s\'est produite lors du chargement des menu orders.');
+            setIsLoading(false);
+        }
     };
 
-    useEffect(fetchOrders, [searchCriteria]);
 
     useEffect(() => {
         fetchJson(apiUrl("/menu-orders/status"))
@@ -63,8 +81,35 @@ function MenuOrdersList() {
         }
     };
 
+    const handleNextPage = () => {
+        if (currentPage < totalPages)
+            setCurrentPage(prevPage => prevPage + 1);
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage > 1)
+            setCurrentPage(prevPage => prevPage - 1);
+    };
+
+    const handlePageInputChange = (e) => {
+        let value = parseInt(e.target.value);
+
+        if (!isNaN(value)) {
+            setCurrentPage(value);
+        } else {
+            setCurrentPage(1);
+        }
+    };
+
+    const filteredMenuOrders = orders.filter((order) => {
+        if (searchTerm) {
+            return order.room?.roomNumber === parseInt(searchTerm, 10);
+        }
+        return true;
+    })
+
     return (
-        <div className="w-full p-4 bg-white rounded shadow-lg menuOrdersList">
+        <div className="w-full p-4 bg-white rounded shadow-lg menuOrdersList pr-16">
             <h2 className="text-2xl font-bold mb-4">Liste des Commandes</h2>
             <button
                 onClick={() => setIsModalOpen(true)}
@@ -73,65 +118,74 @@ function MenuOrdersList() {
                 <MdAddBox /> Ajouter une commande
             </button>
 
-            <div className="flex gap-10 my-4">
+            <div className="relative flex items-center w-64">
                 <input
                     type="text"
-                    placeholder="numéro de chambre"
-                    value={searchCriteria.roomId}
-                    onChange={(e) => setSearchCriteria(prev => ({ ...prev, roomId: e.target.value }))}
-                    className="border rounded p-2 outline-none"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Rechercher une salle"
+                    className="p-2 pr-8 border border-gray-300 rounded-md outline-none"
                 />
-                <input
-                    type="text"
-                    placeholder="numéro de table"
-                    value={searchCriteria.tableId}
-                    onChange={(e) => setSearchCriteria(prev => ({ ...prev, tableId: e.target.value }))}
-                    className="border rounded p-2 outline-none"
-                />
+                {searchTerm && (
+                    <button className="absolute right-2" onClick={() => setSearchTerm('')}>
+                        <MdClear />
+                    </button>
+                )}
             </div>
 
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden mt-4 menuOrdersList">
                 <thead>
-                <tr className="bg-gray-200">
-                    <th className="py-2">Id</th>
-                    <th className="py-2">Chambre</th>
-                    <th className="py-2">Table</th>
-                    <th className="py-2">Menu</th>
-                    <th className="py-2">Quantité</th>
-                    <th className="py-2">Coût</th>
-                    <th className="py-2">Statut</th>
-                    <th className="py-2">Date de Commande</th>
-                    <th className="py-2 px-4">Modifié le</th>
-                </tr>
+                    <tr className="bg-gray-200">
+                        <th className="py-2">Chambre</th>
+                        <th className="py-2">Table</th>
+                        <th className="py-2">Menu</th>
+                        <th className="py-2">Quantité</th>
+                        <th className="py-2">Coût</th>
+                        <th className="py-2">Statut</th>
+                        <th className="py-2">Date de Commande</th>
+                        <th className="py-2 px-4">Modifié le</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {orders.map((order) => (
-                    <tr key={order.id} className="hover:bg-gray-100 text-center border-y">
-                        <td className="py-2">{order.id}</td>
-                        <td className="py-2">{order.room?.roomNumber || "-"}</td>
-                        <td className="py-2">{order.table?.number || "-"}</td>
-                        <td className="py-2">{order.menu?.name || "-"}</td>
-                        <td className="py-2">{order.quantity}</td>
-                        <td className="py-2">{order.cost}</td>
-                        <td className="py-2 px-4 cursor-pointer">
-                            <button
-                                onClick={() => handleEditStatus(order)}
-                                className={`w-full flex flex-col gap-1 items-center ${order.orderStatus?.toLowerCase() !== "completed" ? 'text-red-500 font-bold' : ''}`}
-                            >
-                                    <span className='flex flex-row text-sm gap-1 items-center '>
-                                        <MdEdit/> {convertStatusToOrder(order.orderStatus?.toLowerCase())}
-                                    </span>
-                                {order.orderStatus?.toUpperCase() !== "COMPLETED" && (
-                                    <div className="text-red-500 text-[10px]">⚠️ désolé, la commande
-                                        est {convertStatusToOrder(order.orderStatus?.toLowerCase())}</div>
-                                )}
-                            </button>
-                        </td>
+                    {isLoading ? (
+                        <tr>
+                            <td colSpan="7" className="text-center py-2">Chargement...</td>
+                        </tr>
+                    ) : error ? (
+                        <tr>
+                            <td colSpan="7" className="text-center py-2 text-red-500">{error}</td>
+                        </tr>
+                    ) :filteredMenuOrders.length > 0 ? (
+                        filteredMenuOrders.toSorted((a, b) => a.id - b.id).map((order) => (
+                            <tr key={order.id} className="hover:bg-gray-100 text-center border-y">
+                                <td className="py-2">{order.room?.roomNumber || "-"}</td>
+                                <td className="py-2">{order.table?.number || "-"}</td>
+                                <td className="py-2">{order.menu?.name || "-"}</td>
+                                <td className="py-2">{order.quantity}</td>
+                                <td className="py-2">{order.cost}</td>
+                                <td className="py-2 px-4 cursor-pointer">
+                                    <button
+                                        onClick={() => handleEditStatus(order)}
+                                        className={`w-full flex flex-col gap-1 items-center ${order.orderStatus?.toLowerCase() !== "completed" ? 'text-red-500 font-bold' : ''}`}
+                                    >
+                                        <span className='flex flex-row text-sm gap-1 items-center '>
+                                            <MdEdit /> {order.orderStatus?.toUpperCase() !== "COMPLETED" && (
+                                                <div className="text-red-500 text-[10px]">⚠️</div>
+                                            )}
+                                            {convertStatusToOrder(order.orderStatus?.toLowerCase())}
+                                        </span>
 
-                        <td className="py-2">{dayjs(order.orderDate).format('YYYY-MM-DD HH:mm')}</td>
-                        <td className="py-2 px-4">{dayjs(order.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
-                    </tr>
-                ))}
+                                    </button>
+                                </td>
+
+                                <td className="py-2">{dayjs(order.orderDate).format('YYYY-MM-DD HH:mm')}</td>
+                                <td className="py-2 px-4">{dayjs(order.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
+                            </tr>
+                        ))) : (
+                        <tr>
+                            <td colSpan="5" className="text-center py-4">Aucun stock trouvé</td>
+                        </tr>
+                    )}
                 </tbody>
             </table>
 
@@ -181,6 +235,36 @@ function MenuOrdersList() {
                     </dir>
                 </div>
             )}
+
+            <div className="flex justify-between mt-4 items-center">
+                <button
+                    onClick={handlePrevPage}
+                    className={`${hasPrevious ? "bg-blue-500 hover:bg-blue-600 " : "bg-gray-500 hover:bg-gray-600 "} text-white px-4 py-2 rounded `}
+                    disabled={!hasPrevious}
+                >
+                    Précédent
+                </button>
+                <div className="flex items-center">
+                    <span className="mr-2">Page {currentPage}/{totalPages}</span>
+                    <input
+                        type="number"
+                        value={currentPage}
+                        onChange={handlePageInputChange}
+                        onBlur={handlePageInputChange}
+                        onKeyDown={(e) => e.key === 'Enter' && handlePageInputChange(e)}
+                        min={1}
+                        max={totalPages}
+                        className="border border-gray-300 rounded-md px-2 py-1 outline-none w-20"
+                    />
+                </div>
+                <button
+                    onClick={handleNextPage}
+                    className={`${hasNext ? "bg-blue-500 hover:bg-blue-600 " : "bg-gray-500 hover:bg-gray-600 "} text-white px-4 py-2 rounded `}
+                    disabled={!hasNext}
+                >
+                    Suivant
+                </button>
+            </div>
         </div>
     );
 }

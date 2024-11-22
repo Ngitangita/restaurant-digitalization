@@ -1,32 +1,36 @@
 import React, { useState } from 'react';
 import { apiUrl } from '../../services/api';
+import { convertStatusToReservation } from '../../services/convertStatus';
 
-const CreateReservation = ({ onCreate, createReservationModal, rooms = [], customers = [] }) => {
+const CreateReservation = ({ onCreate, createReservationModal, statuses, rooms, customers }) => {
     const [customerId, setCustomerId] = useState('');
     const [roomId, setRoomId] = useState('');
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [description, setDescription] = useState('');
-    const [status, setStatus] = useState(''); // Par exemple, 'CONFIRMED', 'CANCELLED', etc.
-    const [errorMessage, setErrorMessage] = useState('');
+    const [status, setStatus] = useState('');
+    const [errors, setErrors] = useState('');
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
         // Validation des champs
         if (!customerId || !roomId || !startDate || !endDate || !description || !status) {
-            setErrorMessage('Tous les champs doivent être remplis.');
+            setErrors('Tous les champs doivent être remplis.');
             return;
         }
 
         const newReservation = {
-            customer: { id: customerId }, // Créez un objet CustomerDTO
-            room: { id: roomId }, // Créez un objet RoomDTO
+            customerId, // Créez un objet CustomerDTO
+            roomId, // Créez un objet RoomDTO
             description,
             reservationStart: new Date(startDate).toISOString(), // Formatez pour LocalDateTime
             reservationEnd: new Date(endDate).toISOString(), // Formatez pour LocalDateTime
             status, // État de la réservation
         };
+
+        console.log(newReservation);
+        
 
         try {
             const response = await fetch(apiUrl('/reservations'), {
@@ -48,71 +52,88 @@ const CreateReservation = ({ onCreate, createReservationModal, rooms = [], custo
                 setEndDate('');
                 setDescription('');
                 setStatus('');
-                setErrorMessage('');
-                createReservationModal(); // Ferme la modal
+                setErrors('');
+                createReservationModal();
             } else {
-                setErrorMessage('Erreur lors de la création de la réservation.');
+                setErrors('Erreur lors de la création de la réservation.');
             }
         } catch (error) {
-            setErrorMessage('Erreur lors de l\'envoi des données.');
+            setErrors('Erreur lors de l\'envoi des données.');
         }
     };
 
     return (
-        <form onSubmit={handleSubmit} className='CreateReservationModal'>
-            <div>
-                <label htmlFor="customerId" className="block text-md font-medium text-gray-700">
-                    Sélectionnez un Client
-                </label>
-                <select
-                    id="customerId"
-                    {...register("customerId")}
-                    className={`mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2 ${errors.customerId ? 'border-red-500' : ''}`}
-                >
-                    <option value="">Sélectionnez un client</option>
-                    {customers.map(customer => (
-                        <option key={customer.id} value={customer.id}>{customer.lastName}</option>
-                    ))}
-                </select>
-                {errors.customerId && <p className="text-red-500 text-sm">{errors.customerId.message}</p>}
+        <form onSubmit={handleSubmit} className='CreateReservationModal p-8 flex flex-col gap-4'>
+
+            <div className='flex flex-row gap-2'>
+                <div>
+                    <label htmlFor="customerId">Sélectionnez un client:</label>
+                    <select
+                        id="customerId"
+                        value={customerId}
+                        onChange={(e) => setCustomerId(e.target.value)}
+                        className="w-full px-3 border outline-none focus:border-blue-500 py-2 border-gray-300 rounded"
+                        required
+                    >
+                        <option value="">Sélectionnez une chambre</option>
+                        {customers && customers.length > 0 ? (
+                            customers.map(customer => (
+                                <option key={customer.id} value={customer.id}>
+                                    {customer.lastName}
+                                </option>
+                            ))
+                        ) : (
+                            <option value="">Aucune client disponible</option>
+                        )}
+                    </select>
+                    {errors.customerId && <p className="text-red-500 text-sm">{errors.customerId.message}</p>}
+                </div>
+                <div>
+                    <label htmlFor="roomId">Sélectionnez une chambre:</label>
+                    <select
+                        id="roomId"
+                        value={roomId}
+                        onChange={(e) => setRoomId(e.target.value)}
+                        className="w-full px-3 border outline-none focus:border-blue-500 py-2 border-gray-300 rounded"
+                        required
+                    >
+                        <option value="">Sélectionnez une chambre</option>
+                        {rooms && rooms.length > 0 ? (
+                            rooms.map(room => (
+                                <option key={room.id} value={room.id}>
+                                    {room.roomNumber}
+                                </option>
+                            ))
+                        ) : (
+                            <option value="">Aucune chambre disponible</option>
+                        )}
+                    </select>
+                    {errors.roomId && <p className="text-red-500 text-sm">{errors.roomId.message}</p>}
+                </div>
             </div>
-            <div>
-                <label htmlFor="roomId" className="block text-md font-medium text-gray-700">
-                    Sélectionnez une Chambre
-                </label>
-                <select
-                    id="roomId"
-                    {...register("roomId")}
-                    className={`mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2 ${errors.roomId ? 'border-red-500' : ''}`}
-                >
-                    <option value="">Sélectionnez une chambre</option>
-                    {rooms.map(room => (
-                        <option key={room.id} value={room.id}>{room.roomNumber}</option>
-                    ))}
-                </select>
-                {errors.roomId && <p className="text-red-500 text-sm">{errors.roomId.message}</p>}
-            </div>
-            <div>
-                <label htmlFor="startDate">Date de début:</label>
-                <input
-                    id="startDate"
-                    type="datetime-local" // Utilisation de datetime-local pour LocalDateTime
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
-                    required
-                />
-            </div>
-            <div>
-                <label htmlFor="endDate">Date de fin:</label>
-                <input
-                    id="endDate"
-                    type="datetime-local" // Utilisation de datetime-local pour LocalDateTime
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
-                    required
-                />
+            <div className='flex flex-row gap-2'>
+                <div>
+                    <label htmlFor="startDate">Date de début:</label>
+                    <input
+                        id="startDate"
+                        type="datetime-local" // Utilisation de datetime-local pour LocalDateTime
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        className="px-3 py-2 border border-gray-300 rounded outline-none"
+                        required
+                    />
+                </div>
+                <div>
+                    <label htmlFor="endDate">Date de fin:</label>
+                    <input
+                        id="endDate"
+                        type="datetime-local" // Utilisation de datetime-local pour LocalDateTime
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        className="px-3 py-2 border border-gray-300 rounded outline-none"
+                        required
+                    />
+                </div>
             </div>
             <div>
                 <label htmlFor="description">Description:</label>
@@ -120,7 +141,7 @@ const CreateReservation = ({ onCreate, createReservationModal, rooms = [], custo
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full px-3 py-2 border border-gray-300 rounded outline-none"
                     required
                 />
             </div>
@@ -130,16 +151,22 @@ const CreateReservation = ({ onCreate, createReservationModal, rooms = [], custo
                     id="status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded"
+                    className="w-full border outline-none focus:border-blue-500 px-3 py-2  border-gray-300 rounded"
                     required
                 >
                     <option value="">Sélectionnez un statut</option>
-                    <option value="CONFIRMED">Confirmé</option>
-                    <option value="CANCELLED">Annulé</option>
-                    {/* Ajoutez d'autres états selon vos besoins */}
+                    {statuses && statuses.length > 0 ? (
+                        statuses.map(status => (
+                            <option key={status} value={status}>
+                                {convertStatusToReservation(status.toLowerCase())}
+                            </option>
+                        ))
+                    ) : (
+                        <option value="">Aucun statut disponible</option>
+                    )}
                 </select>
             </div>
-            {errorMessage && <p className="text-red-500">{errorMessage}</p>}
+            {errors && <p className="text-red-500">{errors}</p>}
             <div className="flex flex-row gap-52 relative top-4">
                 <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">Créer</button>
                 <button

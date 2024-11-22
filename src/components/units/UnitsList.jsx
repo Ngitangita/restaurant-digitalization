@@ -99,11 +99,8 @@ function UnitsList() {
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden ingredientTable">
                 <thead>
                 <tr className="bg-gray-200">
-                    <th className="py-2 px-4">Id</th>
                     <th className="py-2 px-4">Nom</th>
                     <th className="py-2 px-4">Abréviation</th>
-                    <th className="py-2 px-4">Créé le</th>
-                    <th className="py-2 px-4">Modifié le</th>
                     <th className="py-2 px-4">Action</th>
                 </tr>
                 </thead>
@@ -120,12 +117,9 @@ function UnitsList() {
                 ) : (
                     units.toSorted((a, b) => a.id - b.id).map((unit) => (
                         <tr key={unit.id} className="hover:bg-gray-100 text-center">
-                            <td className="py-2 px-4">{unit.id}</td>
                             <td className="py-2 px-4">{unit.name}</td>
                             <td className="py-2 px-4">{unit.abbreviation}</td>
-                            <td className="py-3 px-4">{dayjs(unit.createdAt).format('YYYY-MM-DD HH:mm')}</td>
-                            <td className="py-3 px-4">{dayjs(unit.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
-                            <td className="py-2 px-4 w-[120px] flex flex-row gap-2 justify-end">
+                            <td className="py-2 px-4 flex flex-row gap-2 justify-center">
                                 <button
                                     className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                                     onClick={() => handleEdit(unit)}

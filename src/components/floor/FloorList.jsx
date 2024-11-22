@@ -108,7 +108,7 @@ const FloorsList = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-white FloorList">
+    <div className="container mx-auto p-4 bg-white FloorList pr-14">
       <h1 className="text-2xl font-bold mb-4">Liste des étages</h1>
       {error && <p className="text-red-500">{error}</p>}
 
@@ -144,11 +144,8 @@ const FloorsList = () => {
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden categoriesTable">
         <thead>
         <tr className="bg-gray-200">
-          <th className="py-2 px-4">Id</th>
           <th className="py-2 px-4">N° de l'étage</th>
           <th className="py-2 px-4">Description</th>
-          <th className="py-2 px-4">Créé le</th>
-          <th className="py-2 px-4">Modifié le</th>
           <th className="py-2 px-4">Action</th>
         </tr>
         </thead>
@@ -156,11 +153,8 @@ const FloorsList = () => {
         {floors.length > 0 ? (
             floors.toSorted((a, b) => a.id - b.id).map(floor => (
                 <tr key={floor.id} className="hover:bg-gray-100 text-center border-y border-collapse">
-                  <td className="py-2 px-4">{floor.id}</td>
                   <td className="py-2 px-4">{floor.floorNumber}</td>
                   <td className="py-2 px-4">{truncate(floor.description, 40)}</td>
-                  <td className="py-3 px-4">{dayjs(floor.createdAt).format('YYYY-MM-DD HH:mm')}</td>
-                  <td className="py-3 px-4">{dayjs(floor.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                   <td className="py-2 px-4">
                     <button
                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"

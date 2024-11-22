@@ -1,44 +1,52 @@
 import React, { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
 import dayjs from 'dayjs';
-import {truncate} from "../../services/truncate.js";
+import { truncate } from "../../services/truncate.js";
+import { MdClear} from 'react-icons/md';
 
 function PurchaseList() {
   const [purchases, setPurchases] = useState([]);
   const [page, setPage] = useState(1);
-  const [size, setSize] = useState(10);
-  const [ingredientName, setIngredientName] = useState('');
-  const [error, setError] = useState(null); 
+  const [size, setSize] = useState(8);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+  const [error, setError] = useState(null);
+
   useEffect(() => {
-    const fetchPurchases = async () => {
-      const url = `${apiUrl('/purchases')}?page=${page - 1}&size=${size}&ingredientName=${ingredientName}`;
-      try {
-        const data = await fetchJson(url);
-        setPurchases(data.items || []);
-        setError(null); 
-      } catch (e) {
-        console.error(e);
-        setError('Erreur lors de la récupération des achats.'); 
-      }
-    };
+    const url = `${apiUrl("/purchases")}?size=${size}&page=${page - 1}&startDate=${startDate}&endDate=${endDate}`;
+    fetchJson(url)
+      .then((d) => {
+        setPurchases(d.items || []);
+      })
+      .catch((e) => console.log(e));
+      
+  }, [size, page, startDate, endDate]);
 
-    fetchPurchases();
-  }, [page, size, ingredientName]);
 
-  
+  useEffect(() => {
+     setPage(1)
+  }, [startDate, endDate]);
+
 
 
   return (
-    <div className="w-full p-4 bg-gray-100 PurchaseList">
+    <div className="w-full p-4 bg-gray-100 PurchaseList pr-14">
       {error && <div className="bg-red-300 text-red-700 p-2 rounded mb-4">{error}</div>}
 
-      <div className="mb-4">
+      <div className="w-64 relative flex items-center mb-4">
+      <input
+          type="datetime-local"
+          value={startDate}
+          onChange={(e) => setStartDate(e.target.value)}
+          onBlur={() => document.activeElement.blur()}
+          className="border border-gray-300 p-2 rounded-md mr-2 outline-none"
+        />
         <input
-          type="text"
-          value={ingredientName}
-          onChange={(e) => setIngredientName(e.target.value)}
-          placeholder="Rechercher par nom d'ingrédient"
-          className="border border-gray-300 p-2 rounded-lg"
+          type="datetime-local"
+          value={endDate}
+          onChange={(e) => setEndDate(e.target.value)}
+          onBlur={() => document.activeElement.blur()}
+          className="border border-gray-300 p-2 rounded-md outline-none"
         />
       </div>
 
@@ -46,7 +54,6 @@ function PurchaseList() {
         <table className="min-w-full bg-white shadow-md rounded-lg PurchaseList">
           <thead >
             <tr className="bg-gray-200">
-              <th className="py-2 px-4">ID</th>
               <th className="py-2 px-4">Nom Ingrédient</th>
               <th className="py-2 px-4">Quantité</th>
               <th className="py-2 px-4">Coût</th>
@@ -59,7 +66,6 @@ function PurchaseList() {
             {purchases.length > 0 ? (
               purchases.map((purchase) => (
                 <tr key={purchase.purchaseId} className="border-b border-gray-200">
-                  <td className="py-2 px-4">{purchase.purchaseId}</td>
                   <td className="py-2 px-4">{purchase.ingredientName}</td>
                   <td className="py-2 px-4">{purchase.quantity}</td>
                   <td className="py-2 px-4">{purchase.cost}</td>
@@ -89,7 +95,7 @@ function PurchaseList() {
         </button>
         <button
           onClick={() => setPage((p) => p + 1)}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
         >
           Next
         </button>

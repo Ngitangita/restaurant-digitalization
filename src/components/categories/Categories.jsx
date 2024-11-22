@@ -1,4 +1,4 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
 import CreateCategories from './CreateCategories';
 import { MdDelete, MdClear } from 'react-icons/md';
@@ -20,7 +20,7 @@ const CategoriesList = () => {
     const [totalPages, setTotalPages] = useState(0);
     const [hasNext, setHasNext] = useState(false);
     const [hasPrevious, setHasPrevious] = useState(false);
-    const {showSuccess, showError} = useToast()
+    const { showSuccess, showError } = useToast()
 
     useEffect(() => {
         void fetchCategories();
@@ -30,7 +30,7 @@ const CategoriesList = () => {
         try {
             const query = new URLSearchParams({
                 name: searchTerm,
-                page: currentPage -1 > 0 ? currentPage -1 : 0,
+                page: currentPage - 1 > 0 ? currentPage - 1 : 0,
                 size: 5
             }).toString();
             const data = await fetchJson(apiUrl(`/categories?${query}`));
@@ -142,7 +142,7 @@ const CategoriesList = () => {
 
 
     return (
-        <div className="container mx-auto p-4 categories bg-white">
+        <div className="container mx-auto p-4 pr-14 categories bg-white">
             <h1 className="text-2xl font-bold mb-4">Liste des catégories</h1>
             {error && <p className="text-red-500">{error}</p>}
 
@@ -191,7 +191,6 @@ const CategoriesList = () => {
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden categoriesTable">
                 <thead>
                     <tr className="bg-gray-200">
-                        <th className="py-2 px-4">ID</th>
                         <th className="py-2 px-4">Nom</th>
                         <th className="py-2 px-4">Créé le</th>
                         <th className="py-2 px-4">Modifié le</th>
@@ -201,7 +200,6 @@ const CategoriesList = () => {
                 <tbody>
                     {categories.length > 0 ? categories.toSorted((a, b) => a.id - b.id).map(category => (
                         <tr key={category.id} className="hover:bg-gray-100 text-center border-y border-collapse">
-                            <td className="py-3 px-4 ">{category.id}</td>
                             <td className="py-3 px-4 ">{category.name}</td>
                             <td className="py-3 px-4">{dayjs(category.createdAt).format('YYYY-MM-DD HH:mm')}</td>
                             <td className="py-3 px-4">{dayjs(category.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
@@ -278,7 +276,7 @@ const CategoriesList = () => {
             <div className="flex justify-between mt-4 items-center">
                 <button
                     onClick={handlePrevPage}
-                    className={`${hasPrevious ? "bg-blue-500 hover:bg-blue-600 ": "bg-gray-500 hover:bg-gray-600 "} text-white px-4 py-2 rounded `}
+                    className={`${hasPrevious ? "bg-blue-500 hover:bg-blue-600 " : "bg-gray-500 hover:bg-gray-600 "} text-white px-4 py-2 rounded `}
                     disabled={!hasPrevious}
                 >
                     Précédent
@@ -298,7 +296,7 @@ const CategoriesList = () => {
                 </div>
                 <button
                     onClick={handleNextPage}
-                    className={`${hasNext ? "bg-blue-500 hover:bg-blue-600 ": "bg-gray-500 hover:bg-gray-600 "} text-white px-4 py-2 rounded `}
+                    className={`${hasNext ? "bg-blue-500 hover:bg-blue-600 " : "bg-gray-500 hover:bg-gray-600 "} text-white px-4 py-2 rounded `}
                     disabled={!hasNext}
                 >
                     Suivant

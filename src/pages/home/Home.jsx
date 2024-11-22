@@ -1,18 +1,16 @@
-// import CreatePayment from "../../components/payment/CreatePayment";
-// import OperationStatistics from "../Stocks/OperationStatistics";
 
-import FactureList from "../factureList/FactureList";
 
+import PaymentList from "../payments/PaymentList";
 
 
 const Home = () => {
 
+    
     return (
         <div>
             
             {/* <OperationStatistics /> */}
-            {/* <CreatePayment/> */}
-            <FactureList /> 
+            <PaymentList /> 
         </div>
     );
 };

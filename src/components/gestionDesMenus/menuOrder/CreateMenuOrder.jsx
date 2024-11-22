@@ -29,6 +29,15 @@ function CreateMenuOrder({ onClose }) {
     const [rooms, setRooms] = useState([]);
     const [menus, setMenus] = useState([]);
 
+    const findByNumber = (number, type) => {
+       if(type === "table"){
+          return tables.find(t => t.number == number)
+       } else {
+        return rooms.find(r => r.roomNumber == number)
+       }
+    }
+
+
     const handleConfirm = async (data) => {
         if (menuRequest.length === 0) {
             setMenuError("Veuillez ajouter au moins un élément de menu.");
@@ -38,12 +47,18 @@ function CreateMenuOrder({ onClose }) {
         setMenuError("");
         setStockError("");
 
+        const room = findByNumber(data.roomId, 'room')
+        const table = findByNumber(data.table, 'table')
+
         const payload = {
             customerId: data.customerId ? Number(data.customerId) : null,
-            roomId: data.roomId ? Number(data.roomId) : null,
-            tableId: data.tableId ? Number(data.tableId) : null,
+            roomId: room?.id ?? null,
+            tableId: table?.id ?? null,
             menuItems: menuRequest,
         };
+
+        console.log(payload);
+        
 
         try {
             const response = await fetchJson(`${apiUrl("/menu-orders")}`, 'POST', payload);

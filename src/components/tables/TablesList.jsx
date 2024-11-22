@@ -201,12 +201,9 @@ function TablesList() {
             <table className="min-w-full shadow-md rounded-lg overflow-hidden bg-white TableTbl">
                 <thead>
                 <tr className="bg-gray-200">
-                    <th className="py-2 px-4">ID</th>
                     <th className="py-2 px-4">Numéro</th>
                     <th className="py-2 px-4">Capacité</th>
                     <th className="py-2 px-4">Statut</th>
-                    <th className="py-2 px-4">Créé le</th>
-                    <th className="py-2 px-4">Modifié le</th>
                     <th className="py-2 px-4">Action</th>
                 </tr>
                 </thead>
@@ -220,7 +217,6 @@ function TablesList() {
                     ) : (
                         filteredTables.toSorted((a, b) => a.id - b.id).map((table) => (
                             <tr key={table.id} className="hover:bg-gray-100 text-center border-y">
-                                <td className="py-2 px-4">{table.id}</td>
                                 <td className="py-2 px-4">{table.number}</td>
                                 <td className="py-2 px-4">{table.capacity}</td>
                                 <td className={`py-2 px-4 cursor-pointer ${table.status.toLowerCase() !== "available" ? 'text-red-500 font-bold' : ''}`}>
@@ -229,16 +225,14 @@ function TablesList() {
                                         className='w-full flex flex-col gap-1 items-center '
                                     >
                                         <span className='flex flex-row gap-1 items-center '>
-                                            <MdEdit/> {convertStatusToTable(table.status.toLowerCase())}
-                                        </span>
-                                        {table.status.toLowerCase() !== "available" && (
-                                            <span className="text-red-500 text-[10px]">⚠️ désolé cette table
-                                                est {convertStatusToTable(table.status)}</span>
+                                            <MdEdit/> {table.status.toLowerCase() !== "available" && (
+                                            <span className="text-red-500 text-[10px]">⚠️ </span>
                                         )}
+                                        {convertStatusToTable(table.status)}
+                                        </span>
+                                        
                                     </button>
                                 </td>
-                                <td className="py-3 px-4">{dayjs(table.createdAt).format('YYYY-MM-DD HH:mm')}</td>
-                                <td className="py-3 px-4">{dayjs(table.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                                 <td className="py-2 px-4 flex flex-row gap-4 justify-center">
                                     <button
                                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"

@@ -52,3 +52,28 @@ export const convertStatusToOrder = (status) => {
 
     return statusMap[status.toUpperCase()] || status;
 };
+
+
+    export const convertStatusToReservation = (status) => {
+        const statusMap = {
+            PENDING: 'En attente',
+            CONFIRMED: 'Confirmé',
+            COMPLETED: 'Terminé',
+            CANCELED: 'Annulé',
+            NO_SHOW: 'Non montrer',
+        };
+    
+        return statusMap[status.toUpperCase()] || status;
+    };
+   
+    export const convertStatusToPayment = (status) => {
+        const statusMap = {
+            PENDING: 'En attente',
+            FAILED: 'Echoué',
+            COMPLETED: 'Terminé',
+            CANCELED: 'Annulé',
+            REFUNDED: 'Remboursement',
+        };
+    
+        return statusMap[status.toUpperCase()] || status;
+    };

@@ -73,7 +73,7 @@ function StockList() {
   };
 
   return (
-    <div className="StockList container mx-auto p-4 bg-white pb-10">
+    <div className="StockList container mx-auto p-4 bg-white pb-10 pr-14">
       <h1 className="text-2xl font-bold mb-4">Liste des Stocks</h1>
       {error && <p className="text-red-500">{error}</p>}
       {successMessage && <p className="text-green-500">{successMessage}</p>}
@@ -117,10 +117,9 @@ function StockList() {
       </div>
 
       <div className="flex-grow overflow-auto">
-        <table className="min-w-full border border-gray-300">
+        <table className="min-w-full">
           <thead>
             <tr className="bg-gray-200">
-              <th className="py-2 px-4">ID</th>
               <th className="py-2 px-4">Créé le</th>
               <th className="py-2 px-4">Modifié le</th>
               <th className="p-2">Ingrédient</th>
@@ -140,9 +139,8 @@ function StockList() {
             ) : stocks.length > 0 ? (
               stocks.map((stock) => (
                   <tr key={stock.id} className='text-center'>
-                    <td className="border-b p-2">{stock.id}</td>
-                    <td className="py-3 px-4">{dayjs(stock.createdAt).format('YYYY-MM-DD HH:mm')}</td>
-                    <td className="py-3 px-4">{dayjs(stock.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
+                    <td className="border-b p-2">{dayjs(stock.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                    <td className="border-b p-2">{dayjs(stock.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                     <td className="border-b p-2">{stock.ingredientName}</td>
                     <td className={`border-b p-2 ${stock.quantity <= 5 ? 'text-red-500 font-bold' : ''}`}>
                       {stock.quantity}
