@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { apiUrl, fetchJson } from "../../../services/api";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 
 const schema = z.object({
     menuId: z.number().min(1, "La MenuId doit être supérieure à 0"),
@@ -15,9 +17,7 @@ function MenuItems({ onSave }) {
     });
 
     const [menus, setMenus] = useState([]);
-    const [filteredMenus, setFilteredMenus] = useState([]);
     const [menuInput, setMenuInput] = useState("");
-    const [showSuggestions, setShowSuggestions] = useState(false);
 
     useEffect(() => {
         const fetchMenus = async () => {
@@ -32,54 +32,53 @@ function MenuItems({ onSave }) {
         fetchMenus();
     }, []);
 
-    const handleMenuInputChange = (event) => {
-        const input = event.target.value.toLowerCase();
-        setMenuInput(event.target.value);
-
-        const foundMenus = menus.filter(menu => menu.name.toLowerCase().includes(input));
-        setFilteredMenus(foundMenus);
-        setShowSuggestions(foundMenus.length > 0);
+    const handleMenuChange = (event, value) => {
+        if (value) {
+            setMenuInput(value.name);
+            setValue("menuId", value.id); 
+        } else {
+            setMenuInput("");
+            setValue("menuId", 0); 
+        }
     };
-
-    const handleSuggestionClick = (menu) => {
-        setMenuInput(menu.name);
-        setValue("menuId", menu.id);
-        setShowSuggestions(false);
-    };
-
+    
     const handleConfirm = (data) => {
+        if (!data.menuId || !data.quantity) {
+            console.error("MenuId ou quantité manquante.");
+            return;
+        }
+    
         onSave(data);
-        reset();
-        setMenuInput("");
+        reset(); 
+        setMenuInput(""); 
     };
+    
 
     return (
         <div className="w-full flex flex-row gap-4 items-start">
-            {/* Champ de recherche de menu */}
-            <div className="flex flex-col w-full relative">
+            <div className="flex flex-col w-full">
                 <label htmlFor="menuInput">Menu Sélectionné</label>
-                <input
+                <Autocomplete
                     id="menuInput"
-                    type="text"
-                    value={menuInput}
-                    onChange={handleMenuInputChange}
-                    placeholder="Tapez les noms du menu..."
-                    className="mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2"
+                    options={menus}
+                    getOptionLabel={(menu) => menu.name || ""}
+                    onChange={handleMenuChange}
+                    renderInput={(params) => (
+                        <TextField
+                            {...params}
+                            label="Tapez les noms du menu..."
+                            variant="outlined"
+                            error={!!errors.menuId}
+                            helperText={errors.menuId?.message}
+                        />
+                    )}
+                    sx={{
+                        width: '250px',
+                        height: '50px', 
+                        '.MuiInputBase-root': { height: '40px' },
+                    }}
+                    value={menus.find((menu) => menu.name === menuInput) || null}
                 />
-                {showSuggestions && (
-                    <ul className="Suggestions absolute top-full left-0 w-full border border-gray-300 bg-white mt-1 max-h-32 overflow-y-auto z-10">
-                        {filteredMenus.map(menu => (
-                            <li
-                                key={menu.id}
-                                onClick={() => handleSuggestionClick(menu)}
-                                className="p-2 hover:bg-blue-100 cursor-pointer Suggestions"
-                            >
-                                {menu.name}
-                            </li>
-                        ))}
-                    </ul>
-                )}
-                {errors.menuId && <p className="text-red-500 text-sm">{errors.menuId.message}</p>}
             </div>
 
             {/* Champ de quantité */}
@@ -89,7 +88,9 @@ function MenuItems({ onSave }) {
                     id="quantity"
                     type="number"
                     {...register("quantity", { valueAsNumber: true })}
-                    className={`mt-1 block w-full border-2 border-gray-300 outline-none focus:outline-1 focus:outline-double focus:outline-blue-400 px-2 py-2 ${
+                    className={`block w-full border-2 border-gray-300 
+                        outline-none focus:outline-1 focus:outline-double 
+                        focus:outline-blue-400 px-2 py-2 h-10 ${
                         errors.quantity ? "border-red-500" : ""
                     }`}
                 />
@@ -100,7 +101,7 @@ function MenuItems({ onSave }) {
             <div className="w-full">
                 <button
                     type="button"
-                    className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mt-8"
+                    className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mt-6"
                     onClick={handleSubmit(handleConfirm)}
                 >
                     Ajouter

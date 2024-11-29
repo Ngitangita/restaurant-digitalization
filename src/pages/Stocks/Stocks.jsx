@@ -4,6 +4,8 @@ import { FaRegEdit } from 'react-icons/fa';
 import OperationDetails from "./OperationDetails";
 import CreateStock from "../../components/addStocks/CreateStock";
 import dayjs from "dayjs";
+import TextField from '@mui/material/TextField';
+import { MdInfoOutline} from 'react-icons/md';
 
 function StockList() {
   const [stocks, setStocks] = useState([]);
@@ -29,11 +31,8 @@ function StockList() {
     setError(null);
     const url = `${apiUrl("/stocks")}?size=${size}&page=${page - 1}&ingredientName=${ingredientName}&quantityMin=${quantityMin}&quantityMax=${quantityMax}&startDate=${startDate}&endDate=${endDate}`;
 
-    console.log("Requête API URL:", url);
-
     fetchJson(url)
       .then((d) => {
-        console.log("Données récupérées :", d);
         setStocks(d.items || []);
         setIsLoading(false);
       })
@@ -64,7 +63,17 @@ function StockList() {
     setOperationDetails(null);
   };
 
-  const handleStockCreated = () => {
+  const handleStockCreated = (data) => {
+    const q = parseFloat(data.quantity);
+    const ingredientId = parseInt(data.ingredientId)
+
+    setStocks(stocks.map(s => s.ingredientId == ingredientId ? ({
+      ... s,
+      quantity: s.quantity + q
+    }): s))
+
+    
+  
     setIsModalOpen(false);
     setSelectedStock(null);
     setSuccessMessage("Le stock a été mis à jour avec succès.");
@@ -79,12 +88,31 @@ function StockList() {
       {successMessage && <p className="text-green-500">{successMessage}</p>}
 
       <div className="flex mb-4">
-        <input
-          type="text"
-          placeholder="Rechercher par nom"
+        <TextField
+          id="outlined-search"
+          label="Rechercher par nom de l'ingredient"
+          type="search"
           value={ingredientName}
           onChange={(e) => setIngredientName(e.target.value)}
-          className="border border-gray-300 p-2 rounded-md mr-2 outline-none"
+          variant="outlined"
+          size="small"
+          fullWidth
+          InputProps={{
+            endAdornment: ingredientName && (
+              <button
+                type="button"
+                className="flex items-center"
+                onClick={() => setIngredientName('')}
+                style={{ cursor: 'pointer', background: 'none', border: 'none' }}
+              >
+              </button>
+            ),
+          }}
+          sx={{
+            width: '250px',
+            height: '50px',
+            '.MuiInputBase-root': { height: '40px' },
+          }}
         />
         <input
           type="number"
@@ -138,35 +166,38 @@ function StockList() {
               </tr>
             ) : stocks.length > 0 ? (
               stocks.map((stock) => (
-                  <tr key={stock.id} className='text-center'>
-                    <td className="border-b p-2">{dayjs(stock.createdAt).format('YYYY-MM-DD HH:mm')}</td>
-                    <td className="border-b p-2">{dayjs(stock.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
-                    <td className="border-b p-2">{stock.ingredientName}</td>
-                    <td className={`border-b p-2 ${stock.quantity <= 5 ? 'text-red-500 font-bold' : ''}`}>
-                      {stock.quantity}
-                      {stock.quantity <= 5 && (
-                          <div className="text-red-500 text-[10px]">⚠️ Stock faible! Ajoutez du stock.</div>
-                      )}
-                    </td>
-                    <td className="border-b p-2 flex justify-center">
-                      <button
-                          className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
-                          onClick={() => toggleModal(stock)}
-                      >
-                        <FaRegEdit/>
-                      </button>
-                      <button
-                          className="bg-green-500 text-white rounded p-2 hover:bg-green-600"
-                          onClick={() => fetchOperationDetails(stock.id)}
-                      >
-                        Voir Détails
-                      </button>
-                    </td>
-                  </tr>
+                <tr key={stock.id} className='text-center'>
+                  <td className="border-b p-2">{dayjs(stock.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                  <td className="border-b p-2">{dayjs(stock.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
+                  <td className="border-b p-2">{stock.ingredientName}</td>
+                  <td className={`border-b p-2 ${stock.quantity <= 5 ? 'text-red-500 font-bold' : ''}`}>
+                    {stock.quantity}
+                    {stock.quantity <= 5 && (
+                      <div className="text-red-500 text-[10px]">⚠️ Stock faible! Ajoutez du stock.</div>
+                    )}
+                  </td>
+                  <td className="border-b p-2 flex justify-center">
+                    <button
+                      className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
+                      onClick={() => toggleModal(stock)}
+                    >
+                      <FaRegEdit />
+                    </button>
+                    <button
+                      className="bg-green-500 text-white rounded p-2 hover:bg-green-600"
+                      onClick={() => fetchOperationDetails(stock.id)}
+                    >
+                      Voir Détails
+                    </button>
+                  </td>
+                </tr>
               ))
             ) : (
-                <tr>
-                <td colSpan="5" className="text-center py-4">Aucun stock trouvé</td>
+              <tr>
+                <td colSpan="5" className="text-center py-4">
+                  <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
+                  Aucun stock trouvé
+                </td>
               </tr>
             )}
           </tbody>

@@ -1,11 +1,10 @@
-import  { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
-import { MdDelete } from 'react-icons/md';
+import { MdDelete, MdInfoOutline } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import CreateFloor from './CreateFloor';
 import EditFloor from './EditFloor';
-import dayjs from "dayjs";
-import {truncate} from "../../services/truncate.js";
+import { truncate } from "../../services/truncate.js";
 import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
 const FloorsList = () => {
@@ -17,7 +16,7 @@ const FloorsList = () => {
   const [floorToEdit, setFloorToEdit] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [floorToDelete, setFloorToDelete] = useState(null);
-  const {showSuccess, showError}= useToast()
+  const { showSuccess, showError } = useToast()
 
   useEffect(() => {
     void fetchFloors();
@@ -74,7 +73,7 @@ const FloorsList = () => {
       }
 
       setShowEditFloorModal(false);
-     void fetchFloors();
+      void fetchFloors();
       showSuccess('Étage mis à jour avec succès');
     } catch (error) {
       console.error('Erreur lors de la mise à jour de l\'étage:', error);
@@ -143,38 +142,41 @@ const FloorsList = () => {
 
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden categoriesTable">
         <thead>
-        <tr className="bg-gray-200">
-          <th className="py-2 px-4">N° de l'étage</th>
-          <th className="py-2 px-4">Description</th>
-          <th className="py-2 px-4">Action</th>
-        </tr>
+          <tr className="bg-gray-200">
+            <th className="py-2 px-4">N° de l'étage</th>
+            <th className="py-2 px-4">Description</th>
+            <th className="py-2 px-4">Action</th>
+          </tr>
         </thead>
         <tbody>
-        {floors.length > 0 ? (
+          {floors.length > 0 ? (
             floors.toSorted((a, b) => a.id - b.id).map(floor => (
-                <tr key={floor.id} className="hover:bg-gray-100 text-center border-y border-collapse">
-                  <td className="py-2 px-4">{floor.floorNumber}</td>
-                  <td className="py-2 px-4">{truncate(floor.description, 40)}</td>
-                  <td className="py-2 px-4">
-                    <button
-                        className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-                        onClick={() => handleEditFloor(floor)}
-                    >
-                      <FaRegEdit/>
-                    </button>
-                    <button
-                        className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
-                        onClick={() => confirmDelete(floor.id)}
-                    >
-                      <MdDelete/>
-                    </button>
-                  </td>
-                </tr>
+              <tr key={floor.id} className="hover:bg-gray-100 text-center border-y border-collapse">
+                <td className="py-2 px-4">{floor.floorNumber}</td>
+                <td className="py-2 px-4">{truncate(floor.description, 40)}</td>
+                <td className="py-2 px-4">
+                  <button
+                    className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
+                    onClick={() => handleEditFloor(floor)}
+                  >
+                    <FaRegEdit />
+                  </button>
+                  <button
+                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
+                    onClick={() => confirmDelete(floor.id)}
+                  >
+                    <MdDelete />
+                  </button>
+                </td>
+              </tr>
             ))
           ) : (
-              <tr>
-                <td colSpan="6" className="py-4 text-center">Aucun étage trouvé</td>
-              </tr>
+            <tr>
+              <td colSpan="6" className="py-4 text-center">
+                <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
+                Aucun étage trouvé
+              </td>
+            </tr>
           )}
         </tbody>
       </table>
@@ -201,15 +203,15 @@ const FloorsList = () => {
             <div className="mt-4 flex justify-between items-center">
 
               <button
-                  className="bg-red-300 text-black rounded p-2 hover:bg-red-400"
-                  onClick={cancelDelete}
+                className="bg-red-300 text-black rounded p-2 hover:bg-red-400"
+                onClick={cancelDelete}
               >
                 Non
               </button>
 
               <button
-                  className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
-                  onClick={handleDelete}
+                className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
+                onClick={handleDelete}
               >
                 Oui
               </button>

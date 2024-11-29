@@ -68,6 +68,11 @@ const menuItems = [
     subItems: [],
   },
   {
+    title: "Payments",
+    path: "/payment",
+    subItems: [],
+  },
+  {
     title: "Calendrier",
     icon: <MdOutlineCalendarMonth />,
     path: "/calendar",

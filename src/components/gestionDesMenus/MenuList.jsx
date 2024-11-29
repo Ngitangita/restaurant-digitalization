@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import CreateMenu from './CreateMenu';
 import { apiUrl } from '../../services/api';
-import { MdDelete, MdClear, MdEdit, MdMoreVert } from 'react-icons/md';
+import { MdDelete, MdInfoOutline, MdEdit, MdMoreVert } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import EditMenu from './EditMenu';
 import { useNavigate } from 'react-router-dom';
-import dayjs from "dayjs";
-import {truncate} from "../../services/truncate.js";
-import {convertStatusMenu} from "../../services/convertStatus.js";
+import { truncate } from "../../services/truncate.js";
+import { convertStatusMenu } from "../../services/convertStatus.js";
 import UpdateStatusMenu from "../updateStatus/UpdateStatusMenu.jsx";
 import useToast from "./menuOrder/(tantely)/hooks/useToast.jsx";
+import TextField from '@mui/material/TextField';
 
 const MenuList = () => {
     const [menus, setMenus] = useState([]);
@@ -28,7 +28,7 @@ const MenuList = () => {
     const [menuToDelete, setMenuToDelete] = useState(null);
     const [detailsVisible, setDetailsVisible] = useState({});
     const navigate = useNavigate();
-    const {showSuccess, showError} = useToast()
+    const { showSuccess, showError } = useToast()
 
     const toggleModal = () => {
         setIsModalOpen(!isModalOpen);
@@ -119,7 +119,7 @@ const MenuList = () => {
             setShowEditMenuModal(false);
             showSuccess('Menu mis à jour avec succès.');
             void fetchMenus();
-        } catch  {
+        } catch {
             showError('Erreur lors de la mise à jour du menu.');
         }
     };
@@ -176,27 +176,38 @@ const MenuList = () => {
             {error && <p className="text-red-500">{error}</p>}
 
             <div className='flex flex-row gap-4'>
-                <div className="w-64 relative flex items-center mb-4">
-                    <input
-                        type="text"
-                        placeholder="Rechercher un menu"
-                        className="pr-10 p-2 border focus:border-blue-500 rounded-md outline-none"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                    />
-                    {searchTerm && (
-                        <button className='absolute right-8' onClick={() => setSearchTerm('')}>
-                            <MdClear />
-                        </button>
-                    )}
-                </div>
-
                 <button
                     className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 ml-2"
                     onClick={toggleModal}
                 >
                     Créer un menu
                 </button>
+                <TextField
+                    id="outlined-search"
+                    label="Rechercher un menu"
+                    type="search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    InputProps={{
+                        endAdornment: searchTerm && (
+                            <button
+                                type="button"
+                                className="flex items-center"
+                                onClick={() => setSearchTerm('')}
+                                style={{ cursor: 'pointer', background: 'none', border: 'none' }}
+                            >
+                            </button>
+                        ),
+                    }}
+                    sx={{
+                        width: '250px',
+                        height: '50px',
+                        '.MuiInputBase-root': { height: '40px' },
+                    }}
+                />
             </div>
 
             {isModalOpen && (
@@ -239,73 +250,83 @@ const MenuList = () => {
                             <td colSpan="9" className="text-center py-2">Chargement...</td>
                         </tr>
                     ) : (
-                        Object.entries(menusByCategory).map(([, { categoryName, menus }]) => (
-                            menus.length > 0 && (
-                                <React.Fragment key={categoryName}>
-                                    <tr className='text-center'>
-                                        <td colSpan="9" className="font-bold text-lg pt-10">{categoryName}</td>
-                                    </tr>
-
-                                    {menus.map(menu => (
-                                        <tr key={menu.id}
-                                            className="hover:bg-gray-100 text-center border-y">
-                                            <td className="py-2 px-4">{menu.name}</td>
-                                            <td className="py-2 px-4">{menu.price}</td>
-                                            <td className="py-2 px-4">{truncate(menu.description, 20)}</td>
-                                            <td className={`py-2 px-4 cursor-pointer ${menu.status.toLowerCase() !== "active" ? 'text-red-500 font-bold' : ''}`}>
-                                                <button
-                                                    onClick={() => handleEditStatus(menu)}
-                                                    className='w-full flex flex-row gap-1 items-center '
-                                                >
-
-                                                    <span className='flex text-sm flex-row gap-1 items-center '>
-                                                        <MdEdit/>  {menu.status.toLowerCase() !== "active" && (
-                                                        <span className="text-red-500 text-[10px]">⚠️</span>
-                                                    )}
-                                                        {convertStatusMenu(menu.status.toLowerCase())}
-                                                    </span>
-
-                                                </button>
-                                            </td>
-                                            <td className="py-2 px-4 flex flex-row justify-center gap-2">
-                                                <button
-                                                    className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-                                                    onClick={() => handleEditMenu(menu)}
-                                                >
-                                                    <FaRegEdit/>
-                                                </button>
-                                                <button
-                                                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
-                                                    onClick={() => confirmDelete(menu.id)}
-                                                >
-                                                    <MdDelete/>
-                                                </button>
-                                                <div className="relative">
-                                                    <button
-                                                        onClick={() => toggleDetails(menu.id)}
-                                                        className="detail focus:outline-none rounded p-2 bg-gray-200"
-                                                    >
-                                                        <MdMoreVert/>
-                                                    </button>
-                                                    {detailsVisible[menu.id] && (
-                                                        <div
-                                                            className="absolute text-start right-[1px] bottom-9 w-72 bg-gray-300 shadow-md rounded-md z-50">
-                                                            <button
-                                                                onClick={() => handleClickRow(menu.id)}
-                                                                className="detail block text-start px-4 py-2 hover:bg-gray-100 w-full border-y border-white"
-                                                            >
-                                                                Voir détail
-                                                            </button>
-                                                        </div>
-                                                    )}
-                                                </div>
-
-                                            </td>
+                        menus.length === 0 ? (
+                            <tr className="text-center">
+                                <td colSpan="6" className="py-4 text-gray-500">
+                                    <div className="flex flex-col items-center justify-center">
+                                        <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
+                                        <p>Aucune menus disponible</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        ) :
+                            (Object.entries(menusByCategory).map(([, { categoryName, menus }]) => (
+                                menus.length > 0 && (
+                                    <React.Fragment key={categoryName}>
+                                        <tr className='text-center'>
+                                            <td colSpan="9" className="font-bold text-lg pt-10">{categoryName}</td>
                                         </tr>
-                                    ))}
-                                </React.Fragment>
-                            )
-                        ))
+
+                                        {menus.map(menu => (
+                                            <tr key={menu.id}
+                                                className="hover:bg-gray-100 text-center border-y">
+                                                <td className="py-2 px-4">{menu.name}</td>
+                                                <td className="py-2 px-4">{menu.price}</td>
+                                                <td className="py-2 px-4">{truncate(menu.description, 20)}</td>
+                                                <td className={`py-2 px-4 cursor-pointer ${menu.status.toLowerCase() !== "active" ? 'text-red-500 font-bold' : ''}`}>
+                                                    <button
+                                                        onClick={() => handleEditStatus(menu)}
+                                                        className='w-full flex flex-row gap-1 items-center justify-center'
+                                                    >
+
+                                                        <span className='flex text-sm flex-row gap-1 items-center '>
+                                                            <MdEdit />  {menu.status.toLowerCase() !== "active" && (
+                                                                <span className="text-red-500 text-[10px]">⚠️</span>
+                                                            )}
+                                                            {convertStatusMenu(menu.status.toLowerCase())}
+                                                        </span>
+
+                                                    </button>
+                                                </td>
+                                                <td className="py-2 px-4 flex flex-row justify-center gap-2">
+                                                    <button
+                                                        className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
+                                                        onClick={() => handleEditMenu(menu)}
+                                                    >
+                                                        <FaRegEdit />
+                                                    </button>
+                                                    <button
+                                                        className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
+                                                        onClick={() => confirmDelete(menu.id)}
+                                                    >
+                                                        <MdDelete />
+                                                    </button>
+                                                    <div className="relative">
+                                                        <button
+                                                            onClick={() => toggleDetails(menu.id)}
+                                                            className="detail focus:outline-none rounded p-2 bg-gray-200"
+                                                        >
+                                                            <MdMoreVert />
+                                                        </button>
+                                                        {detailsVisible[menu.id] && (
+                                                            <div
+                                                                className="absolute text-start right-[1px] bottom-9 w-72 bg-gray-300 shadow-md rounded-md z-50">
+                                                                <button
+                                                                    onClick={() => handleClickRow(menu.id)}
+                                                                    className="detail block text-start px-4 py-2 hover:bg-gray-100 w-full border-y border-white"
+                                                                >
+                                                                    Voir détail
+                                                                </button>
+                                                            </div>
+                                                        )}
+                                                    </div>
+
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </React.Fragment>
+                                )
+                            )))
                     )}
                 </tbody>
             </table>
@@ -313,7 +334,7 @@ const MenuList = () => {
             {showEditModal && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
                     <div className="bg-white rounded-lg shadow-lg max-w-sm EditModal">
-                    <div className='flex flex-row justify-between items-center'>
+                        <div className='flex flex-row justify-between items-center'>
                             <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statut</h2>
                             <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
                             relative bottom-4 text-[30px] hover:text-white cursor-pointer'

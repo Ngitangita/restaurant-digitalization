@@ -14,19 +14,19 @@ const CreateReservation = ({ onCreate, createReservationModal, statuses, rooms, 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Validation des champs
+     
         if (!customerId || !roomId || !startDate || !endDate || !description || !status) {
             setErrors('Tous les champs doivent être remplis.');
             return;
         }
 
         const newReservation = {
-            customerId, // Créez un objet CustomerDTO
-            roomId, // Créez un objet RoomDTO
+            customerId,
+            roomId, 
             description,
-            reservationStart: new Date(startDate).toISOString(), // Formatez pour LocalDateTime
-            reservationEnd: new Date(endDate).toISOString(), // Formatez pour LocalDateTime
-            status, // État de la réservation
+            reservationStart: new Date(startDate).toISOString(), 
+            reservationEnd: new Date(endDate).toISOString(), 
+            status, 
         };
 
         console.log(newReservation);
@@ -45,7 +45,6 @@ const CreateReservation = ({ onCreate, createReservationModal, statuses, rooms, 
                 const createdReservation = await response.json();
                 onCreate(createdReservation);
 
-                // Réinitialisez les champs après la création réussie
                 setCustomerId('');
                 setRoomId('');
                 setStartDate('');

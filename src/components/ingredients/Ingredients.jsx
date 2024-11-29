@@ -7,6 +7,7 @@ import useFetch from '../../hooks/useFetch';
 import EditIngredients from './EditIngredients';
 import dayjs from "dayjs";
 import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
+import TextField from '@mui/material/TextField';
 
 const IngredientList = () => {
     const [ingredients, setIngredients] = useState([]);
@@ -148,26 +149,38 @@ const IngredientList = () => {
             {error && <p className="text-red-500">{error}</p>}
 
             <div className='flex flex-row gap-4'>
-                <div className="w-64 relative flex items-center mb-4">
-                    <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Rechercher un ingrédient"
-                        className="p-2 pr-8 border border-gray-300 rounded-md outline-none"
-                    />
-                    {searchTerm && (
-                        <button className="relative right-5" onClick={handleClearSearch}>
-                            <MdClear />
-                        </button>
-                    )}
-                </div>
                 <button
                     className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 ml-2"
                     onClick={toggleModal}
                 >
                     Créer un ingrédient
                 </button>
+                <TextField
+                    id="outlined-search"
+                    label="Rechercher un ingrédient"
+                    type="search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    InputProps={{
+                        endAdornment: searchTerm && (
+                            <button
+                                type="button"
+                                className="flex items-center"
+                                onClick={() => setSearchTerm('')}
+                                style={{ cursor: 'pointer', background: 'none', border: 'none' }}
+                            >
+                            </button>
+                        ),
+                    }}
+                    sx={{
+                        width: '250px',
+                        height: '50px',
+                        '.MuiInputBase-root': { height: '40px' },
+                    }}
+                />
             </div>
 
             {isModalOpen && (

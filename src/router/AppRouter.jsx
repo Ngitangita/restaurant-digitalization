@@ -21,6 +21,7 @@ import FloorList from "../components/floor/FloorList";
 import MenuOrdersList from "../components/gestionDesMenus/menuOrder/MenuOrdersList";
 import UnitsList from "../components/units/UnitsList.jsx";
 import {ToastContainer} from "react-toastify";
+import PaymentList from "../pages/payments/PaymentList.jsx";
 
 function ProtectedRoute() {
     const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -56,6 +57,7 @@ function AppRouter() {
                         <Route path="floorList" element={<FloorList/>}/>
                         <Route path="calendar" element={<TheCalendar/>}/>
                         <Route path="commandes" element={<MenuOrdersList/>}/>
+                        <Route path="payment" element={<PaymentList/>}/>
                         <Route path="reservations" element={<ReservationList/>}/>
                         <Route path="stocks" element={<Stocks/>}/>
                         <Route path="PurchaseList" element={<PurchaseList/>}/>

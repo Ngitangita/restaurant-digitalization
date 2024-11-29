@@ -1,15 +1,16 @@
-import {useEffect, useState} from "react";
-import {Navigate, useNavigate} from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
 import { axiosConf } from "../../services/api";
-import {useAuthStore} from "../../stores/useAuthStore.js";
+import { useAuthStore } from "../../stores/useAuthStore.js";
+import useToast from "../../components/gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
 const LoginSchema = z.object({
   email: z.string().email({ message: "Adresse e-mail invalide" }),
-  password: z.string().min(8, { message: "Le mot de passe doit comporter au moins 8 caractères" }),
+  password: z.string().min(8, { message: "Le mot de passe est incorrecte" }),
 });
 
 const SignupSchema = z.object({
@@ -32,7 +33,7 @@ export default function Authentication() {
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
-
+  const { showSuccess, showError } = useToast()
 
   const {
     register: loginRegister,
@@ -60,9 +61,8 @@ export default function Authentication() {
     }
   }, [isAuthenticated, navigate]);
 
-
   const handleLogin = async (data) => {
-    setIsLoading(true); 
+    setIsLoading(true);
     try {
       const response = await axiosConf.post("/sign-in", {
         email: data.email,
@@ -70,11 +70,12 @@ export default function Authentication() {
       });
       if (response?.status >= 200 && response.status < 300 && response.data) {
         setIsAuthenticated(true);
+        showSuccess("Connexion réussie ! Bienvenue.");
         navigate("/");
       }
-      navigate("/");
     } catch (error) {
       console.error("Échec de la connexion :", error);
+      showError("Une erreur est survenue lors de la connexion. Veuillez réessayer.");
     }
     setIsLoading(false);
     resetLogin();
@@ -91,26 +92,30 @@ export default function Authentication() {
       if (response?.status >= 200 && response.status < 300 && response.data) {
         setIsAuthenticated(true);
         navigate("/");
+        showSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
       }
     } catch (error) {
       if (error.response && error.response.status === 409) {
         if (error.response.data.message.includes("email")) {
           setSignupError("Cet e-mail est déjà utilisé. Veuillez utiliser un e-mail différent.");
+          showError("E-mail déjà utilisé.");
         } else if (error.response.data.message.includes("username")) {
           setSignupError("Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre.");
+          showError("Nom d'utilisateur déjà pris.");
         }
       } else {
         console.error("Échec de l'inscription :", error);
+        showError("Une erreur est survenue lors de l'inscription. Veuillez réessayer.");
       }
     }
     setIsLoading(false);
     resetSignup();
   };
 
-
   if (isAuthenticated) {
     return null;
   }
+
   return (
     <div className="overflow-hidden LoginbgImg h-screen w-screen">
       <div className="bg-black/80 h-screen flex flex-col justify-center items-center p-4 md:p-8 lg:p-16">
@@ -126,7 +131,7 @@ export default function Authentication() {
             </div>
           </div>
 
-          <div className="flex justify-around mb-4">
+          <div className="flex justify-around">
             <button
               className={`px-4 py-2 rounded-lg ${type === "userIconSingin" ? "bg-gradient-to-r from-gray-800 to-gray-300/80 text-white" : "bg-gray-200"}`}
               onClick={() => setType("userIconSingin")}
@@ -141,7 +146,7 @@ export default function Authentication() {
             </button>
           </div>
 
-          {isLoading ? ( // Affiche le loader pendant le traitement
+          {isLoading ? ( 
             <div className="flex justify-center">
               <div
                 className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-middle"
@@ -154,41 +159,25 @@ export default function Authentication() {
             <>
               {type === "userIconSingin" ? (
                 <form onSubmit={loginSubmit(handleLogin)} className="flex flex-col gap-4 text-white">
-                  <div className="w-full flex flex-col gap-2 items-start">
-                    <label className="text-[13px] w-40">Votre e-mail</label>
-                    <input
-                      type="email"
-                      placeholder="nom@mail.com"
-                      className="w-full px-4 py-2 border border-black/25 rounded-lg bg-white/5 outline-none text-white"
-                      {...loginRegister("email")}
-                    />
-                    {loginErrors.email && <span className="text-red-500 text-[13px]">{loginErrors.email.message}</span>}
-                  </div>
-
-                  <div className="w-full flex flex-col gap-2 items-start relative">
-                    <label className="text-[13px] w-40">Mot de passe</label>
-                    <input
-                      type={showLoginPassword ? "text" : "password"}
-                      placeholder="********"
-                      className="w-full px-4 py-2 border border-black/25 rounded-lg bg-white/5 text-white outline-none"
-                      {...loginRegister("password")}
-                    />
-                    {loginErrors.password && <span className="text-red-500 text-[13px]">{loginErrors.password.message}</span>}
-
-                    <button
-                      type="button"
-                      className="absolute right-2 top-10 text-white"
-                      onClick={() => setShowLoginPassword((prev) => !prev)}
-                    >
-                      {showLoginPassword ? (
-                        <FaRegEyeSlash />
-                      ) : (
-                        <FaRegEye />
-                      )}
-                    </button>
-                  </div>
-
-                  <button type="submit" className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-gray-300/80 text-white rounded-lg">
+                  <FormField
+                    label="Votre e-mail"
+                    type="email"
+                    placeholder="nom@mail.com"
+                    register={loginRegister}
+                    errors={loginErrors}
+                    name="email"
+                  />
+                  <PasswordInput
+                    showPassword={showLoginPassword}
+                    toggleShowPassword={() => setShowLoginPassword(!showLoginPassword)}
+                    register={loginRegister}
+                    name="password"
+                    errors={loginErrors}
+                  />
+                  <button
+                    type="submit"
+                    className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-gray-300/80 text-white rounded-lg"
+                  >
                     Connexion
                   </button>
                   <span className="text-white w-36 hover:text-blue-500">
@@ -196,89 +185,43 @@ export default function Authentication() {
                       Mot de passe oublié ?
                     </a>
                   </span>
-
                 </form>
               ) : (
-                <form onSubmit={signupSubmit(handleSignup)} className="flex flex-col gap-4 text-white">
-                  <div className="flex flex-row gap-2 items-start">
-                    <label className="text-[13px] w-40">Votre nom</label>
-                    <div className="w-full flex flex-col gap-2 items-start">
-                      <input
-                        type="text"
-                        placeholder="votre nom"
-                        className="w-full bg-white/10 px-4 py-2 border border-black/25 rounded-lg outline-none text-white"
-                        {...signupRegister("name")}
-                      />
-                      {signupErrors.name && <span className="text-red-500 text-[13px]">{signupErrors.name.message}</span>}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-row gap-2 items-start">
-                    <label className="text-[13px] w-40">Votre e-mail</label>
-                    <div className="w-full flex flex-col gap-2 items-start">
-                      <input
-                        type="email"
-                        placeholder="nom@mail.com"
-                        className="w-full bg-white/10 px-4 py-2 border border-black/25 rounded-lg outline-none text-white"
-                        {...signupRegister("email")}
-                      />
-                      {signupErrors.email && <span className="text-red-500 text-[13px]">{signupErrors.email.message}</span>}
-                    </div>
-                  </div>
-
-                  <div className="flex flex-row gap-2 items-start relative">
-                    <label className="text-[13px] w-40">Mot de passe</label>
-                    <div className="w-full flex flex-col gap-2 items-start relative">
-                      <input
-                        type={showSignupPassword ? "text" : "password"}
-                        placeholder="********"
-                        className="w-full bg-white/10 px-4 py-2 border border-black/25 rounded-lg outline-none text-white"
-                        {...signupRegister("password")}
-                      />
-                      {signupErrors.password && <span className="text-red-500 text-[13px]">{signupErrors.password.message}</span>}
-
-                      <button
-                        type="button"
-                        className="absolute right-2 top-4 text-white"
-                        onClick={() => setShowSignupPassword((prev) => !prev)}
-                      >
-                        {showSignupPassword ? (
-                          <FaRegEyeSlash />
-                        ) : (
-                          <FaRegEye />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  <div className="flex flex-row gap-2 items-start relative">
-                    <label className="text-[13px] w-40">Confirmer le mot de passe</label>
-                    <div className="w-full flex flex-col gap-2 items-start relative">
-                      <input
-                        type={showConfirmPassword ? "text" : "password"}
-                        placeholder="********"
-                        className="w-full bg-white/10 px-4 py-2 border border-black/25 rounded-lg outline-none text-white"
-                        {...signupRegister("confirmePassword")}
-                      />
-                      {signupErrors.confirmePassword && <span className="text-red-500 text-[13px]">{signupErrors.confirmePassword.message}</span>}
-
-                      <button
-                        type="button"
-                        className="absolute right-2 top-4 text-white"
-                        onClick={() => setShowConfirmPassword((prev) => !prev)}
-                      >
-                        {showConfirmPassword ? (
-                          <FaRegEyeSlash />
-                        ) : (
-                          <FaRegEye />
-                        )}
-                      </button>
-                    </div>
-                  </div>
-
-                  {signupError && <span className="text-red-500 text-[13px]">{signupError}</span>}
-
-                  <button type="submit" className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-gray-300/80 text-white rounded-lg">
+                <form onSubmit={signupSubmit(handleSignup)} className="flex flex-col text-white">
+                  <FormField
+                    label="Votre nom"
+                    type="text"
+                    placeholder="votre nom"
+                    register={signupRegister}
+                    errors={signupErrors}
+                    name="name"
+                  />
+                  <FormField
+                    label="Votre e-mail"
+                    type="email"
+                    placeholder="nom@mail.com"
+                    register={signupRegister}
+                    errors={signupErrors}
+                    name="email"
+                  />
+                  <PasswordInput
+                    showPassword={showSignupPassword}
+                    toggleShowPassword={() => setShowSignupPassword(!showSignupPassword)}
+                    register={signupRegister}
+                    name="password"
+                    errors={signupErrors}
+                  />
+                  <PasswordInput
+                    showPassword={showConfirmPassword}
+                    toggleShowPassword={() => setShowConfirmPassword(!showConfirmPassword)}
+                    register={signupRegister}
+                    name="confirmePassword"
+                    errors={signupErrors}
+                  />
+                  <button
+                    type="submit"
+                    className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-gray-300/80 text-white rounded-lg"
+                  >
                     Inscription
                   </button>
                 </form>
@@ -288,5 +231,45 @@ export default function Authentication() {
         </div>
       </div>
     </div>
+  );
+}
+
+function FormField({ label, type, placeholder, register, errors, name }) {
+  return (
+    <>
+      <label className="text-lg font-semibold text-white">{label}</label>
+      <input
+        {...register(name)}
+        type={type}
+        placeholder={placeholder}
+        className="w-full px-4 py-2 bg-gray-800/50 text-white rounded-lg border-2 border-gray-600 focus:outline-none focus:border-blue-500"
+      />
+      {errors[name] && (
+        <p className="text-sm text-red-400">{errors[name]?.message}</p>
+      )}
+    </>
+  );
+}
+
+function PasswordInput({ showPassword, toggleShowPassword, register, name, errors }) {
+  return (
+    <>
+      <label className="text-lg font-semibold text-white">Mot de passe</label>
+      <div className="relative">
+        <input
+          {...register(name)}
+          type={showPassword ? "text" : "password"}
+          placeholder="Votre mot de passe"
+          className="w-full px-4 py-2 bg-gray-800/50 text-white rounded-lg border-2 border-gray-600 focus:outline-none focus:border-blue-500"
+        />
+        <div
+          className="absolute top-3 right-4 cursor-pointer"
+          onClick={toggleShowPassword}
+        >
+          {showPassword ? <FaRegEyeSlash className="text-white" /> : <FaRegEye className="text-white" />}
+        </div>
+      </div>
+      {errors[name] && <p className="text-sm text-red-400">{errors[name]?.message}</p>}
+    </>
   );
 }

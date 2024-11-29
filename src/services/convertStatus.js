@@ -70,9 +70,9 @@ export const convertStatusToOrder = (status) => {
         const statusMap = {
             PENDING: 'En attente',
             FAILED: 'Echoué',
-            COMPLETED: 'Terminé',
+            COMPLETED: 'Payé',
             CANCELED: 'Annulé',
-            REFUNDED: 'Remboursement',
+            REFUNDED: 'Non payé',
         };
     
         return statusMap[status.toUpperCase()] || status;

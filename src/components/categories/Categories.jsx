@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
 import CreateCategories from './CreateCategories';
-import { MdDelete, MdClear } from 'react-icons/md';
+import { MdDelete, MdInfoOutline } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import EditModal from './EditModal';
 import dayjs from "dayjs";
 import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
+import TextField from '@mui/material/TextField';
 
 const CategoriesList = () => {
     const [categories, setCategories] = useState([]);
@@ -80,10 +81,6 @@ const CategoriesList = () => {
         setCategoryToDelete(null);
     };
 
-    const handleClearSearch = () => {
-        setSearchTerm('');
-    };
-
     const handleEditCategory = (category) => {
         setCategoryToEdit(category || {});
         setShowEditCategoryModal(true);
@@ -147,27 +144,38 @@ const CategoriesList = () => {
             {error && <p className="text-red-500">{error}</p>}
 
             <div className='flex flex-row gap-4'>
-                <div className="w-64 relative flex items-center mb-4">
-                    <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Rechercher une catégorie"
-                        className="p-2 pr-8   focus:border-blue-500 border border-gray-300 rounded-md outline-none"
-                    />
-                    {searchTerm && (
-                        <button className="relative right-5" onClick={handleClearSearch}>
-                            <MdClear />
-                        </button>
-                    )}
-                </div>
-
                 <button
                     onClick={toggleModal}
                     className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
                 >
                     Créer une catégorie
                 </button>
+                <TextField
+                    id="outlined-search"
+                    label="Rechercher une catégorie"
+                    type="search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    InputProps={{
+                        endAdornment: searchTerm && (
+                            <button
+                                type="button"
+                                className="flex items-center"
+                                onClick={() => setSearchTerm('')}
+                                style={{ cursor: 'pointer', background: 'none', border: 'none' }}
+                            >
+                            </button>
+                        ),
+                    }}
+                    sx={{
+                        width: '250px',
+                        height: '50px',
+                        '.MuiInputBase-root': { height: '40px' },
+                    }}
+                />
             </div>
 
             {isModalOpen && (
@@ -220,7 +228,10 @@ const CategoriesList = () => {
                         </tr>
                     )) : (
                         <tr>
-                            <td colSpan="5" className="py-4 text-center">Aucune catégorie trouvée</td>
+                            <td colSpan="5" className="py-4 text-center">
+                                <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
+                                Aucune catégorie trouvée
+                            </td>
                         </tr>
                     )}
                 </tbody>

@@ -29,10 +29,22 @@ function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredie
 
   const onSubmit = async (data) => {
     try {
-      await fetchJson(apiUrl("/stocks/add"), 'POST', data);
-      console.log('Stock créé avec succès:', data);
+
+      const url = apiUrl("/stocks/add")
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+    });
+
+    if(res.ok){
+        onStockCreated?.(data); 
+    }
+      
       reset();
-      if (onStockCreated) onStockCreated(); 
+      
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
     }

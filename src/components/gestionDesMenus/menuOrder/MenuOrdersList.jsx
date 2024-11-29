@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { apiUrl, fetchJson } from "../../../services/api";
 import CreateMenuOrder from "./CreateMenuOrder";
-import { MdAddBox, MdEdit, MdClear } from "react-icons/md";
+import { MdAddBox, MdEdit, MdInfoOutline } from "react-icons/md";
 import UpdateStatusOrder from "../../updateStatus/UpdateStatusOrder.jsx";
 import dayjs from "dayjs";
 import { convertStatusToOrder } from "../../../services/convertStatus.js";
 import useToast from "./(tantely)/hooks/useToast.jsx";
+import TextField from '@mui/material/TextField';
 
 function MenuOrdersList() {
     const [orders, setOrders] = useState([]);
@@ -111,26 +112,41 @@ function MenuOrdersList() {
     return (
         <div className="w-full p-4 bg-white rounded shadow-lg menuOrdersList pr-16">
             <h2 className="text-2xl font-bold mb-4">Liste des Commandes</h2>
-            <button
-                onClick={() => setIsModalOpen(true)}
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 flex flex-row gap-2 items-center"
-            >
-                <MdAddBox /> Ajouter une commande
-            </button>
+            <div className="flex flex-row gap-2 items-center">
+                <button
+                    onClick={() => setIsModalOpen(true)}
+                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 
+                    flex flex-row gap-2 items-center mb-2"
+                >
+                    <MdAddBox /> Ajouter une commande
+                </button>
 
-            <div className="relative flex items-center w-64">
-                <input
-                    type="text"
+                <TextField
+                    id="outlined-search"
+                    label="Rechercher une salle"
+                    type="search"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Rechercher une salle"
-                    className="p-2 pr-8 border border-gray-300 rounded-md outline-none"
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    InputProps={{
+                        endAdornment: searchTerm && (
+                            <button
+                                type="button"
+                                className="flex items-center"
+                                onClick={() => setSearchTerm('')}
+                                style={{ cursor: 'pointer', background: 'none', border: 'none' }}
+                            >
+                            </button>
+                        ),
+                    }}
+                    sx={{
+                        width: '250px',
+                        height: '50px',
+                        '.MuiInputBase-root': { height: '40px' },
+                    }}
                 />
-                {searchTerm && (
-                    <button className="absolute right-2" onClick={() => setSearchTerm('')}>
-                        <MdClear />
-                    </button>
-                )}
             </div>
 
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden mt-4 menuOrdersList">
@@ -149,13 +165,13 @@ function MenuOrdersList() {
                 <tbody>
                     {isLoading ? (
                         <tr>
-                            <td colSpan="7" className="text-center py-2">Chargement...</td>
+                            <td colSpan="8" className="text-center py-2">Chargement...</td>
                         </tr>
                     ) : error ? (
                         <tr>
-                            <td colSpan="7" className="text-center py-2 text-red-500">{error}</td>
+                            <td colSpan="8" className="text-center py-2 text-red-500">{error}</td>
                         </tr>
-                    ) :filteredMenuOrders.length > 0 ? (
+                    ) : filteredMenuOrders.length > 0 ? (
                         filteredMenuOrders.toSorted((a, b) => a.id - b.id).map((order) => (
                             <tr key={order.id} className="hover:bg-gray-100 text-center border-y">
                                 <td className="py-2">{order.room?.roomNumber || "-"}</td>
@@ -170,7 +186,7 @@ function MenuOrdersList() {
                                     >
                                         <span className='flex flex-row text-sm gap-1 items-center '>
                                             <MdEdit /> {order.orderStatus?.toUpperCase() !== "COMPLETED" && (
-                                                <div className="text-red-500 text-[10px]">⚠️</div>
+                                                <span className="text-red-500 text-[10px]">⚠️</span>
                                             )}
                                             {convertStatusToOrder(order.orderStatus?.toLowerCase())}
                                         </span>
@@ -182,8 +198,13 @@ function MenuOrdersList() {
                                 <td className="py-2 px-4">{dayjs(order.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
                             </tr>
                         ))) : (
-                        <tr>
-                            <td colSpan="5" className="text-center py-4">Aucun stock trouvé</td>
+                        <tr className="hover:bg-gray-100 text-center border-y">
+                            <td colSpan="8" className="py-4 text-gray-500  ">
+                                <p className="flex flex-col items-center justify-center w-full">
+                                    <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
+                                    <span>Aucun stock trouvé</span>
+                                </p>
+                            </td>
                         </tr>
                     )}
                 </tbody>
@@ -211,10 +232,9 @@ function MenuOrdersList() {
                 </div>
             )}
 
-            {/* Modal for creating a new order */}
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-                    <dir className="w-[700px] mx-auto bg-white rounded CreateModal">
+                    <dir className=" mx-auto bg-white rounded CreateModal">
                         <div className='flex flex-row justify-between items-center'>
                             <h2 className="text-center font-serif font-bold
                             text-xl pl-8 pt-8 pb-4">
@@ -230,7 +250,9 @@ function MenuOrdersList() {
                         <CreateMenuOrder
                             isOpen={isModalOpen}
                             onClose={() => setIsModalOpen(false)}
-                            onOrderCreated={(newOrder) => setOrders(prev => [...prev, newOrder])}
+                            onOrderCreated={(newOrder) => {
+                                fetchOrders()
+                            }}
                         />
                     </dir>
                 </div>

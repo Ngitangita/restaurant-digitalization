@@ -1,6 +1,6 @@
 
+import OperationStatistics from "../Stocks/OperationStatistics";
 
-import PaymentList from "../payments/PaymentList";
 
 
 const Home = () => {
@@ -9,8 +9,7 @@ const Home = () => {
     return (
         <div>
             
-            {/* <OperationStatistics /> */}
-            <PaymentList /> 
+            <OperationStatistics />
         </div>
     );
 };

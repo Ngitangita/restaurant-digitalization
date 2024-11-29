@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { apiUrl, fetchJson } from '../../../services/api';
 import ManageMenuIngredients from './ManageMenuIngredients';
-import { MdDelete} from 'react-icons/md';
+import { MdDelete, MdInfoOutline} from 'react-icons/md';
 import dayjs from "dayjs";
 
 function MenuWithIngredients() {
@@ -106,6 +106,7 @@ function MenuWithIngredients() {
           {menu.ingredients.length === 0 ? (
             <tr className="text-center">
               <td colSpan="5" className="py-4 text-gray-500">
+              <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
                 Aucun ingrédient disponible pour ce menu.
               </td>
             </tr>

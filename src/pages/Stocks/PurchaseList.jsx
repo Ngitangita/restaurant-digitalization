@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
 import dayjs from 'dayjs';
 import { truncate } from "../../services/truncate.js";
-import { MdClear} from 'react-icons/md';
+import { MdInfoOutline } from 'react-icons/md';
 
 function PurchaseList() {
   const [purchases, setPurchases] = useState([]);
@@ -19,12 +19,12 @@ function PurchaseList() {
         setPurchases(d.items || []);
       })
       .catch((e) => console.log(e));
-      
+
   }, [size, page, startDate, endDate]);
 
 
   useEffect(() => {
-     setPage(1)
+    setPage(1)
   }, [startDate, endDate]);
 
 
@@ -34,7 +34,7 @@ function PurchaseList() {
       {error && <div className="bg-red-300 text-red-700 p-2 rounded mb-4">{error}</div>}
 
       <div className="w-64 relative flex items-center mb-4">
-      <input
+        <input
           type="datetime-local"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
@@ -77,6 +77,7 @@ function PurchaseList() {
             ) : (
               <tr>
                 <td colSpan="9" className="py-4 text-center text-gray-500">
+                  <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
                   Aucune donnée disponible
                 </td>
               </tr>

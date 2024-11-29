@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { apiUrl, fetchJson } from '../../services/api';
 import { FaRegEdit } from 'react-icons/fa';
-import { MdDelete, MdClear, MdEdit } from 'react-icons/md';
+import { MdDelete, MdInfoOutline, MdEdit } from 'react-icons/md';
 import EditTable from './EditTable';
-import dayjs from "dayjs";
-import {convertStatusToTable} from "../../services/convertStatus.js";
+import TextField from '@mui/material/TextField';
+import { convertStatusToTable } from "../../services/convertStatus.js";
 import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
 function TablesList() {
@@ -21,7 +21,7 @@ function TablesList() {
     const [searchTerm, setSearchTerm] = useState('');
     const [showEditTableModal, setShowEditTableModal] = useState(false);
     const [tableToEdit, setTableToEdit] = useState(null);
-    const {showSuccess, showError} = useToast()
+    const { showSuccess, showError } = useToast()
 
 
     const fetchTables = async () => {
@@ -73,7 +73,13 @@ function TablesList() {
         setTableCapacity('');
         setTableStatus('');
     };
-    
+
+    const confirmDelete = (tableId) => {
+        const table = tables.find(t => t.id === tableId);
+        setTableToDelete(table);
+        setShowDeleteModal(true);
+    };
+
     const handleDelete = async () => {
         try {
             await fetch(apiUrl(`/tables/${tableToDelete.id}`), {
@@ -86,12 +92,6 @@ function TablesList() {
             console.error('Erreur lors de la suppression de la table:', error);
             showError("Erreur lors de la suppression de la table.");
         }
-    };
-
-    const confirmDelete = (tableId) => {
-        const table = tables.find(t => t.id === tableId);
-        setTableToDelete(table);
-        setShowDeleteModal(true);
     };
 
     const cancelDelete = () => {
@@ -123,11 +123,6 @@ function TablesList() {
 
         }
     };
-
-    const handleClearSearch = () => {
-        setSearchTerm('');
-    };
-
 
     const filteredTables = tables.filter((table) =>
         table.number.toString().includes(searchTerm) ||
@@ -175,42 +170,54 @@ function TablesList() {
         <div className="container mx-auto p-4 bg-white TableListe">
             <h1 className="text-2xl font-bold mb-4">Liste des Tables</h1>
             <div className='flex flex-row gap-4'>
-                <div className="w-64 relative flex items-center mb-4">
-                    <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Rechercher une table"
-                        className="p-2 pr-8 border border-gray-300 rounded-md outline-none"
-                    />
-                    {searchTerm && (
-                        <button className="relative right-5" onClick={handleClearSearch}>
-                            <MdClear />
-                        </button>
-                    )}
-                </div>
-
                 <button
                     className="bg-blue-500 text-white rounded hover:bg-blue-600 px-4 py-2 mb-4"
                     onClick={() => setShowCreateModal(true)}
                 >
                     Créer Table
                 </button>
+                <TextField
+                    id="outlined-search"
+                    label="Rechercher un table"
+                    type="search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    InputProps={{
+                        endAdornment: searchTerm && (
+                            <button
+                                type="button"
+                                className="flex items-center"
+                                onClick={() => setSearchTerm('')}
+                                style={{ cursor: 'pointer', background: 'none', border: 'none' }}
+                            >
+                            </button>
+                        ),
+                    }}
+                    sx={{
+                        width: '250px',
+                        height: '50px',
+                        '.MuiInputBase-root': { height: '40px' },
+                    }}
+                />
             </div>
 
             <table className="min-w-full shadow-md rounded-lg overflow-hidden bg-white TableTbl">
                 <thead>
-                <tr className="bg-gray-200">
-                    <th className="py-2 px-4">Numéro</th>
-                    <th className="py-2 px-4">Capacité</th>
-                    <th className="py-2 px-4">Statut</th>
-                    <th className="py-2 px-4">Action</th>
-                </tr>
+                    <tr className="bg-gray-200">
+                        <th className="py-2 px-4">Numéro</th>
+                        <th className="py-2 px-4">Capacité</th>
+                        <th className="py-2 px-4">Statut</th>
+                        <th className="py-2 px-4">Action</th>
+                    </tr>
                 </thead>
                 <tbody>
-                {filteredTables.length === 0 ? (
+                    {filteredTables.length === 0 ? (
                         <tr className="text-center">
                             <td colSpan="7" className="py-4 text-gray-500">
+                                <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
                                 Aucune table disponible
                             </td>
                         </tr>
@@ -225,12 +232,12 @@ function TablesList() {
                                         className='w-full flex flex-col gap-1 items-center '
                                     >
                                         <span className='flex flex-row gap-1 items-center '>
-                                            <MdEdit/> {table.status.toLowerCase() !== "available" && (
-                                            <span className="text-red-500 text-[10px]">⚠️ </span>
-                                        )}
-                                        {convertStatusToTable(table.status)}
+                                            <MdEdit /> {table.status.toLowerCase() !== "available" && (
+                                                <span className="text-red-500 text-[10px]">⚠️ </span>
+                                            )}
+                                            {convertStatusToTable(table.status)}
                                         </span>
-                                        
+
                                     </button>
                                 </td>
                                 <td className="py-2 px-4 flex flex-row gap-4 justify-center">
@@ -238,13 +245,13 @@ function TablesList() {
                                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                                         onClick={() => handleEditTable(table)}
                                     >
-                                        <FaRegEdit/>
+                                        <FaRegEdit />
                                     </button>
                                     <button
                                         className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
                                         onClick={() => confirmDelete(table.id)}
                                     >
-                                        <MdDelete/>
+                                        <MdDelete />
                                     </button>
                                 </td>
                             </tr>

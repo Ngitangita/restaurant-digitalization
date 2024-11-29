@@ -1,11 +1,11 @@
-import{ useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiUrl } from '../../services/api';
-import { MdClear, MdDelete, MdEdit } from 'react-icons/md';
+import { MdInfoOutline, MdDelete, MdEdit } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import CreateRoom from './CreateRoom';
 import EditRoom from './EditRoom';
-import dayjs from "dayjs";
-import {convertStatusToRoom} from "../../services/convertStatus.js";
+import TextField from '@mui/material/TextField';
+import { convertStatusToRoom } from "../../services/convertStatus.js";
 import UpdateStatusRoom from "../updateStatus/UpdateStatusRoom.jsx";
 import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
@@ -14,7 +14,7 @@ const RoomList = () => {
     const [statuses, setStatuses] = useState([]);
     const [floors, setFloors] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [modalType, setModalType] = useState(''); // 'create', 'editStatus', 'editRoom', 'delete'
+    const [modalType, setModalType] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -122,26 +122,38 @@ const RoomList = () => {
         <div className="container mx-auto p-4 bg-white RoomList pr-14">
             <h2 className="text-2xl font-bold mb-4">Liste des Salles</h2>
             <div className="flex flex-row gap-4 mb-4">
-                <div className="relative flex items-center w-64">
-                    <input
-                        type="text"
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        placeholder="Rechercher une salle"
-                        className="p-2 pr-8 border border-gray-300 rounded-md outline-none"
-                    />
-                    {searchTerm && (
-                        <button className="absolute right-2" onClick={() => setSearchTerm('')}>
-                            <MdClear />
-                        </button>
-                    )}
-                </div>
                 <button
-                    className="bg-blue-500 text-white rounded hover:bg-blue-600 px-4 py-2"
+                    className="bg-blue-500 text-white rounded hover:bg-blue-600 px-4 "
                     onClick={() => toggleModal('create')}
                 >
                     Créer Salle
                 </button>
+                <TextField
+                    id="outlined-search"
+                    label="Rechercher un chambre"
+                    type="search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    InputProps={{
+                        endAdornment: searchTerm && (
+                            <button
+                                type="button"
+                                className="flex items-center"
+                                onClick={() => setSearchTerm('')}
+                                style={{ cursor: 'pointer', background: 'none', border: 'none' }}
+                            >
+                            </button>
+                        ),
+                    }}
+                    sx={{
+                        width: '250px',
+                        height: '50px',
+                        '.MuiInputBase-root': { height: '40px' },
+                    }}
+                />
             </div>
 
             {isLoading ? (
@@ -149,18 +161,19 @@ const RoomList = () => {
             ) : error ? (
                 <p className="text-center text-red-500">{error}</p>
             ) : (
-                <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden RoomList">
+                <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden 
+                RoomList">
                     <thead>
-                    <tr className="bg-gray-200">
-                        <th className="py-2 px-4">Numéro de Salle</th>
-                        <th className="py-2 px-4">Capacité (en personnes)</th>
-                        <th className="py-2 px-4">Prix (en Ar)</th>
-                        <th className="py-2 px-4">Statut</th>
-                        <th className="py-2 px-4">Actions</th>
-                    </tr>
+                        <tr className="bg-gray-200">
+                            <th className="py-2 px-4">Numéro de Salle</th>
+                            <th className="py-2 px-4">Capacité (en personnes)</th>
+                            <th className="py-2 px-4">Prix (en Ar)</th>
+                            <th className="py-2 px-4">Statut</th>
+                            <th className="py-2 px-4">Actions</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {filteredRooms.length > 0 ? (
+                        {filteredRooms.length > 0 ? (
                             filteredRooms.toSorted((a, b) => a.id - b.id).map((room) => (
                                 <tr key={room.id} className="hover:bg-gray-100 text-center border-y border-collapse">
                                     <td className="p-2">{room.roomNumber}</td>
@@ -171,35 +184,38 @@ const RoomList = () => {
                                             onClick={() => toggleModal('editStatus', room)}
                                             className='w-full flex flex-row gap-1 items-center'
                                         >
-                                            <span className='flex flex-row gap-1 text-[11px] items-center '>
+                                            <span className='flex flex-row gap-1 items-center '>
                                                 {room.status.toLowerCase() !== "available" && (
                                                     <span className="text-red-500 text-[10px]">⚠️</span>
                                                 )}
-                                                <MdEdit/> {convertStatusToRoom(room.status.toLowerCase())}
+                                                <MdEdit /> {convertStatusToRoom(room.status.toLowerCase())}
                                             </span>
 
                                         </button>
                                     </td>
-                                      <td className="p-2 flex justify-center items-center">
+                                    <td className="p-2 flex justify-center items-center">
                                         <button
                                             className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                                             onClick={() => toggleModal('editRoom', room)}
                                         >
-                                            <FaRegEdit/>
+                                            <FaRegEdit />
                                         </button>
                                         <button
                                             className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
                                             onClick={() => toggleModal('delete', room)}
                                         >
-                                            <MdDelete/>
+                                            <MdDelete />
                                         </button>
                                     </td>
                                 </tr>
                             ))
-                    ) : (
-                        <tr>
-                            <td colSpan="8" className="py-4 text-center">Aucune salle trouvée</td>
-                        </tr>
+                        ) : (
+                            <tr>
+                                <td colSpan="8" className="py-4 text-center">
+                                    <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
+                                    Aucune salle trouvée
+                                </td>
+                            </tr>
                         )}
                     </tbody>
                 </table>
@@ -270,7 +286,7 @@ const RoomList = () => {
                         <div className="mt-4 flex justify-between">
 
                             <button className="bg-red-300 text-gray-700 rounded px-4 py-2 ml-2"
-                                    onClick={() => toggleModal('')}>
+                                onClick={() => toggleModal('')}>
                                 Non
                             </button>
                             <button className="bg-blue-500 text-white rounded px-4 py-2" onClick={handleDelete}>

@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete, MdInfoOutline } from "react-icons/md";
 import { apiUrl, fetchJson } from '../../services/api';
-import dayjs from "dayjs";
 import CreateUnit from "./CreateUnit.jsx";
 import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
@@ -15,6 +14,7 @@ function UnitsList() {
     const [showDeleteModal, setShowDeleteModal] = useState(false);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const { showSuccess, showError } = useToast();
+    const [unitToDelete, setUnitToDelete] = useState(null);
 
     const fetchUnits = async () => {
         try {
@@ -29,26 +29,29 @@ function UnitsList() {
         void fetchUnits();
     }, []);
 
-    const confirmDelete = (id) => {
-        setSelectedUnit(id);
+    const confirmDelete = (unitId) => {
+        const unit = units.find(u => u.id === unitId);
+        setUnitToDelete(unit);
         setShowDeleteModal(true);
     };
-
+    
     const handleDelete = async () => {
         try {
-            await fetchJson(apiUrl(`/units/${selectedUnit}`), 'DELETE');
+            await fetch(apiUrl(`/units/${unitToDelete.id}`), {
+                method: 'DELETE',
+            });
             setShowDeleteModal(false);
-            setSelectedUnit(null);
             void fetchUnits();
-            showSuccess('Unité supprimée avec succès');
+            showSuccess("Unit supprimée avec succès.");
         } catch (error) {
-            showError('Erreur lors de la suppression de l\'unité: ' + error.message);
+            console.error('Erreur lors de la suppression de la unit:', error);
+            showError("Erreur lors de la suppression de la unit.");
         }
     };
 
     const cancelDelete = () => {
         setShowDeleteModal(false);
-        setSelectedUnit(null);
+        setUnitToDelete(null);
     };
 
     const handleEdit = (unit) => {
@@ -143,7 +146,7 @@ function UnitsList() {
             {showDeleteModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
                     <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
-                        <p className="mb-6">Êtes-vous sûr de vouloir supprimer cette unité ?</p>
+                        <p className="mb-6">Êtes-vous sûr de vouloir supprimer l'unité {unitToDelete?.name} ?</p>
                         <div className="flex justify-between">
                             <button
                                 className="bg-red-300 text-gray-800 py-2 px-4 rounded-md hover:bg-red-400"
