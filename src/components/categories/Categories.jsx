@@ -1,0 +1,320 @@
+import { useEffect, useState } from 'react';
+import { apiUrl, fetchJson } from '../../services/api';
+import CreateCategories from './CreateCategories';
+import { MdDelete, MdInfoOutline } from 'react-icons/md';
+import { FaRegEdit } from 'react-icons/fa';
+import EditModal from './EditModal';
+import dayjs from "dayjs";
+import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
+import TextField from '@mui/material/TextField';
+
+const CategoriesList = () => {
+    const [categories, setCategories] = useState([]);
+    const [error, setError] = useState(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [categoryToDelete, setCategoryToDelete] = useState(null);
+    const [categoryToEdit, setCategoryToEdit] = useState(null);
+    const [showEditCategoryModal, setShowEditCategoryModal] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(0);
+    const [hasNext, setHasNext] = useState(false);
+    const [hasPrevious, setHasPrevious] = useState(false);
+    const { showSuccess, showError } = useToast()
+
+    useEffect(() => {
+        void fetchCategories();
+    }, [currentPage, searchTerm]);
+
+    const fetchCategories = async () => {
+        try {
+            const query = new URLSearchParams({
+                name: searchTerm,
+                page: currentPage - 1 > 0 ? currentPage - 1 : 0,
+                size: 5
+            }).toString();
+            const data = await fetchJson(apiUrl(`/categories?${query}`));
+            setCategories(data.items || []);
+            setTotalPages(data?.pageInfo.totalPages || 0);
+            setHasNext(data?.pageInfo?.hasNext || false);
+            setHasPrevious(data?.pageInfo?.hasPrevious || false);
+        } catch (err) {
+            const errorMsg = err.message || 'Erreur lors de la récupération des catégories';
+            setError(errorMsg);
+            showError('Erreur lors de la récupération des catégories');
+        }
+    };
+
+    const toggleModal = () => {
+        setIsModalOpen(!isModalOpen);
+    };
+
+    const handleCategoryCreated = () => {
+        void fetchCategories();
+        setIsModalOpen(false);
+        showSuccess('Catégorie créée avec succès');
+    };
+
+    const handleDelete = async () => {
+        try {
+            await fetch(apiUrl(`/categories/${categoryToDelete.id}`), {
+                method: 'DELETE',
+            });
+            setShowDeleteModal(false);
+            void fetchCategories();
+            showSuccess('Catégorie supprimée avec succès');
+        } catch (error) {
+            showError('Erreur lors de la suppression de la catégorie');
+            console.error('Erreur lors de la suppression de la catégorie', error);
+        }
+    };
+
+    const confirmDelete = (categorieId) => {
+        const category = categories.find(c => c.id === categorieId);
+        setCategoryToDelete(category);
+        setShowDeleteModal(true);
+    };
+
+    const cancelDelete = () => {
+        setShowDeleteModal(false);
+        setCategoryToDelete(null);
+    };
+
+    const handleEditCategory = (category) => {
+        setCategoryToEdit(category || {});
+        setShowEditCategoryModal(true);
+    };
+
+    const handleSaveEdit = async () => {
+        if (!categoryToEdit || !categoryToEdit.id || !categoryToEdit.name) {
+            console.error('Les informations de la catégorie sont incomplètes.');
+            showError('Les informations de la catégorie sont incomplètes.');
+            return;
+        }
+
+        try {
+            const url = apiUrl(`/categories`);
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(categoryToEdit),
+            });
+
+            if (!response.ok) {
+                throw new Error(`Erreur lors de la mise à jour de la catégorie: ${response.statusText}`);
+            }
+
+            setShowEditCategoryModal(false);
+            void fetchCategories();
+            showSuccess('Catégorie mise à jour avec succès');
+        } catch (error) {
+            showError('Erreur lors de la mise à jour de la catégorie');
+            console.error('Erreur lors de la mise à jour de la catégorie:', error);
+        }
+    };
+
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages)
+            setCurrentPage(prevPage => prevPage + 1);
+    };
+
+    const handlePrevPage = () => {
+        if (currentPage > 1)
+            setCurrentPage(prevPage => prevPage - 1);
+    };
+
+    const handlePageInputChange = (e) => {
+        let value = parseInt(e.target.value);
+
+        if (!isNaN(value)) {
+            setCurrentPage(value);
+        } else {
+            setCurrentPage(1);
+        }
+    };
+
+
+    return (
+        <div className="container mx-auto p-4 pr-14 categories bg-white">
+            <h1 className="text-2xl font-bold mb-4">Liste des catégories</h1>
+            {error && <p className="text-red-500">{error}</p>}
+
+            <div className='flex flex-row gap-4'>
+                <button
+                    onClick={toggleModal}
+                    className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                >
+                    Créer une catégorie
+                </button>
+                <TextField
+                    id="outlined-search"
+                    label="Rechercher une catégorie"
+                    type="search"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    variant="outlined"
+                    size="small"
+                    fullWidth
+                    InputProps={{
+                        endAdornment: searchTerm && (
+                            <button
+                                type="button"
+                                className="flex items-center"
+                                onClick={() => setSearchTerm('')}
+                                style={{ cursor: 'pointer', background: 'none', border: 'none' }}
+                            >
+                            </button>
+                        ),
+                    }}
+                    sx={{
+                        width: '250px',
+                        height: '50px',
+                        '.MuiInputBase-root': { height: '40px' },
+                    }}
+                />
+            </div>
+
+            {isModalOpen && (
+                <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+                    <div className="CreateModal bg-white rounded-md shadow-md z-[9999]">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Créer une nouvelle catégorie</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={toggleModal}>
+                                x
+                            </span>
+                        </div>
+                        <CreateCategories
+                            onClose={toggleModal}
+                            onCategoryCreated={handleCategoryCreated} />
+                    </div>
+                </div>
+            )}
+
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden categoriesTable">
+                <thead>
+                    <tr className="bg-gray-200">
+                        <th className="py-2 px-4">Nom</th>
+                        <th className="py-2 px-4">Créé le</th>
+                        <th className="py-2 px-4">Modifié le</th>
+                        <th className="py-2 px-4">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {categories.length > 0 ? categories.toSorted((a, b) => a.id - b.id).map(category => (
+                        <tr key={category.id} className="hover:bg-gray-100 text-center border-y border-collapse">
+                            <td className="py-3 px-4 ">{category.name}</td>
+                            <td className="py-3 px-4">{dayjs(category.createdAt).format('YYYY-MM-DD HH:mm')}</td>
+                            <td className="py-3 px-4">{dayjs(category.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
+                            <td className="py-3 px-4">
+                                <button
+                                    className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
+                                    onClick={() => handleEditCategory(category)}
+                                >
+                                    <FaRegEdit />
+                                </button>
+                                <button
+                                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
+                                    onClick={() => confirmDelete(category.id)}
+                                >
+                                    <MdDelete />
+                                </button>
+                            </td>
+                        </tr>
+                    )) : (
+                        <tr>
+                            <td colSpan="5" className="py-4 text-center">
+                                <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
+                                Aucune catégorie trouvée
+                            </td>
+                        </tr>
+                    )}
+                </tbody>
+            </table>
+
+            {showDeleteModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center DeleteModal">
+                        <div>
+                            <p className="mb-6">Êtes-vous sûr de vouloir supprimer le catégorie {categoryToDelete?.name} ?</p>
+                            <div className="flex justify-between">
+
+                                <button
+                                    className="bg-red-300 text-gray-800 px-4 py-2 rounded hover:bg-red-400"
+                                    onClick={cancelDelete}
+                                >
+                                    Non
+                                </button>
+                                <button
+                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                                    onClick={handleDelete}
+                                >
+                                    Oui
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {showEditCategoryModal && (
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+                    <div className="EditModal bg-white rounded-lg shadow-lg w-[400px] text-center">
+                        <div className='flex flex-row justify-between items-center'>
+                            <h2 className="text-xl pl-8 pt-8 pb-4">Modifier la catégorie</h2>
+                            <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
+                                onClick={() => setShowEditCategoryModal(false)}>
+                                x
+                            </span>
+                        </div>
+                        <EditModal
+                            category={categoryToEdit}
+                            setCategoryToEdit={setCategoryToEdit}
+                            categoryToEdit={categoryToEdit}
+                            onSave={handleSaveEdit}
+                            onCancel={() => setShowEditCategoryModal(false)}
+                        />
+                    </div>
+                </div>
+            )}
+
+            <div className="flex justify-between mt-4 items-center">
+                <button
+                    onClick={handlePrevPage}
+                    className={`${hasPrevious ? "bg-blue-500 hover:bg-blue-600 " : "bg-gray-500 hover:bg-gray-600 "} text-white px-4 py-2 rounded `}
+                    disabled={!hasPrevious}
+                >
+                    Précédent
+                </button>
+                <div className="flex items-center">
+                    <span className="mr-2">Page {currentPage}/{totalPages}</span>
+                    <input
+                        type="number"
+                        value={currentPage}
+                        onChange={handlePageInputChange}
+                        onBlur={handlePageInputChange}
+                        onKeyDown={(e) => e.key === 'Enter' && handlePageInputChange(e)}
+                        min={1}
+                        max={totalPages}
+                        className="border border-gray-300 rounded-md px-2 py-1 outline-none w-20"
+                    />
+                </div>
+                <button
+                    onClick={handleNextPage}
+                    className={`${hasNext ? "bg-blue-500 hover:bg-blue-600 " : "bg-gray-500 hover:bg-gray-600 "} text-white px-4 py-2 rounded `}
+                    disabled={!hasNext}
+                >
+                    Suivant
+                </button>
+            </div>
+        </div>
+    );
+};
+
+export default CategoriesList;
