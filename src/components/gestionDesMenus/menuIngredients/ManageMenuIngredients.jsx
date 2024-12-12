@@ -58,7 +58,7 @@ const ManageMenuIngredients = ({ onAddIngredients}) => {
 
             {isModalOpen && (
                 <div className="modal-overlay fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center ">
-                    <div className="modal-content bg-white p-6 rounded shadow-lg relative ">
+                    <div className="modal-content bg-white p-6 rounded shadow-lg relative CreateModal">
                         <button 
                             onClick={handleCloseModal} 
                             className="absolute top-0 right-0 px-4 p-2 hover:bg-red-400 hover:text-white text-gray-600 text-2xl"

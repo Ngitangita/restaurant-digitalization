@@ -167,7 +167,7 @@ function TablesList() {
     };
 
     return (
-        <div className="container mx-auto p-4 bg-white TableListe">
+        <div className="container mx-auto p-4 bg-white darkBody">
             <h1 className="text-2xl font-bold mb-4">Liste des Tables</h1>
             <div className='flex flex-row gap-4'>
                 <button
@@ -204,7 +204,7 @@ function TablesList() {
                 />
             </div>
 
-            <table className="min-w-full shadow-md rounded-lg overflow-hidden bg-white TableTbl">
+            <table className="min-w-full shadow-md rounded-lg overflow-hidden bg-white darkBody">
                 <thead>
                     <tr className="bg-gray-200">
                         <th className="py-2 px-4">Numéro</th>

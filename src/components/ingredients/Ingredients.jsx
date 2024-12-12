@@ -144,7 +144,7 @@ const IngredientList = () => {
     };
 
     return (
-        <div className="ingredient container mx-auto p-4 bg-white">
+        <div className="darkBody container mx-auto p-4 pr-12 bg-white">
             <h1 className="text-2xl font-bold mb-4">Liste des Ingrédients</h1>
             {error && <p className="text-red-500">{error}</p>}
 
@@ -199,7 +199,7 @@ const IngredientList = () => {
                 </div>
             )}
 
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden ingredientTable">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody">
                 <thead>
                 <tr className="bg-gray-200">
                     <th className="py-2 px-4">Nom</th>

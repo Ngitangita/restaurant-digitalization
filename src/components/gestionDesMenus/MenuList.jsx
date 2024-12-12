@@ -171,7 +171,7 @@ const MenuList = () => {
     };
 
     return (
-        <div className="container bg-white MenuList mx-auto p-10 pb-14">
+        <div className="container bg-white darkBody mx-auto p-10 pb-14">
             <h1 className="text-2xl font-bold mb-4">Liste des Menus</h1>
             {error && <p className="text-red-500">{error}</p>}
 
@@ -234,7 +234,7 @@ const MenuList = () => {
                 </div>
             )}
 
-            <table className="min-w-full bg-white MenuList shadow-md rounded-lg overflow-hidden">
+            <table className="min-w-full bg-white darkBody shadow-md rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-200">
                         <th className="py-2 px-4">Nom</th>

@@ -25,7 +25,7 @@ function ReservationList() {
     setModalType(type);
     setSelectedReservation(reservation);
     setIsModalOpen(!isModalOpen);
-};
+  };
 
   const fetchReservations = async () => {
     setIsLoading(true);
@@ -105,24 +105,24 @@ function ReservationList() {
   };
 
   return (
-    <div className="container pr-10 p-6 bg-white shadow-md rounded-md">
+    <div className="darkBody container pr-10 p-6 bg-white shadow-md rounded-md">
       <h1 className="text-2xl font-bold mb-4">Liste des Réservations</h1>
 
       <button
         className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 ml-2"
-        onClick={toggleModal}
+        onClick={() => toggleModal('create')}
       >
         Créer un réservation
       </button>
 
-      {isModalOpen && (
+      {isModalOpen && modalType === 'create' && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
           <div className="CreateModal bg-white rounded-lg shadow-lg w-full max-w-md">
             <div className='flex flex-row justify-between items-center'>
               <h2 className="text-xl pl-8 pt-8 pb-4">Créer une nouvelle réservation</h2>
               <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
                             relative bottom-4 text-[30px] hover:text-white cursor-pointer'
-                onClick={toggleModal}>
+                onClick={() => toggleModal('')}>
                 x
               </span>
             </div>
@@ -131,7 +131,7 @@ function ReservationList() {
                 setReservations(prev => [...prev, reservation]);
                 toggleModal();
               }}
-              createReservationModal={toggleModal}
+              createReservationModal={() => toggleModal('')}
               rooms={rooms}
               customers={customers}
               statuses={statuses}
@@ -143,10 +143,10 @@ function ReservationList() {
       <table className="w-full table-auto">
         <thead>
           <tr className="bg-gray-100">
-            <th className="px-4 py-2">Client</th>
-            <th className="px-4 py-2">Chambre</th>
             <th className="px-4 py-2">Date de début</th>
             <th className="px-4 py-2">Date de fin</th>
+            <th className="px-4 py-2">Client</th>
+            <th className="px-4 py-2">Chambre</th>
             <th className="px-4 py-2">Statut</th>
             <th className="px-4 py-2">Description</th>
             <th className="px-4 py-2">Action</th>
@@ -159,44 +159,44 @@ function ReservationList() {
             </tr>
           ) : (
             reservations.length === 0 ? (
-            <tr  className="border-b">
-              <td colSpan="7" className="py-4 text-gray-500">
-                <p className="flex flex-col items-center justify-center">
-                  <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
-                  <span>Aucun réservations trouvé</span>
-                </p>
-              </td>
-            </tr>) : (reservations.map((reservation) => (
-              <tr key={reservation.id}>
-                <td className="px-4 py-2">{reservation.customer.lastName}</td>
-                <td className="px-4 py-2">{reservation.room ? reservation.room.roomNumber : 'N/A'}</td>
-                <td className="px-4 py-2">{reservation.reservationStart}</td>
-                <td className="px-4 py-2">{reservation.reservationEnd}</td>
-                <td className={`py-2 px-4 cursor-pointer ${reservation.status.toLowerCase() !== "confirmed" || reservation.status.toLowerCase() !== "completed" ? 'text-red-500 font-bold' : ''}`}>
-                  <button
-                    onClick={() => toggleModal('editStatus', reservation)}
-                    className='w-full flex flex-col gap-1 items-center '
-                  >
-                    <span className='flex flex-row gap-1 items-center '>
-                      <MdEdit /> {reservation.status.toLowerCase() !== "confirmed" || reservation.status.toLowerCase() !== "completed" && (
+              <tr className="border-b">
+                <td colSpan="7" className="py-4 text-gray-500">
+                  <p className="flex flex-col items-center justify-center">
+                    <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
+                    <span>Aucun réservations trouvé</span>
+                  </p>
+                </td>
+              </tr>) : (reservations.map((reservation) => (
+                <tr key={reservation.id} className="hover:bg-gray-100 text-center border-y">
+                  <td className="px-4 py-2">{reservation.reservationStart}</td>
+                  <td className="px-4 py-2">{reservation.reservationEnd}</td>
+                  <td className="px-4 py-2">{reservation.customer.firstName} {reservation.customer.lastName}</td>
+                  <td className="px-4 py-2">{reservation.room ? reservation.room.roomNumber : 'N/A'}</td>
+                  <td className={`py-2 px-4 cursor-pointer ${(reservation.status.toLowerCase() !== "confirmed" && reservation.status.toLowerCase() !== "completed") ? 'text-red-500 font-bold' : ''}`}>
+                    <button
+                      onClick={() => toggleModal('editStatus', reservation)}
+                      className='w-full flex flex-col gap-1 items-center '
+                    >
+                      <span className='flex flex-row gap-1 items-center '>
+                        <MdEdit /> {(reservation.status.toLowerCase() !== "confirmed" && reservation.status.toLowerCase() !== "completed") && (
                           <span className="text-red-500 text-[10px]">⚠️ </span>
                         )}
-                      {convertStatusToReservation(reservation.status)}
-                    </span>
+                        {convertStatusToReservation(reservation.status)}
+                      </span>
 
-                  </button>
-                </td>
-                <td className="px-4 py-2">{reservation.description}</td>
-                <td className="py-2 px-4 flex flex-row gap-2 justify-center">
-                  <button
-                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
-                    onClick={() => confirmDelete(reservation.id)}
-                  >
-                    <MdDelete />
-                  </button>
-                </td>
-              </tr>
-            ))))}
+                    </button>
+                  </td>
+                  <td className="px-4 py-2">{reservation.description}</td>
+                  <td className="py-2 px-4 flex flex-row gap-2 justify-center">
+                    <button
+                      className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
+                      onClick={() => confirmDelete(reservation.id)}
+                    >
+                      <MdDelete />
+                    </button>
+                  </td>
+                </tr>
+              ))))}
         </tbody>
       </table>
 

@@ -105,7 +105,7 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="AddIngredientsModal">
+        <form onSubmit={handleSubmit(onSubmit)}>
             <h1 className="text-2xl font-bold mb-4">Gestion des ingrédients de menus</h1>
 
             <div className="flex flex-row gap-2 border-b-[1px] pb-5 items-center">
@@ -158,13 +158,13 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
                     {ingredientQuantities.map((ingredient) => (
                         <li
                             key={ingredient.ingredientId}
-                            className={`flex items-center cursor-pointer hover:bg-gray-100 text-center ${selectedForDeletion.includes(ingredient.ingredientId) ? 'bg-gray-200' : ''
+                            className={`flex items-center cursor-pointer hover:bg-gray-100 text-center dark:hover:bg-gray-600${selectedForDeletion.includes(ingredient.ingredientId) ? 'bg-gray-200' : ''
                                 } transition-all`}
                             onClick={() => handleIngredientClick(ingredient.ingredientId)}
                         >
                             <input
                                 type="checkbox"
-                                className="mr-2"
+                                className="mr-2 dark:hover:bg-gray-600"
                                 checked={selectedForDeletion.includes(ingredient.ingredientId)}
                                 onChange={() => toggleDeleteMode(ingredient.ingredientId)}
                             />

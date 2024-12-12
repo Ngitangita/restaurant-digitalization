@@ -77,7 +77,7 @@ function MenuWithIngredients() {
 
 
   return (
-    <div className="container mx-auto p-4 bg-white MenuWithIngredients">
+    <div className="container mx-auto p-4 bg-white darkBody">
       <div className='flex flex-row gap-5 items-center'>
         <ManageMenuIngredients
           onAddIngredients={fetchMenuWithIngredients}

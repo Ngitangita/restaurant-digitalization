@@ -90,7 +90,7 @@ function UnitsList() {
     }
 
     return (
-        <div className="container mx-auto p-4 bg-white">
+        <div className="container mx-auto p-4 bg-white darkBody">
             <div className='flex flex-row gap-4'>
                 <button
                     className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 ml-2"
@@ -99,7 +99,7 @@ function UnitsList() {
                     Créer un unité
                 </button>
             </div>
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden ingredientTable">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody">
                 <thead>
                 <tr className="bg-gray-200">
                     <th className="py-2 px-4">Nom</th>
@@ -107,7 +107,7 @@ function UnitsList() {
                     <th className="py-2 px-4">Action</th>
                 </tr>
                 </thead>
-                <tbody className='ModalListeUnit'>
+                <tbody className='darkBody'>
                 {units.length === 0 ? (
                     <tr className="text-center">
                         <td colSpan="6" className="py-4 text-gray-500">

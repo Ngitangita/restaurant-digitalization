@@ -59,26 +59,30 @@ function MenuOrdersList() {
 
     const handleEditStatus = (order) => {
         setSelectedOrderId(order.id);
-        setStatus(order.status);
+        setStatus(order.orderStatus);
         setShowEditModal(true);
     };
 
     const handleUpdateStatus = async () => {
         try {
             const url = apiUrl(`/menu-orders/${selectedOrderId}/status`);
-            await fetch(url, {
+            const res = await fetch(url, {
                 method: 'PATCH',
-                body: JSON.stringify(status),
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                body: JSON.stringify(status),
             });
 
-            setShowEditModal(false);
-            setSelectedOrderId(null);
-            fetchOrders();
-        } catch (error) {
-            console.error('Erreur lors de la mise à jour du statut de la commande:', error);
+            if (res.ok) {
+                setShowEditModal(false);
+                setSelectedOrderId(null);
+                void fetchOrders();
+                showSuccess("Le status a été mis à jour avec succès.");
+            }
+
+        } catch {
+            showError("Erreur lors de la mise à jour du statut de la commande.");
         }
     };
 
@@ -104,13 +108,13 @@ function MenuOrdersList() {
 
     const filteredMenuOrders = orders.filter((order) => {
         if (searchTerm) {
-            return order.room?.roomNumber === parseInt(searchTerm, 10);
+            return (order.room?.roomNumber || order.table?.number) === parseInt(searchTerm, 10);
         }
         return true;
     })
 
     return (
-        <div className="w-full p-4 bg-white rounded shadow-lg menuOrdersList pr-16">
+        <div className="w-full p-4 bg-white rounded shadow-lg darkBody pr-16">
             <h2 className="text-2xl font-bold mb-4">Liste des Commandes</h2>
             <div className="flex flex-row gap-2 items-center">
                 <button
@@ -123,7 +127,7 @@ function MenuOrdersList() {
 
                 <TextField
                     id="outlined-search"
-                    label="Rechercher une salle"
+                    label="Rechercher chambre / table"
                     type="search"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -149,7 +153,7 @@ function MenuOrdersList() {
                 />
             </div>
 
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden mt-4 menuOrdersList">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden mt-4 darkBody">
                 <thead>
                     <tr className="bg-gray-200">
                         <th className="py-2">Chambre</th>
@@ -185,7 +189,7 @@ function MenuOrdersList() {
                                         className={`w-full flex flex-col gap-1 items-center ${order.orderStatus?.toLowerCase() !== "completed" ? 'text-red-500 font-bold' : ''}`}
                                     >
                                         <span className='flex flex-row text-sm gap-1 items-center '>
-                                            <MdEdit /> {order.orderStatus?.toUpperCase() !== "COMPLETED" && (
+                                            <MdEdit /> {order.orderStatus?.toLowerCase() !== "completed" && (
                                                 <span className="text-red-500 text-[10px]">⚠️</span>
                                             )}
                                             {convertStatusToOrder(order.orderStatus?.toLowerCase())}

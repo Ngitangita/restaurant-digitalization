@@ -107,7 +107,7 @@ const CreatePayment = ({ onCreate, annulerModal }) => {
     };
 
     return (
-        <div className="max-w-md mx-auto p-4 bg-white shadow-md rounded">
+        <div className="max-w-md mx-auto p-4 shadow-md rounded">
             <form onSubmit={handleSubmit} className="mb-6">
                 <div className='flex flex-row gap-2'>
                     <div>

@@ -6,6 +6,7 @@ import CreateStock from "../../components/addStocks/CreateStock";
 import dayjs from "dayjs";
 import TextField from '@mui/material/TextField';
 import { MdInfoOutline} from 'react-icons/md';
+import useToast from "../../components/gestionDesMenus/menuOrder/(tantely)/hooks/useToast";
 
 function StockList() {
   const [stocks, setStocks] = useState([]);
@@ -24,6 +25,7 @@ function StockList() {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [operationDetails, setOperationDetails] = useState(null);
   const [selectedOperationId, setSelectedOperationId] = useState(null);
+  const { showSuccess, showError } = useToast()
 
   useEffect(() => {
 
@@ -39,6 +41,7 @@ function StockList() {
       .catch((e) => {
         console.error(e);
         setError("Une erreur s'est produite lors du chargement des stocks.");
+        showError("Une erreur s'est produite lors du chargement des stocks.");
         setIsLoading(false);
       });
   }, [size, page, ingredientName, quantityMin, quantityMax, startDate, endDate]);
@@ -76,13 +79,13 @@ function StockList() {
   
     setIsModalOpen(false);
     setSelectedStock(null);
-    setSuccessMessage("Le stock a été mis à jour avec succès.");
+    showSuccess("Le stock a été mis à jour avec succès.");
     setTimeout(() => setSuccessMessage(null), 3000);
     setPage(1);
   };
 
   return (
-    <div className="StockList container mx-auto p-4 bg-white pb-10 pr-14">
+    <div className="darkBody container mx-auto p-4 bg-white pb-10 pr-14">
       <h1 className="text-2xl font-bold mb-4">Liste des Stocks</h1>
       {error && <p className="text-red-500">{error}</p>}
       {successMessage && <p className="text-green-500">{successMessage}</p>}
@@ -111,6 +114,7 @@ function StockList() {
           sx={{
             width: '250px',
             height: '50px',
+            zIndex: '0px',
             '.MuiInputBase-root': { height: '40px' },
           }}
         />
@@ -225,7 +229,7 @@ function StockList() {
         )}
 
         {showDetailsModal && selectedOperationId && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="bg-white rounded-lg w-1/2 DetailsModal">
               <div className='flex flex-row justify-between items-center'>
                 <h2 className="text-xl pl-8 pt-8 pb-4">Détails de l'Opération</h2>

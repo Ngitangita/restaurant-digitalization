@@ -27,11 +27,8 @@ body.dark {
     background: #0e1c36;
 }
 
-body.dark header, body.dark .Sidebar, body.dark .BonDeCommandes, body.dark .ingredient, body.dark .ingredientTable, 
-body.dark .Breadcrumb, body.dark .MenuList, body.dark .categories, body.dark .categoriesTable, body.dark .StockList, 
-body.dark .StockListTBody, body.dark .Notifications, body.dark .UpdatePassword, body.dark .TableListe, body.dark .TableTbl,
-body.dark .MenuWithIngredients, body.dark .RoomList, body.dark .FloorList, body.dark .menuOrdersList,
-body.dark .PurchaseList{background: #1a2b52; color: #e5e5e5 !important; opacity: 0.85;}
+body.dark header, body.dark .Sidebar, body.dark .darkBody, body.dark .Breadcrumb
+{background: #1a2b52; color: #e5e5e5 !important; opacity: 0.85;}
 
 body.dark span {
     color: #e5e5e5 !important; opacity: 0.85;}
@@ -45,7 +42,7 @@ body.dark .Sidebar .button:hover {
 body.dark .Sidebar .Authentification {
     background: #1a2b52; color: #e5e5e5 !important;}
 
-body.dark .CreateModal, body.dark .DeleteModal, body.dark .ModalListeUnit,
+body.dark .CreateModal, body.dark .DeleteModal,
 body.dark .EditModal, body.dark .DetailsModal{background: #0e1c36; color: #e5e5e5 !important; }
 
 body.dark label {
@@ -61,9 +58,6 @@ body.dark input, body.dark select, body.dark option, body.dark textarea, body.da
 body.dark .SearchBox {background: #1a2b52; color: #e5e5e5; border: none; opacity: 0.85;}
 
 body.dark table {border: none;}
-
-body.dark .Commande, body.dark .DrinkStock, body.dark .FoodStock, body.dark .IngredientStock {
-    background: #1a2b52; color: #e5e5e5; opacity: 0.85;}
 
 body.dark tr {border: none;}
 

@@ -139,7 +139,7 @@ const CategoriesList = () => {
 
 
     return (
-        <div className="container mx-auto p-4 pr-14 categories bg-white">
+        <div className="container mx-auto p-4 pr-14 darkBody bg-white">
             <h1 className="text-2xl font-bold mb-4">Liste des catégories</h1>
             {error && <p className="text-red-500">{error}</p>}
 
@@ -196,7 +196,7 @@ const CategoriesList = () => {
                 </div>
             )}
 
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden categoriesTable">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody">
                 <thead>
                     <tr className="bg-gray-200">
                         <th className="py-2 px-4">Nom</th>

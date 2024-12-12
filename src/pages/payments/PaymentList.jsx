@@ -111,9 +111,6 @@ function PaymentList() {
 
   const handleUpdateMethod = async () => {
     try {
-
-      console.log(method);
-
       const url = apiUrl(`/payments/update/method/${selectedPaymentId}`);
       const res = await fetch(url, {
         method: 'PUT',
@@ -127,7 +124,7 @@ function PaymentList() {
         setShowEditMethodModal(false);
         setSelectedPaymentId(null);
         void fetchPayments();
-        showSuccess("Statut mis à jour avec succès.");
+        showSuccess("Méthode mis à jour avec succès.");
       }
 
     } catch {
@@ -162,7 +159,7 @@ function PaymentList() {
   };
 
   return (
-    <div className="container p-6 pr-14 bg-white shadow-md rounded-md">
+    <div className="container p-6 pr-14 bg-white shadow-md rounded-md darkBody">
       <h1 className="text-2xl font-bold mb-4">Liste des payments</h1>
 
       <button

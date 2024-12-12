@@ -25,7 +25,7 @@ function OperationDetails({ operationId, onClose }) {
   }
 
   return (
-    <div className="p-8 ">
+    <div className="p-8">
         {error && <div className="bg-red-300 text-red-700 p-2 rounded mb-4">{error}</div>}
         {!error && (
           <>

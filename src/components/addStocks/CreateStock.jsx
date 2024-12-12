@@ -19,8 +19,7 @@ function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredie
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
   });
-
-  // Remplir le champ de l'ID de l'ingrédient
+  
   useEffect(() => {
     if (ingredientId) {
       setValue("ingredientId", ingredientId);
@@ -64,7 +63,7 @@ function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredie
         <input
           type="hidden"
           value={ingredientId}
-          {...register("ingredientId", { required: true })} // Assurez-vous que l'ID de l'ingrédient est requis
+          {...register("ingredientId", { required: true })} 
         />
         {errors.ingredientId && <p className="text-red-500">{errors.ingredientId.message}</p>}
       </div>

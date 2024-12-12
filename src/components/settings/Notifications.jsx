@@ -4,7 +4,7 @@ export function Notifications() {
   return (
     <form
       onSubmit={(e) => e.preventDefault()}
-      className="Notifications bg-white p-6 rounded-lg shadow-md space-y-6 text-gray-500"
+      className="darkBody bg-white p-6 rounded-lg shadow-md space-y-6 text-gray-500"
     >
       <div>
         <h3 className="text-lg font-semibold">Notifications</h3>

@@ -86,7 +86,7 @@ function OperationStatistics() {
     setTimeout(() => setIsFocused(false), 100);
   };
   return (
-      <div className="container bg-white w-[1109px] MenuList mx-auto p-10 pb-14">
+      <div className="container bg-white w-[1109px] darkBody mx-auto p-10 pb-14">
         <h2 className="text-xl font-semibold mb-4">Statistiques des Opérations</h2>
 
         <div className="flex gap-4 mb-4">
