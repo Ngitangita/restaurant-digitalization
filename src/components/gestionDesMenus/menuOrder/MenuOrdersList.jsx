@@ -22,7 +22,7 @@ function MenuOrdersList() {
     const [searchTerm, setSearchTerm] = useState('');
     const [hasPrevious, setHasPrevious] = useState(false);
     const [hasNext, setHasNext] = useState(false);
-    const { showError } = useToast();
+    const { showError, showSuccess } = useToast();
 
     useEffect(() => {
         void fetchOrders();
@@ -254,7 +254,7 @@ function MenuOrdersList() {
                         <CreateMenuOrder
                             isOpen={isModalOpen}
                             onClose={() => setIsModalOpen(false)}
-                            onOrderCreated={(newOrder) => {
+                            onOrderCreated={() => {
                                 fetchOrders()
                             }}
                         />
