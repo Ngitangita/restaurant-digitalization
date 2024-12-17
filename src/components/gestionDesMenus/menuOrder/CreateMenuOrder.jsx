@@ -7,6 +7,7 @@ import MenuItems from "./MenuItems";
 import { MdDelete } from "react-icons/md";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
+import useToast from "./(tantely)/hooks/useToast";
 
 const schema = z.object({
   customerId: z.union([z.string(), z.number()]).optional(),
@@ -34,6 +35,7 @@ function CreateMenuOrder({ onClose, onOrderCreated }) {
     const [customers, setCustomers] = useState([]);
     const [tables, setTables] = useState([]);
     const [rooms, setRooms] = useState([]);
+    const {showError, showSuccess} = useToast()
     const [menus, setMenus] = useState([]);
      
     const handleConfirm = async (data) => {
@@ -48,18 +50,51 @@ function CreateMenuOrder({ onClose, onOrderCreated }) {
 
         const payload = {
             customerId: data.customerId ? Number(data.customerId) : null,
-            roomId: data.roomId ? Number(data.roomId) : null,
-            tableId: data.tableId ? Number(data.tableId) : null,
+            roomNumber: data.roomId ? Number(data.roomId) : null,
+            tableNumber: data.tableId ? Number(data.tableId) : null,
             menuItems: menuRequest,
         };
     
         try {
-            const response = await fetchJson(`${apiUrl("/menu-orders")}`, "POST", payload);
-            onOrderCreated(response)
-            onClose(); 
-        } catch (error) {
-            console.error("Erreur lors de la soumission :", error);
-        }
+          const response = await fetch(apiUrl("/menu-orders"), {
+              method: "POST",
+              headers: {
+                  "Content-Type": "application/json",
+              },
+              body: JSON.stringify(payload),
+          });
+  
+          const data = await response.json();
+
+          console.log(data);
+
+          if (!response.ok) {
+            const ingredientsList = data.message
+            ? Array.from(
+                  new Set(
+                      data.message
+                          .split(",")
+                          .map((item) => item.trim().toLowerCase()) 
+                  )
+              ).map((item) => item.charAt(0).toUpperCase() + item.slice(1))
+            : [];
+        
+        const formattedMessage = ingredientsList.length > 0 
+            ? `Les ingrédients suivants sont insuffisants :\n• ${ingredientsList.join("\n• ")}`
+            : `Erreur : ${response.statusText}`;
+
+            setMenuError(formattedMessage);
+            showError(formattedMessage);
+            throw new Error(formattedMessage);
+
+          }
+  
+          showSuccess("Commande créée avec succès !");
+          onOrderCreated(data);
+          onClose();
+      } catch (error) {
+          console.error("Erreur lors de la soumission :", error.message);
+      }
     };
     
     const handleSave = useCallback((data) => {
@@ -137,7 +172,7 @@ function CreateMenuOrder({ onClose, onOrderCreated }) {
                     options={rooms}
                     getOptionKey={(option, index) => option?.id ?? `default-key-${index}`}
                     getOptionLabel={(option) => option?.roomNumber?.toString() || "Inconnu"}
-                    onChange={(event, value) => field.onChange(value?.id || null)}
+                    onChange={(event, value) => field.onChange(value?.roomNumber || null)}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -161,7 +196,7 @@ function CreateMenuOrder({ onClose, onOrderCreated }) {
                     options={tables}
                     getOptionKey={(option, index) => option?.id ?? `default-key-${index}`}
                     getOptionLabel={(option) => option?.number?.toString() || "Inconnu"}
-                    onChange={(event, value) => field.onChange(value?.id || null)}
+                    onChange={(event, value) => field.onChange(value?.number || null)}
                     renderInput={(params) => (
                       <TextField
                         {...params}

@@ -209,12 +209,14 @@ const RoomList = () => {
                                 </tr>
                             ))
                         ) : (
-                            <tr>
-                                <td colSpan="8" className="py-4 text-center">
+                            <tr className="hover:bg-gray-100 text-center border-y">
+                            <td colSpan="8" className="py-4 text-gray-500  ">
+                                <p className="flex flex-col items-center justify-center w-full">
                                     <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
-                                    Aucune salle trouvée
-                                </td>
-                            </tr>
+                                    <span>Aucun salle trouvé</span>
+                                </p>
+                            </td>
+                        </tr>
                         )}
                     </tbody>
                 </table>

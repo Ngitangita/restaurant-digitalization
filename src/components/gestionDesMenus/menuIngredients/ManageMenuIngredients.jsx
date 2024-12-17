@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { apiUrl } from '../../../services/api';
 import AddIngredientsToMenu from './AddIngredientsToMenu';
 import { MdAddBox } from "react-icons/md";

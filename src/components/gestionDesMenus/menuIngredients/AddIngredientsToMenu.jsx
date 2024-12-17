@@ -1,16 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import  React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as zod from 'zod';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import { MdDelete } from 'react-icons/md';
 import { apiUrl } from '../../../services/api';
+import useToast from '../menuOrder/(tantely)/hooks/useToast';
 
-const schema = zod.object({
-    quantity: zod.number().positive().min(1, 'Quantité invalide'),
-});
+
 
 const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => {
     const [ingredientQuantities, setIngredientQuantities] = useState([]);
@@ -19,12 +15,9 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
     const [errorMessage, setErrorMessage] = useState('');
     const [selectedForDeletion, setSelectedForDeletion] = useState([]);
 
+    const {showError, showSuccess} = useToast()
     const { menuId } = useParams();
     const navigate = useNavigate();
-
-    const { handleSubmit } = useForm({
-        resolver: zodResolver(schema),
-    });
 
     useEffect(() => {
         setIngredientQuantities([]);
@@ -48,7 +41,9 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
             quantity: parseFloat(quantity),
         };
 
+        
         setIngredientQuantities([...ingredientQuantities, newIngredient]);
+
         setSelectedIngredient(null);
         setQuantity('');
         setErrorMessage('');
@@ -66,12 +61,18 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
         toggleDeleteMode(ingredientId);
     };
 
-    const onSubmit = async () => {
+    const onSubmit = async (e) => {
+
+        e.preventDefault()
+        console.log(ingredientQuantities);
+
         if (!menuId || ingredientQuantities.length === 0) {
             setErrorMessage('Veuillez sélectionner un menu et ajouter au moins un ingrédient.');
             return;
         }
 
+      
+        
         const menuIngredientsData = {
             menuId: parseInt(menuId, 10),
             ingredients: ingredientQuantities.map(({ ingredientId, quantity }) => ({
@@ -88,14 +89,17 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
             });
 
             if (response.ok) {
+                showSuccess('Ingrédients ajoutés avec succès !');
                 onAddIngredients();
                 closeModal();
                 navigate(`/menu-ingredients/menu/${menuId}`);
             } else {
+                showError('Erreur lors de l’ajout des ingrédients au menu.');
                 setErrorMessage('Erreur lors de l’ajout des ingrédients au menu.');
             }
         } catch {
             setErrorMessage('Erreur lors de l’envoi des données.');
+            showError('Erreur lors de l’envoi des données.');
         }
     };
 
@@ -105,7 +109,7 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={onSubmit}>
             <h1 className="text-2xl font-bold mb-4">Gestion des ingrédients de menus</h1>
 
             <div className="flex flex-row gap-2 border-b-[1px] pb-5 items-center">

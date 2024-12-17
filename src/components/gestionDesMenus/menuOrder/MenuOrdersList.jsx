@@ -186,10 +186,10 @@ function MenuOrdersList() {
                                 <td className="py-2 px-4 cursor-pointer">
                                     <button
                                         onClick={() => handleEditStatus(order)}
-                                        className={`w-full flex flex-col gap-1 items-center ${order.orderStatus?.toLowerCase() !== "completed" ? 'text-red-500 font-bold' : ''}`}
+                                        className={`w-full flex flex-col gap-1 items-center ${order.orderStatus?.toLowerCase() !== "delivered" ? 'text-red-500 font-bold' : ''}`}
                                     >
                                         <span className='flex flex-row text-sm gap-1 items-center '>
-                                            <MdEdit /> {order.orderStatus?.toLowerCase() !== "completed" && (
+                                            <MdEdit /> {order.orderStatus?.toLowerCase() !== "delivered" && (
                                                 <span className="text-red-500 text-[10px]">⚠️</span>
                                             )}
                                             {convertStatusToOrder(order.orderStatus?.toLowerCase())}

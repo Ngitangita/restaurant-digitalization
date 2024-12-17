@@ -15,10 +15,7 @@ export const convertStatusMenu = (status) => {
 export const convertStatusToTable = (status) => {
     const statusMap = {
         'AVAILABLE': 'Disponible',
-        'OCCUPIED': 'Occupé',
-        'RESERVED': 'Réservé',
-        'OUT_OF_SERVICE': 'Hors service',
-        'CLEANING': 'Nettoyage'
+        'NOT_AVAILABLE': 'Non disponible'
     };
 
     const formattedStatus = statusMap[status.toUpperCase()] || 'Statut inconnu';
@@ -30,10 +27,7 @@ export const convertStatusToTable = (status) => {
 export const convertStatusToRoom = (status) => {
     const statusMap = {
         'AVAILABLE': 'Disponible',
-        'OCCUPIED': 'Occupé',
-        'UNDER_MAINTENANCE': 'En maintenance',
-        'RESERVED': 'Réservé',
-        'OUT_OF_SERVICE': 'Hors service'
+        'NOT_AVAILABLE': 'Non disponible'
     };
 
     const formattedStatus = statusMap[status.toUpperCase()] || 'Statut inconnu';
@@ -44,10 +38,8 @@ export const convertStatusToRoom = (status) => {
 
 export const convertStatusToOrder = (status) => {
     const statusMap = {
-        PENDING: 'En attente',
-        COMPLETED: 'Terminé',
-        CANCELED: 'Annulé',
-        IN_PROGRESS: 'En cours',
+        NOT_DELIVERED: 'non livré',
+        DELIVERED: 'livré',
     };
 
     return statusMap[status.toUpperCase()] || status;
@@ -58,9 +50,7 @@ export const convertStatusToOrder = (status) => {
         const statusMap = {
             PENDING: 'En attente',
             CONFIRMED: 'Confirmé',
-            COMPLETED: 'Terminé',
             CANCELED: 'Annulé',
-            NO_SHOW: 'Non montrer',
         };
     
         return statusMap[status.toUpperCase()] || status;
@@ -68,11 +58,8 @@ export const convertStatusToOrder = (status) => {
    
     export const convertStatusToPayment = (status) => {
         const statusMap = {
-            PENDING: 'En attente',
-            FAILED: 'Echoué',
-            COMPLETED: 'Payé',
-            CANCELED: 'Annulé',
-            REFUNDED: 'Non payé',
+            PAID: 'Payé',
+            UNPAID: 'Non payé',
         };
     
         return statusMap[status.toUpperCase()] || status;
