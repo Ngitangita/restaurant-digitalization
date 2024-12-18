@@ -98,8 +98,18 @@ function CreateMenuOrder({ onClose, onOrderCreated }) {
     };
     
     const handleSave = useCallback((data) => {
-        setMenuRequest((prev) => [...prev, data]);
-    }, []);
+      setMenuRequest((prev) => {
+          const existingItemIndex = prev.findIndex(item => item.menuId === data.menuId);
+          if (existingItemIndex !== -1) {
+              const updatedMenuRequest = [...prev];
+              updatedMenuRequest[existingItemIndex].quantity += data.quantity;
+              return updatedMenuRequest;
+          } else {
+              return [...prev, data];
+          }
+      });
+  }, []);
+  
 
     const removeItem = (menuId) => {
         setMenuRequest(menuRequest.filter(item => item.menuId !== menuId));

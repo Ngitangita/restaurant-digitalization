@@ -176,7 +176,16 @@ function MenuOrdersList() {
                             <td colSpan="8" className="text-center py-2 text-red-500">{error}</td>
                         </tr>
                     ) : filteredMenuOrders.length > 0 ? (
-                        filteredMenuOrders.toSorted((a, b) => a.id - b.id).map((order) => (
+                        filteredMenuOrders.toSorted((a, b) => {
+                            const statusA = a.orderStatus?.toLowerCase() !== "delivered" ? 0 : 1;
+                            const statusB = b.orderStatus?.toLowerCase() !== "delivered" ? 0 : 1;
+
+                            if (statusA !== statusB) {
+                                return statusA - statusB
+                            }
+
+                            return (new Date(b.orderDate) - new Date(a.orderDate) || new Date(b.updatedAt) - new Date(a.updatedAt))
+                        }).map((order) => (
                             <tr key={order.id} className="hover:bg-gray-100 text-center border-y">
                                 <td className="py-2">{order.room?.roomNumber || "-"}</td>
                                 <td className="py-2">{order.table?.number || "-"}</td>
@@ -206,7 +215,7 @@ function MenuOrdersList() {
                             <td colSpan="8" className="py-4 text-gray-500  ">
                                 <p className="flex flex-col items-center justify-center w-full">
                                     <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
-                                    <span>Aucun stock trouvé</span>
+                                    <span>Aucun commande trouvé</span>
                                 </p>
                             </td>
                         </tr>
