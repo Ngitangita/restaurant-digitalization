@@ -8,7 +8,7 @@ const EditIngredients = ({units, ingredientName, setIngredientName, unitId, setU
         className="border p-2 rounded w-full mb-4"
       />
       <select
-        value={unitId}
+        value={unitId || ""}
         onChange={(e) => setUnitId(e.target.value)}
         className="border p-2 rounded w-full mb-4"
       >

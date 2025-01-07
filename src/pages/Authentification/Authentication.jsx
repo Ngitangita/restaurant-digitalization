@@ -10,14 +10,14 @@ import useToast from "../../components/gestionDesMenus/menuOrder/(tantely)/hooks
 
 const LoginSchema = z.object({
   email: z.string().email({ message: "Adresse e-mail invalide" }),
-  password: z.string().min(8, { message: "Le mot de passe est incorrecte" }),
+  password: z.string().min(4, { message: "Le mot de passe est incorrecte" }),
 });
 
 const SignupSchema = z.object({
   name: z.string().min(2, { message: "Le nom doit comporter au moins 2 caractères" }),
   email: z.string().email({ message: "Adresse e-mail invalide" }),
-  password: z.string().min(8, { message: "Le mot de passe doit comporter au moins 8 caractères" }),
-  confirmePassword: z.string().min(8, { message: "Le mot de passe doit comporter au moins 8 caractères" }),
+  password: z.string().min(4, { message: "Le mot de passe doit comporter au moins 4 caractères" }),
+  confirmePassword: z.string().min(4, { message: "Le mot de passe doit comporter au moins 4 caractères" }),
 }).refine((data) => data.password === data.confirmePassword, {
   message: "Les mots de passe ne correspondent pas",
   path: ["confirmePassword"],
@@ -216,6 +216,8 @@ export default function Authentication() {
                     toggleShowPassword={() => setShowConfirmPassword(!showConfirmPassword)}
                     register={signupRegister}
                     name="confirmePassword"
+                      placeholder="Confirmez votre mot de passe"
+                     label="Confirmer le mot de passe"
                     errors={signupErrors}
                   />
                   <button
@@ -251,15 +253,15 @@ function FormField({ label, type, placeholder, register, errors, name }) {
   );
 }
 
-function PasswordInput({ showPassword, toggleShowPassword, register, name, errors }) {
+function PasswordInput({ showPassword, toggleShowPassword, register,placeholder = 'Votre mot de passe', name, errors, label = 'Mot de passe' }) {
   return (
     <>
-      <label className="text-lg font-semibold text-white">Mot de passe</label>
+      <label className="text-lg font-semibold text-white">{label}</label>
       <div className="relative">
         <input
           {...register(name)}
           type={showPassword ? "text" : "password"}
-          placeholder="Votre mot de passe"
+          placeholder={placeholder}
           className="w-full px-4 py-2 bg-gray-800/50 text-white rounded-lg border-2 border-gray-600 focus:outline-none focus:border-blue-500"
         />
         <div

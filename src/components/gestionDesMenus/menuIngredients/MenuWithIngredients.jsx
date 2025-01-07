@@ -160,18 +160,19 @@ function MenuWithIngredients() {
               {ingredientToDelete?.ingredientName} ?
             </p>
             <div className="mt-4">
+            <button
+                className="bg-gray-300 text-black rounded p-2 hover:bg-gray-400"
+                onClick={cancelDelete}
+              >
+                Non
+              </button>
               <button
                 className="bg-red-500 text-white rounded p-2 hover:bg-red-600 mr-2"
                 onClick={handleDelete}
               >
                 Oui
               </button>
-              <button
-                className="bg-gray-300 text-black rounded p-2 hover:bg-gray-400"
-                onClick={cancelDelete}
-              >
-                Non
-              </button>
+             
             </div>
           </div>
         </div>

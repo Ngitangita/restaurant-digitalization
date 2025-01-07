@@ -1,4 +1,4 @@
-import  React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
@@ -12,10 +12,9 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
     const [ingredientQuantities, setIngredientQuantities] = useState([]);
     const [selectedIngredient, setSelectedIngredient] = useState(null);
     const [quantity, setQuantity] = useState('');
-    const [errorMessage, setErrorMessage] = useState('');
     const [selectedForDeletion, setSelectedForDeletion] = useState([]);
 
-    const {showError, showSuccess} = useToast()
+    const { showError, showSuccess } = useToast()
     const { menuId } = useParams();
     const navigate = useNavigate();
 
@@ -23,31 +22,37 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
         setIngredientQuantities([]);
     }, [ingredients]);
 
+
     const addIngredient = () => {
         if (!selectedIngredient || !quantity || parseFloat(quantity) <= 0) {
-            setErrorMessage('Sélectionnez un ingrédient et entrez une quantité valide.');
+            showError('Sélectionnez un ingrédient et entrez une quantité valide.');
             return;
         }
 
         const existingIngredient = ingredientQuantities.find(iq => iq.ingredientId === selectedIngredient.id);
+
         if (existingIngredient) {
-            setErrorMessage('Cet ingrédient a déjà été sélectionné.');
-            return;
+            const updatedIngredients = ingredientQuantities.map(iq =>
+                iq.ingredientId === selectedIngredient.id
+                    ? { ...iq, quantity: iq.quantity + parseFloat(quantity) }
+                    : iq
+            );
+
+            setIngredientQuantities(updatedIngredients);
+        } else {
+            const newIngredient = {
+                ingredientId: selectedIngredient.id,
+                name: selectedIngredient.name,
+                quantity: parseFloat(quantity),
+            };
+
+            setIngredientQuantities([...ingredientQuantities, newIngredient]);
         }
-
-        const newIngredient = {
-            ingredientId: selectedIngredient.id,
-            name: selectedIngredient.name,
-            quantity: parseFloat(quantity),
-        };
-
-        
-        setIngredientQuantities([...ingredientQuantities, newIngredient]);
 
         setSelectedIngredient(null);
         setQuantity('');
-        setErrorMessage('');
     };
+
 
     const toggleDeleteMode = (ingredientId) => {
         if (selectedForDeletion.includes(ingredientId)) {
@@ -64,15 +69,14 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
     const onSubmit = async (e) => {
 
         e.preventDefault()
-        console.log(ingredientQuantities);
 
         if (!menuId || ingredientQuantities.length === 0) {
-            setErrorMessage('Veuillez sélectionner un menu et ajouter au moins un ingrédient.');
+            showError('Veuillez sélectionner un menu et ajouter au moins un ingrédient.');
             return;
         }
 
-      
-        
+
+
         const menuIngredientsData = {
             menuId: parseInt(menuId, 10),
             ingredients: ingredientQuantities.map(({ ingredientId, quantity }) => ({
@@ -95,10 +99,8 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
                 navigate(`/menu-ingredients/menu/${menuId}`);
             } else {
                 showError('Erreur lors de l’ajout des ingrédients au menu.');
-                setErrorMessage('Erreur lors de l’ajout des ingrédients au menu.');
             }
         } catch {
-            setErrorMessage('Erreur lors de l’envoi des données.');
             showError('Erreur lors de l’envoi des données.');
         }
     };
@@ -106,6 +108,23 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
     const removeSelectedIngredients = () => {
         setIngredientQuantities(ingredientQuantities.filter(iq => !selectedForDeletion.includes(iq.ingredientId)));
         setSelectedForDeletion([]);
+    };
+
+
+    const handleQuantityChange = (e, ingredientId) => {
+        const updatedQuantity = parseFloat(e.target.value);
+
+        if (isNaN(updatedQuantity) || updatedQuantity < 0) {
+            return;
+        }
+
+        const updatedIngredients = ingredientQuantities.map(ingredient =>
+            ingredient.ingredientId === ingredientId
+                ? { ...ingredient, quantity: updatedQuantity }
+                : ingredient
+        );
+
+        setIngredientQuantities(updatedIngredients);
     };
 
     return (
@@ -156,7 +175,6 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
                     Ajouter l'ingrédient
                 </button>
             </div>
-
             <div>
                 <ul className="mt-4 pb-5">
                     {ingredientQuantities.map((ingredient) => (
@@ -172,34 +190,41 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
                                 checked={selectedForDeletion.includes(ingredient.ingredientId)}
                                 onChange={() => toggleDeleteMode(ingredient.ingredientId)}
                             />
-                            {ingredient.name} - Quantité: {ingredient.quantity}
+                            {ingredient.name} -
+                            <input
+                                type="number"
+                                min="0"
+                                value={ingredient.quantity}
+                                className="mx-2 border px-2 py-1 rounded w-[6em] focus:outline-1 focus:outline-blue-600"
+                                onChange={(e) => handleQuantityChange(e, ingredient.ingredientId)}
+                            />
+
+                            {selectedForDeletion.includes(ingredient.ingredientId) && (
+                                <button
+                                    type="button"
+                                    onClick={removeSelectedIngredients}
+                                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
+                                >
+                                    <MdDelete />
+                                </button>
+                            )}
                         </li>
                     ))}
                 </ul>
 
-                {selectedForDeletion.length > 0 && (
-                    <button
-                        type="button"
-                        onClick={removeSelectedIngredients}
-                        className="bg-red-500 text-white rounded p-2 hover:bg-red-600 ml-2"
-                    >
-                        <MdDelete />
-                    </button>
-                )}
-
-                {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
             </div>
 
-            <div className="mt-4">
-                <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">
-                    Soumettre
-                </button>
+
+            <div className="mt-4 flex flex-wrap flex-row justify-between">
                 <button type="button" onClick={closeModal} className="bg-gray-500 text-white rounded px-4 py-2 hover:bg-gray-600 ml-2">
                     Annuler
                 </button>
+
+                <button type="submit" className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600">
+                    Soumettre
+                </button>
             </div>
 
-            {errorMessage && <p className="text-red-500 mt-4">{errorMessage}</p>}
         </form>
     );
 };
