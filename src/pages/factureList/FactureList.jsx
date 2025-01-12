@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { apiUrl } from '../../services/api';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
