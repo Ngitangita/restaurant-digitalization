@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { FaRegEdit } from "react-icons/fa";
-import { MdDelete, MdInfoOutline } from "react-icons/md";
+import { MdAddBox, MdDelete, MdInfoOutline } from "react-icons/md";
 import { apiUrl, fetchJson } from '../../services/api';
+import { useNavigate } from 'react-router-dom';
 
 function CustomerList() {
     const [customers, setCustomers] = useState([]);
@@ -9,6 +10,7 @@ function CustomerList() {
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [page, setPage] = useState(1);
     const [size, setSize] = useState(8);
+    const navigate = useNavigate()
     const [customerData, setCustomerData] = useState({
         firstName: '',
         lastName: '',
@@ -82,6 +84,13 @@ function CustomerList() {
 
     return (
         <div className="container mx-auto p-4">
+            <button
+                onClick={() => navigate("/customers/create")}
+                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 
+                        flex flex-row gap-2 items-center mb-2"
+            >
+                <MdAddBox /> Ajouter une client
+            </button>
             <table className="min-w-full shadow-md rounded-lg overflow-hidden">
                 <thead>
                     <tr className="bg-gray-200">

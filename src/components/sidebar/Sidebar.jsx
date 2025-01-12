@@ -7,10 +7,11 @@ import { RiMenuUnfold4Line } from "react-icons/ri";
 import {
   MdKeyboardCommandKey, MdOutlineCalendarMonth,
   MdOutlineHome, MdMenuBook, MdOutlineSettings,
-  MdMenu, MdOutlineLogin
+  MdMenu, MdOutlineLogin, MdPayment
 } from "react-icons/md";
 import { useTitleStore } from '../../stores/useTitleStore';
 import {useAuthStore} from "../../stores/useAuthStore.js";
+import { Person2 } from '@mui/icons-material';
 
 const menuItems = [
   {
@@ -64,18 +65,13 @@ const menuItems = [
   {
     title: "Commandes",
     icon: <MdKeyboardCommandKey />,
-    path: "/commandes",
+    path: "/orders/summary",
     subItems: [],
   },
   {
     title: "Payments",
     path: "/payment",
-    subItems: [],
-  },
-  {
-    title: "Calendrier",
-    icon: <MdOutlineCalendarMonth />,
-    path: "/calendar",
+    icon: <MdPayment />,
     subItems: [],
   },
   {
@@ -94,6 +90,19 @@ const menuItems = [
     title: "Réservations",
     icon: <RiReservedLine />,
     path: "/reservations",
+    subItems: [],
+  },
+  
+  {
+    title: "Calendrier",
+    icon: <MdOutlineCalendarMonth />,
+    path: "/calendar",
+    subItems: [],
+  },
+  {
+    title: "Clients",
+    icon: <Person2 />,
+    path: "/customers",
     subItems: [],
   },
   {

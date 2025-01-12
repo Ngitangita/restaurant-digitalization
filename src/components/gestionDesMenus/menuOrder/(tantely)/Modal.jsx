@@ -1,7 +1,7 @@
 import { createPortal } from "react-dom";
 import { FaTimes } from "react-icons/fa"; 
 
-function Modal({ children, isOpen, setIsOpen, onConfirm }) {
+function Modal({ children, isOpen, setIsOpen }) {
     return (
         <>
             {createPortal(

@@ -112,6 +112,7 @@ function TablesList() {
                 status: tableStatus
             };
 
+            
             await fetchJson(apiUrl(`/tables/status`), 'PUT', updateData);
             setShowEditModal(false);
             setSelectedTableId(null);

@@ -25,7 +25,7 @@ function OperationStatistics() {
       }
 
       if (maxTotalQuantity !== null && maxTotalQuantity !== undefined) {
-        queryParams.append("maxTotalQuantity", maxTotalQuantity);
+        queryParams.append("maxTotalQuantity", maxTotalQuantity );
       }
 
       if (date) {
@@ -33,8 +33,6 @@ function OperationStatistics() {
       }
       const url = `${apiUrl("/operations/statistic")}?${queryParams.toString()}`;
 
-      console.log(url);
-      
 
       try {
         const data = await fetchJson(url);        
