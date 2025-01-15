@@ -1,24 +1,29 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { apiUrl } from '../../services/api';
 import useToast from '../gestionDesMenus/menuOrder/(tantely)/hooks/useToast';
 import { convertStatusToReservation } from '../../services/convertStatus';
+import { Autocomplete, TextField, Button } from '@mui/material';
 
-function CreateReservation({ onCreate, createReservationModal, rooms, customers, statuses }) {
+function CreateReservation({ onCreate, createReservationModal, rooms, tables, customers, statuses }) {
     const [formData, setFormData] = useState({
         reservationStart: '',
         reservationEnd: '',
         customerId: '',
-        roomId: '',
+        roomIds: [],
+        tableIds: [],
         status: '',
         description: '',
     });
     const { showSuccess, showError } = useToast();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [errors, setErrors] = useState('');
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+    const handleAutocompleteChange = (field, value) => {
+        setFormData((prevData) => ({ ...prevData, [field]: value.map((item) => item.id) }));
     };
 
     const handleSubmit = async (e) => {
@@ -32,11 +37,13 @@ function CreateReservation({ onCreate, createReservationModal, rooms, customers,
                 body: JSON.stringify(formData),
             });
 
+            const newReservation = await response.json();
+
             if (!response.ok) {
-                setErrors('Erreur lors de la création de la réservation.');
+                showError(newReservation?.message ?? 'Erreur lors de la création de la réservation.');
+                return;
             }
 
-            const newReservation = await response.json();
             showSuccess('Réservation créée avec succès.');
             onCreate(newReservation);
         } catch (err) {
@@ -48,7 +55,7 @@ function CreateReservation({ onCreate, createReservationModal, rooms, customers,
 
     return (
         <form onSubmit={handleSubmit} className="p-6">
-            <div className='flex flex-row gap-2'>
+            <div className="flex justify-between flex-row items-center">
                 <div className="mb-4">
                     <label htmlFor="reservationStart" className="block mb-2 font-bold">Date de début</label>
                     <input
@@ -74,66 +81,95 @@ function CreateReservation({ onCreate, createReservationModal, rooms, customers,
                     />
                 </div>
             </div>
-            <div className='flex flex-row gap-2'>
+
+            <div className="flex justify-between flex-row items-center">
                 <div className="mb-4">
-                    <label htmlFor="customerId" className="block mb-2 font-bold">Client</label>
-                    <select
+
+                    <Autocomplete
                         id="customerId"
-                        name="customerId"
-                        value={formData.customerId}
-                        onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
-                        required
-                    >
-                        <option value="">-- Sélectionnez un client --</option>
-                        {customers.map((customer) => (
-                            <option key={customer.id} value={customer.id}>
-                                {customer.lastName} {customer.firstName}
-                            </option>
-                        ))}
-                    </select>
+                        options={customers}
+                        getOptionLabel={(customer) => `${customer.lastName} ${customer.firstName}`}
+                        value={customers.find((c) => c.id === formData.customerId) || null}
+                        onChange={(event, value) => {
+                            setFormData((prevData) => ({
+                                ...prevData,
+                                customerId: value ? value.id : '',
+                            }));
+                        }}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Client"
+                                placeholder="Sélectionnez un client"
+                                variant="outlined"
+                                required
+                            />
+                        )}
+                        className="w-64"
+                    />
                 </div>
+
                 <div className="mb-4">
-                    <label htmlFor="roomId" className="block mb-2 font-bold">Chambre</label>
-                    <select
-                        id="roomId"
-                        name="roomId"
-                        value={formData.roomId}
-                        onChange={handleChange}
-                        className="w-full border rounded px-3 py-2"
-                        required
-                    >
-                        <option value="">-- Sélectionnez une chambre --</option>
-                        {rooms.map((room) => (
-                            <option key={room.id} value={room.id}>
-                                Chambre {room.roomNumber}
-                            </option>
-                        ))}
-                    </select>
+                    <label htmlFor="roomIds" className="block mb-2 font-bold">Chambres</label>
+                    <div>
+                        <Autocomplete
+                            multiple
+                            id="roomIds"
+                            className="block w-64"
+                            options={rooms}
+                            getOptionLabel={(room) => `Chambre ${room.roomNumber}`}
+                            onChange={(event, value) => handleAutocompleteChange('roomIds', value)}
+                            renderInput={(params) => (
+                                <TextField {...params} variant="outlined" placeholder="Sélectionnez les chambres" />
+                            )}
+                        />
+                    </div>
                 </div>
             </div>
-           
-            <div className="mb-4">
-                <label htmlFor="status" className="block mb-2 font-bold">Statut</label>
-                <select
-                    id="status"
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                    className="w-full border rounded px-3 py-2"
-                    required
-                >
-                    <option value="">-- Sélectionnez un statut --</option>
-                    {statuses && statuses.length > 0 ? (statuses.map((status) => (
-                        <option key={status} value={status}>
-                            {convertStatusToReservation(status.toLowerCase())}
-                        </option>
-                    ))):(
-                        <option value="">Aucun statut disponible</option>
-                    )}
-                </select>
+
+            <div className="flex justify-between flex-row items-center">
+                <div className="mb-4">
+                    <label htmlFor="tableIds" className="block mb-2 font-bold">Tables</label>
+                    <Autocomplete
+                        multiple
+                        className="w-64"
+                        id="tableIds"
+                        options={tables}
+                        getOptionLabel={(table) => `Table ${table.number}`}
+                        onChange={(event, value) => handleAutocompleteChange('tableIds', value)}
+                        renderInput={(params) => (
+                            <TextField {...params} variant="outlined" placeholder="Sélectionnez les tables" />
+                        )}
+                    />
+                </div>
+
+                <div className="mb-4">
+                    <Autocomplete
+                        id="status"
+                        options={statuses || []}
+                        value={formData.status}
+                        onChange={(event, newValue) => {
+                            setFormData((prevData) => ({
+                                ...prevData,
+                                status: newValue || '',
+                            }));
+                        }}
+                        getOptionLabel={(status) => convertStatusToReservation(status.toLowerCase())}
+                        renderInput={(params) => (
+                            <TextField
+                                {...params}
+                                label="Statut"
+                                variant="outlined"
+                                placeholder="Sélectionnez un statut"
+                                required
+                            />
+                        )}
+                        className="w-64"
+                        disableClearable
+                    />
+                </div>
             </div>
-            {errors && <p className="text-red-500">{errors}</p>}
+
             <div className="mb-4">
                 <label htmlFor="description" className="block mb-2 font-bold">Description</label>
                 <textarea
@@ -145,21 +181,23 @@ function CreateReservation({ onCreate, createReservationModal, rooms, customers,
                     rows="3"
                 />
             </div>
-            <div className="flex justify-end">
-                <button
+            <div className="flex justify-between">
+                <Button
                     type="button"
-                    className="bg-gray-300 text-gray-700 py-2 px-4 rounded-md hover:bg-gray-400 mr-2"
+                    variant="contained"
+                    color="inherit"
                     onClick={createReservationModal}
                 >
                     Annuler
-                </button>
-                <button
+                </Button>
+                <Button
                     type="submit"
-                    className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
+                    variant="contained"
+                    color="primary"
                     disabled={isSubmitting}
                 >
                     {isSubmitting ? 'Création...' : 'Créer'}
-                </button>
+                </Button>
             </div>
         </form>
     );

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import  { useEffect, useState } from 'react';
 import { apiUrl } from '../../services/api';
 import { MdInfoOutline, MdEdit, MdDelete } from "react-icons/md";
 import CreatePayment from '../../components/payment/CreatePayment';
@@ -6,45 +6,42 @@ import { convertStatusToPayment } from '../../services/convertStatus';
 import useToast from '../../components/gestionDesMenus/menuOrder/(tantely)/hooks/useToast';
 import UpdateStatusPayment from '../../components/updateStatus/UpdateStatusPayment';
 import UpdateMethodPayment from '../../components/updateStatus/UpdateMethodPayment';
+import Invoices from "../invoices/Invoices.jsx";
+import dayjs from "dayjs";
 
 function PaymentList() {
   const [payments, setPayments] = useState([]);
-  const [reservation, setReservation] = useState([]);
   const [methods, setMethods] = useState([]);
   const [method, setMethod] = useState(null);
   const [statuses, setStatuses] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [error, setError] = useState(null);
   const [selectedPaymentId, setSelectedPaymentId] = useState(null);
   const [status, setStatus] = useState('');
   const [showEditModal, setShowEditModal] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
   const [showEditMethodModal, setShowEditMethodModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [paymentToDelete, setPaymentToDelete] = useState(null);
   const { showSuccess, showError } = useToast()
+  const [isGenerateInvoice, setIsGenerateInvoice] = useState(false);
+  const [paymentId, setPaymentId] = useState(null);
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
   };
 
   const fetchPayments = async () => {
-    setIsLoading(true);
     try {
-      const [paymentsResponse, methodsResponse, reservationResponse, statusesResponse] = await Promise.all([
+      const [paymentsResponse, methodsResponse, statusesResponse] = await Promise.all([
         fetch(apiUrl('/payments')),
         fetch(apiUrl('/payments/method')),
-        fetch(apiUrl('/reservations')),
         fetch(apiUrl('/payments/status'))
       ]);
 
-      if (!paymentsResponse.ok || !methodsResponse.ok || !reservationResponse || !statusesResponse.ok) {
+      if (!paymentsResponse.ok || !methodsResponse.ok  || !statusesResponse.ok) {
         throw new Error('Erreur lors de la récupération des chambres, clients ou statuts');
       }
 
       const paymentsData = await paymentsResponse.json();
-      const reservationData = await reservationResponse.json();
       const methodsData = await methodsResponse.json();
 
       const statusesData = await statusesResponse.json();
@@ -52,12 +49,9 @@ function PaymentList() {
       setPayments(paymentsData);
       setMethods(methodsData);
       setStatuses(statusesData);
-      setReservation(reservationData)
     } catch (err) {
-      setError(err.message);
+      console.error(err.message);
       showError("Erreur lors de la récupération des données.");
-    } finally {
-      setIsLoading(false);
     }
   };
 
@@ -79,7 +73,8 @@ function PaymentList() {
   };
 
   const handleUpdateStatus = async () => {
-    console.log("STATUS", status);
+    setIsGenerateInvoice(status === 'PAID');
+    setPaymentId(selectedPaymentId)
     try {
       const url = apiUrl(`/payments/update/status/${selectedPaymentId}`);
       const res = await fetch(url, {
@@ -159,7 +154,7 @@ function PaymentList() {
   };
 
   return (
-    <div className="container p-6 pr-14 bg-white shadow-md rounded-md darkBody">
+    <div className="container p-6 pr-14 bg-white shadow-md rounded-md darkBody overflow-y-scroll">
       <h1 className="text-2xl font-bold mb-4">Liste des payments</h1>
 
       <button
@@ -204,12 +199,12 @@ function PaymentList() {
                   </button>
                 </td>
                 <td >{payment.amount}</td>
-                <td className={`cursor-pointer ${payment.status.toLowerCase() !== "completed" ? 'text-red-500 font-bold' : ''}`}>
+                <td className={`cursor-pointer ${payment.status.toLowerCase() === "unpaid" ? 'text-red-500 font-bold' : ''}`}>
                   <button
                     onClick={() => handleEditStatus(payment)}
                     className='w-full flex flex-row gap-1 items-center '>
                     <span className='flex text-sm flex-row gap-1 items-center '>
-                      <MdEdit />  {payment.status.toLowerCase() !== "completed" && (
+                      <MdEdit />  {payment.status.toLowerCase() === "unpaid" && (
                         <span className="text-red-500 text-[10px]">⚠️</span>
                       )}
                       {convertStatusToPayment(payment.status.toLowerCase())}
@@ -218,8 +213,9 @@ function PaymentList() {
                   </button>
                 </td>
                 <td >{payment.description}</td>
-                <td>{payment.paymentDate}</td>
-                <td className="p-2">{payment.updatedAt}</td>
+                <td>{dayjs(payment.paymentDate).format('DD/MM/YYYY HH:mm:ss')}</td>
+                <td className="p-2">{dayjs(payment.updatedAt).format('DD/MM/YYYY HH:mm:ss')}</td>
+
                 <td>
                   <button
                     className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
@@ -236,7 +232,7 @@ function PaymentList() {
 
       {isModalOpen && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="CreateModal bg-white rounded-lg shadow-lg w-full max-w-md">
+          <div className="CreateModal bg-white rounded-lg shadow-lg w-full max-w-lg">
             <div className='flex flex-row justify-between items-center'>
               <h2 className="text-xl pl-8 pt-8 pb-4">Créer une nouvelle payment</h2>
               <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
@@ -247,7 +243,7 @@ function PaymentList() {
             </div>
             <CreatePayment
               onCreate={handleCreate}
-              annulerModal={toggleModal}
+              onCancel={toggleModal}
             />
           </div>
         </div>
@@ -298,10 +294,25 @@ function PaymentList() {
         </div>
       )}
 
+      {isGenerateInvoice && (
+          <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+            <div className="bg-white rounded-lg shadow-lg max-w-4xl EditModal relative">
+              <span className='hover:bg-red-500 px-5  flex text-center justify-between items-center
+                            absolute top-0  right-0 rounded text-[30px] hover:text-white cursor-pointer'
+                    onClick={() => setIsGenerateInvoice(false)}>
+                x
+              </span>
+              <Invoices
+                  paymentId={paymentId}
+              />
+            </div>
+          </div>
+      )}
+
       {showDeleteModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center DeleteModal">
-            <p className="mb-6">Êtes-vous sûr de vouloir supprimer le payment de {paymentToDelete?.reservationId} ?</p>
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center DeleteModal">
+              <p className="mb-6">Êtes-vous sûr de vouloir supprimer le payment de {paymentToDelete?.reservationId} ?</p>
             <div className="flex justify-between">
 
               <button

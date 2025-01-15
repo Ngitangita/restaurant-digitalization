@@ -228,9 +228,11 @@ const CategoriesList = () => {
                         </tr>
                     )) : (
                         <tr>
-                            <td colSpan="5" className="py-4 text-center">
-                                <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
-                                Aucune catégorie trouvée
+                            <td colSpan="4" className="py-4 text-center  w-full ">
+                                <div className="flex w-full justify-center items-center flex-col">
+                                    <MdInfoOutline className="text-4xl inline-block mb-2 text-gray-400" />
+                                    <span>Aucune catégorie trouvée</span>
+                                </div>
                             </td>
                         </tr>
                     )}

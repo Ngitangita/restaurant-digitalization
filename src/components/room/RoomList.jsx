@@ -120,13 +120,13 @@ const RoomList = () => {
 
     return (
         <div className="container mx-auto p-4 bg-white darkBody pr-14">
-            <h2 className="text-2xl font-bold mb-4">Liste des Salles</h2>
+            <h2 className="text-2xl font-bold mb-4">Liste des chambres</h2>
             <div className="flex flex-row gap-4 mb-4">
                 <button
                     className="bg-blue-500 text-white rounded hover:bg-blue-600 px-4 "
                     onClick={() => toggleModal('create')}
                 >
-                    Créer Salle
+                    Créer chambre
                 </button>
                 <TextField
                     id="outlined-search"

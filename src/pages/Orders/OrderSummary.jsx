@@ -27,7 +27,6 @@ function OrderSummary() {
 
     const handleClick = order => {
         navigate(`/orders/by-${order.type.toLowerCase() === 'table' ? 'table' : 'room'}/${order.number}`)
-        console.log(order.number);
     }
 
     const handlePayment = order => {

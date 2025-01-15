@@ -1,13 +1,14 @@
-import { useParams } from "react-router-dom";
-import { useEffect, useState } from "react";
+import {useParams} from "react-router-dom";
+import {useEffect, useState} from "react";
 import useToast from "../../components/gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
-import { apiUrl, fetchJson } from "../../services/api.js";
+import {apiUrl, fetchJson} from "../../services/api.js";
 import dayjs from "dayjs";
 import {convertStatusToOrder, convertStatusToRoom} from "../../services/convertStatus.js";
 import {IoMdTrash} from "react-icons/io";
+import {formatPriceInAriary} from "../../services/formatePrice.js";
 
 function OrdersByRoom() {
-    const { roomNumber } = useParams();
+    const {roomNumber} = useParams();
     const [isOpenModal, setIsOpenModal] = useState(false);
     const [selectedOrderId, setSelectedOrderId] = useState(null);
     const {showSuccess, showError} = useToast();
@@ -22,7 +23,7 @@ function OrdersByRoom() {
     });
 
     const fetchApi = async () => {
-        setFetchState((prev) => ({ ...prev, isLoading: true }));
+        setFetchState((prev) => ({...prev, isLoading: true}));
         const url = apiUrl(`/menu-orders/all/room/${roomNumber}`);
         try {
             const rawData = await fetchJson(url);
@@ -30,17 +31,17 @@ function OrdersByRoom() {
             if (rawData.length > 0) {
                 const room = rawData[0].room;
                 // eslint-disable-next-line no-unused-vars
-                const orders = rawData.map(({ room, ...order }) => order);
+                const orders = rawData.map(({room, ...order}) => order);
                 setFetchState({
                     isLoading: false,
                     hasError: false,
-                    data: { room, orders }
+                    data: {room, orders}
                 });
             } else {
                 setFetchState({
                     isLoading: false,
                     hasError: false,
-                    data: { room: {}, orders: [] }
+                    data: {room: {}, orders: []}
                 });
             }
         } catch (error) {
@@ -48,7 +49,7 @@ function OrdersByRoom() {
             setFetchState({
                 isLoading: false,
                 hasError: true,
-                data: { room: {}, orders: [] }
+                data: {room: {}, orders: []}
             });
             showError("Échec de la récupération des commandes. Veuillez réessayer.");
         }
@@ -57,7 +58,6 @@ function OrdersByRoom() {
     useEffect(() => {
         void fetchApi()
     }, [roomNumber]);
-
 
 
     const handleClick = (order) => {
@@ -73,10 +73,14 @@ function OrdersByRoom() {
             setIsOpenModal(false);
             void fetchApi();
             showSuccess("Commande supprimée avec succès.");
-        } catch  {
+        } catch {
             showError("Erreur lors de la suppression de la commande.");
         }
     };
+
+    const totalPrice = fetchState.data.orders.reduce((total, order) => {
+        return total + (order.cost * order.quantity);
+    }, 0);
 
     return (
         <div className="container mx-auto bg-white dark:bg-gray-800 text-black dark:text-white p-10 pb-14">
@@ -84,7 +88,8 @@ function OrdersByRoom() {
                 <p className="text-center text-lg font-semibold text-gray-500">Chargement en cours...</p>
             )}
             {fetchState.hasError && (
-                <p className="text-center text-lg font-semibold text-red-600">Erreur lors de la récupération des données.</p>
+                <p className="text-center text-lg font-semibold text-red-600">Erreur lors de la récupération des
+                    données.</p>
             )}
             {!fetchState.isLoading && !fetchState.hasError && (
                 <div className="space-y-6">
@@ -113,6 +118,7 @@ function OrdersByRoom() {
                                 <th className="px-4 py-2 border-b">Coût</th>
                                 <th className="px-4 py-2 border-b">Statut</th>
                                 <th className="px-4 py-2 border-b">Date de commande</th>
+                                <th className="px-4 py-2 border-b">Actions</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -121,7 +127,7 @@ function OrdersByRoom() {
                                     <td className="px-4 py-2 border-b">{order?.id}</td>
                                     <td className="px-4 py-2 border-b">{order.menu?.name}</td>
                                     <td className="px-4 py-2 border-b">{order.quantity}</td>
-                                    <td className="px-4 py-2 border-b">{order.cost}</td>
+                                    <td className="px-4 py-2 border-b">{formatPriceInAriary(order.cost, false)}</td>
                                     <td className="px-4 py-2 border-b">{convertStatusToOrder(order.orderStatus)}</td>
                                     <td className="px-4 py-2 border-b">{dayjs(order.orderDate).format('YYYY-MM-DD HH:mm:ss')}</td>
                                     <td className="px-4 py-2 border-b">
@@ -135,6 +141,15 @@ function OrdersByRoom() {
                                 </tr>
                             ))}
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colSpan="3" className="px-4 py-2 text-right font-bold">Total :</td>
+                                    <td className="px-4 py-2">
+                                        {formatPriceInAriary(totalPrice, false)} Ar
+                                    </td>
+                                    <td colSpan="3"></td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>

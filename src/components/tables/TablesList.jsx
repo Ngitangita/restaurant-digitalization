@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
-import { apiUrl, fetchJson } from '../../services/api';
-import { FaRegEdit } from 'react-icons/fa';
-import { MdDelete, MdInfoOutline, MdEdit } from 'react-icons/md';
+import {useEffect, useState} from 'react';
+import {apiUrl, fetchJson} from '../../services/api';
+import {FaRegEdit} from 'react-icons/fa';
+import {MdDelete, MdEdit, MdInfoOutline} from 'react-icons/md';
 import EditTable from './EditTable';
 import TextField from '@mui/material/TextField';
-import { convertStatusToTable } from "../../services/convertStatus.js";
+import {convertStatusToTable} from "../../services/convertStatus.js";
 import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
 
 function TablesList() {
@@ -21,7 +21,7 @@ function TablesList() {
     const [searchTerm, setSearchTerm] = useState('');
     const [showEditTableModal, setShowEditTableModal] = useState(false);
     const [tableToEdit, setTableToEdit] = useState(null);
-    const { showSuccess, showError } = useToast()
+    const {showSuccess, showError} = useToast()
 
 
     const fetchTables = async () => {
@@ -112,7 +112,7 @@ function TablesList() {
                 status: tableStatus
             };
 
-            
+
             await fetchJson(apiUrl(`/tables/status`), 'PUT', updateData);
             setShowEditModal(false);
             setSelectedTableId(null);
@@ -192,7 +192,7 @@ function TablesList() {
                                 type="button"
                                 className="flex items-center"
                                 onClick={() => setSearchTerm('')}
-                                style={{ cursor: 'pointer', background: 'none', border: 'none' }}
+                                style={{cursor: 'pointer', background: 'none', border: 'none'}}
                             >
                             </button>
                         ),
@@ -200,64 +200,67 @@ function TablesList() {
                     sx={{
                         width: '250px',
                         height: '50px',
-                        '.MuiInputBase-root': { height: '40px' },
+                        '.MuiInputBase-root': {height: '40px'},
                     }}
                 />
             </div>
 
             <table className="min-w-full shadow-md rounded-lg overflow-hidden bg-white darkBody">
                 <thead>
-                    <tr className="bg-gray-200">
-                        <th className="py-2 px-4">Numéro</th>
-                        <th className="py-2 px-4">Capacité</th>
-                        <th className="py-2 px-4">Statut</th>
-                        <th className="py-2 px-4">Action</th>
-                    </tr>
+                <tr className="bg-gray-200">
+                    <th className="py-2 px-4">Numéro</th>
+                    <th className="py-2 px-4">Capacité</th>
+                    <th className="py-2 px-4">Statut</th>
+                    <th className="py-2 px-4">Action</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {filteredTables.length === 0 ? (
-                        <tr className="text-center">
-                            <td colSpan="7" className="py-4 text-gray-500">
-                                <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
+                {filteredTables.length === 0 ? (
+                    <tr className="text-center">
+                        <td colSpan="7" className="py-4 text-gray-500">
+                            <div className="flex justify-center items-center flex-col">
+                                <MdInfoOutline className="text-4xl flex inline-block mb-2 text-gray-400"/>
                                 Aucune table disponible
-                            </td>
-                        </tr>
-                    ) : (
-                        filteredTables.toSorted((a, b) => a.id - b.id).map((table) => (
-                            <tr key={table.id} className="hover:bg-gray-100 text-center border-y">
-                                <td className="py-2 px-4">{table.number}</td>
-                                <td className="py-2 px-4">{table.capacity}</td>
-                                <td className={`py-2 px-4 cursor-pointer ${table.status.toLowerCase() !== "available" ? 'text-red-500 font-bold' : ''}`}>
-                                    <button
-                                        onClick={() => handleEditStatus(table)}
-                                        className='w-full flex flex-col gap-1 items-center '
-                                    >
+                            </div>
+                        </td>
+
+                    </tr>
+                ) : (
+                    filteredTables.toSorted((a, b) => a.id - b.id).map((table) => (
+                        <tr key={table.id} className="hover:bg-gray-100 text-center border-y">
+                            <td className="py-2 px-4">{table.number}</td>
+                            <td className="py-2 px-4">{table.capacity}</td>
+                            <td className={`py-2 px-4 cursor-pointer ${table.status.toLowerCase() !== "available" ? 'text-red-500 font-bold' : ''}`}>
+                                <button
+                                    onClick={() => handleEditStatus(table)}
+                                    className='w-full flex flex-col gap-1 items-center '
+                                >
                                         <span className='flex flex-row gap-1 items-center '>
-                                            <MdEdit /> {table.status.toLowerCase() !== "available" && (
-                                                <span className="text-red-500 text-[10px]">⚠️ </span>
-                                            )}
+                                            <MdEdit/> {table.status.toLowerCase() !== "available" && (
+                                            <span className="text-red-500 text-[10px]">⚠️ </span>
+                                        )}
                                             {convertStatusToTable(table.status)}
                                         </span>
 
-                                    </button>
-                                </td>
-                                <td className="py-2 px-4 flex flex-row gap-4 justify-center">
-                                    <button
-                                        className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-                                        onClick={() => handleEditTable(table)}
-                                    >
-                                        <FaRegEdit />
-                                    </button>
-                                    <button
-                                        className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
-                                        onClick={() => confirmDelete(table.id)}
-                                    >
-                                        <MdDelete />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))
-                    )}
+                                </button>
+                            </td>
+                            <td className="py-2 px-4 flex flex-row gap-4 justify-center">
+                                <button
+                                    className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
+                                    onClick={() => handleEditTable(table)}
+                                >
+                                    <FaRegEdit/>
+                                </button>
+                                <button
+                                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
+                                    onClick={() => confirmDelete(table.id)}
+                                >
+                                    <MdDelete/>
+                                </button>
+                            </td>
+                        </tr>
+                    ))
+                )}
                 </tbody>
             </table>
 
@@ -291,7 +294,7 @@ function TablesList() {
                             <h2 className="text-xl pl-8 pt-8 pb-4">Créer une Table</h2>
                             <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
                             relative bottom-4 text-[30px] hover:text-white cursor-pointer'
-                                onClick={() => setShowCreateModal(false)}>
+                                  onClick={() => setShowCreateModal(false)}>
                                 x
                             </span>
                         </div>
@@ -348,7 +351,7 @@ function TablesList() {
                             <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statut</h2>
                             <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
                             relative bottom-4 text-[30px] hover:text-white cursor-pointer'
-                                onClick={() => setShowEditModal(false)}>
+                                  onClick={() => setShowEditModal(false)}>
                                 x
                             </span>
                         </div>
@@ -387,7 +390,7 @@ function TablesList() {
                     <div className="relative top-6 bg-white rounded-lg shadow-lg w-full max-w-md EditModal">
                         <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
                         relative left-[408px] text-[30px] hover:text-white cursor-pointer'
-                            onClick={() => setShowEditTableModal(false)}>
+                              onClick={() => setShowEditTableModal(false)}>
                             x</span>
                         <EditTable
                             tableToEdit={tableToEdit}

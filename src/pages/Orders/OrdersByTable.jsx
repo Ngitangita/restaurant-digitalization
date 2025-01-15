@@ -5,6 +5,7 @@ import { apiUrl, fetchJson } from "../../services/api.js";
 import {convertStatusToOrder, convertStatusToTable} from "../../services/convertStatus.js";
 import dayjs from "dayjs";
 import {IoMdTrash} from "react-icons/io";
+import {formatPriceInAriary} from "../../services/formatePrice.js";
 
 
 function OrdersByTable() {
@@ -77,6 +78,10 @@ function OrdersByTable() {
         }
     };
 
+    const totalPrice = fetchState.data.orders.reduce((total, order) => {
+        return total + (order.cost * order.quantity);
+    }, 0);
+
     return (
         <div className="container mx-auto bg-white dark:bg-gray-800 text-black dark:text-white p-10 pb-14">
             {fetchState.isLoading && (
@@ -121,7 +126,7 @@ function OrdersByTable() {
                                     <td className="px-4 py-2 border-b">{order?.id}</td>
                                     <td className="px-4 py-2 border-b">{order.menu?.name}</td>
                                     <td className="px-4 py-2 border-b">{order.quantity}</td>
-                                    <td className="px-4 py-2 border-b">{order.cost}</td>
+                                    <td className="px-4 py-2 border-b">{formatPriceInAriary(order.cost, false)}</td>
                                     <td className="px-4 py-2 border-b">{convertStatusToOrder(order.orderStatus)}</td>
                                     <td className="px-4 py-2 border-b">{dayjs(order.orderDate).format('YYYY-MM-DD HH:mm:ss')}</td>
                                     <td className="px-4 py-2 border-b">
@@ -135,6 +140,15 @@ function OrdersByTable() {
                                 </tr>
                             ))}
                             </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colSpan="3" className="px-4 py-2 text-right font-bold">Total :</td>
+                                    <td className="px-4 py-2">
+                                        {formatPriceInAriary(totalPrice, false)} Ar
+                                    </td>
+                                    <td colSpan="3"></td>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
