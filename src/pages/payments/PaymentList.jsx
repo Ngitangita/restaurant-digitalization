@@ -167,8 +167,7 @@ function PaymentList() {
       <table className="min-w-full shadow-md rounded-lg overflow-hidden">
         <thead>
           <tr className="bg-gray-200">
-            <th className="py-2 px-4">N° du chambre</th>
-            <th className="py-2 px-4">Method</th>
+            <th className="py-2 px-4">Méthode</th>
             <th className="py-2 px-4">Montant</th>
             <th className="py-2 px-4">Status</th>
             <th className="py-2 px-4">Description</th>
@@ -190,8 +189,7 @@ function PaymentList() {
           ) : (
             payments.map((payment) => (
               <tr key={payment.id} className="hover:bg-gray-100 text-center border border-y">
-                <td >{payment.reservationId}</td>
-                <td>
+                <td className="px-3">
                   <button
                     onClick={() => handleEditMethod(payment)}
                     className='w-full flex flex-row gap-1 items-center '>
@@ -199,13 +197,19 @@ function PaymentList() {
                   </button>
                 </td>
                 <td >{payment.amount}</td>
-                <td className={`cursor-pointer ${payment.status.toLowerCase() === "unpaid" ? 'text-red-500 font-bold' : ''}`}>
+                <td className={`cursor-pointer text-center  ${payment.status.toLowerCase() === "unpaid" ? 'text-red-500 font-bold' : ''}`}>
                   <button
-                    onClick={() => handleEditStatus(payment)}
-                    className='w-full flex flex-row gap-1 items-center '>
-                    <span className='flex text-sm flex-row gap-1 items-center '>
-                      <MdEdit />  {payment.status.toLowerCase() === "unpaid" && (
-                        <span className="text-red-500 text-[10px]">⚠️</span>
+                    onClick={() => {
+                      if (payment.status.toLowerCase() === 'unpaid')
+                          handleEditStatus(payment)
+                    }}
+                    className='w-full flex flex-row gap-1 items-center justify-center text-center'>
+                    <span className={`flex text-sm flex-row  gap-1 items-center text-center ${payment.status.toLowerCase() === 'paid' ? 'text-green-500': ''}`}>
+                      {payment.status.toLowerCase() === "unpaid" && (
+                         <>
+                           <MdEdit />
+                           <span className="text-red-500 text-[10px]">⚠️</span>
+                         </>
                       )}
                       {convertStatusToPayment(payment.status.toLowerCase())}
                     </span>

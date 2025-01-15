@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast";
-import { convertStatusToPayment } from "../../services/convertStatus";
 import { apiUrl } from "../../services/api";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
@@ -14,7 +13,7 @@ const CreatePayment = ({ onCreate, onCancel }) => {
         roomNumbers: [],
         amount: 0.0,
         paymentMethod: "",
-        status: "",
+        status: "UNPAID",
         description: "",
     });
 
@@ -90,7 +89,7 @@ const CreatePayment = ({ onCreate, onCancel }) => {
         <div className="max-w-lg mx-auto p-4 shadow-md rounded">
             <form onSubmit={handleSubmit} className="mb-6">
                 <div className="flex flex-row gap-4 mb-4">
-                    <div className="w-1/2">
+                    <div className="w-full">
                         <label htmlFor="reservationId" className="block text-gray-700">
                             Reservation:
                         </label>
@@ -110,25 +109,7 @@ const CreatePayment = ({ onCreate, onCancel }) => {
                         />
                     </div>
 
-                    <div className="w-1/2">
-                        <label htmlFor="status" className="block text-gray-700">
-                            Statut:
-                        </label>
-                        <Autocomplete
-                            id="status"
-                            options={data.statuses}
-                            getOptionLabel={(option) =>
-                                convertStatusToPayment(option.toLowerCase())
-                            }
-                            onChange={(event, value) =>
-                                handleChange("status", value ?? "")
-                            }
-                            renderInput={(params) => (
-                                <TextField {...params} variant="outlined" placeholder="Choisir..."/>
-                            )}
-                            className="w-full"
-                        />
-                    </div>
+
                 </div>
 
                 <div className="flex flex-row gap-4 mb-4">
@@ -196,7 +177,7 @@ const CreatePayment = ({ onCreate, onCancel }) => {
                             onChange={(e) =>
                                 handleChange("amount", parseFloat(e.target.value) ?? 0.0)
                             }
-                            className="w-full px-3 py-2 border rounded"
+                            className="w-full px-3 py-4 border rounded focus:outline focus:outline-blue-700"
                             required
                         />
                     </div>

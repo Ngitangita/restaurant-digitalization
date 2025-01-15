@@ -30,7 +30,7 @@ function OrderSummary() {
     }
 
     const handlePayment = order => {
-        console.log(order);
+        navigate('/payment?'+ order.id )
     }
 
     return (
