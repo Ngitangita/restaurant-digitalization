@@ -1,7 +1,48 @@
+import { useState } from "react";
+import useToast from "../menus/menu-orders/(tantely)/hooks/useToast";
+import { apiUrl, fetchJson } from "../../services/api";
+
 export function UpdatePassword() {
+  const [email, setEmail] = useState("");
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [success, ] = useState("");
+  const { showSuccess, showError } = useToast()
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    
+    if (newPassword !== confirmPassword) {
+      showError("Les mots de passe ne correspondent pas.")
+      return;
+    }
+
+    try {
+      const payload = {
+        email,
+        oldPassword,
+        newPassword,
+        confirmPassword,
+      }
+       await fetchJson(apiUrl("/password/change"), 'POST', payload);
+        showSuccess("Mot de passe mis à jour avec succès !")
+        setEmail("");
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+       
+    } catch (err) {
+      showError("Une erreur réseau est survenue. Veuillez réessayer.")
+      console.error(err);
+    }
+  };
+
   return (
     <form
-      onSubmit={(e) => e.preventDefault()}
+      onSubmit={handleSubmit}
       className="darkBody bg-white p-6 rounded-lg shadow-md space-y-6 text-gray-500 mb-20"
     >
       <div>
@@ -11,10 +52,34 @@ export function UpdatePassword() {
 
       <div className="space-y-4 max-w-md">
         <div>
-          <label className="block text-sm font-medium">Mot de passe</label>
+          <label className="block text-sm font-medium">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="mt-1 block w-full focus:outline focus:outline-1 focus:outline-blue-600 p-2 border border-gray-300 rounded-sm"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Ancien mot de passe</label>
           <input
             type="password"
-            name="password"
+            name="oldPassword"
+            value={oldPassword}
+            onChange={(e) => setOldPassword(e.target.value)}
+            className="mt-1 block w-full focus:outline focus:outline-1 focus:outline-blue-600 p-2 border border-gray-300 rounded-sm"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium">Nouveau mot de passe</label>
+          <input
+            type="password"
+            name="newPassword"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
             className="mt-1 block w-full focus:outline focus:outline-1 focus:outline-blue-600 p-2 border border-gray-300 rounded-sm"
           />
         </div>
@@ -24,14 +89,26 @@ export function UpdatePassword() {
           <input
             type="password"
             name="confirmPassword"
-            className="mt-1 block w-full focus:outline focus:outline-1 focus:outline-blue-600 p-2 border border-gray-300 rounded-sm "
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="mt-1 block w-full focus:outline focus:outline-1 focus:outline-blue-600 p-2 border border-gray-300 rounded-sm"
           />
         </div>
       </div>
 
+      {error && <p className="text-red-500 text-sm">{error}</p>}
+      {success && <p className="text-green-500 text-sm">{success}</p>}
+
       <div className="flex justify-end gap-4">
         <button
-          type="submit"
+          type="button"
+          onClick={() => {
+            setEmail("");
+            setOldPassword("");
+            setNewPassword("");
+            setConfirmPassword("");
+            setError("");
+          }}
           className="px-4 py-2 border border-gray-500 text-gray-500 rounded-md hover:bg-gray-100"
         >
           Annuler

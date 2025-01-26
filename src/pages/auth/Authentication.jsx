@@ -27,7 +27,7 @@ export default function Authentication() {
   const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [type, setType] = useState("userIconSingin");
-  const [signupError, setSignupError] = useState("");
+  const [, setSignupError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
   const [showSignupPassword, setShowSignupPassword] = useState(false);
