@@ -11,7 +11,6 @@ const CreatePayment = ({ onCreate, onCancel }) => {
         reservationId: null,
         tableNumbers: [],
         roomNumbers: [],
-        amount: 0.0,
         paymentMethod: "",
         status: "UNPAID",
         description: "",
@@ -31,8 +30,8 @@ const CreatePayment = ({ onCreate, onCancel }) => {
                 await Promise.all([
                     fetch(apiUrl("/reservations")),
                     fetch(apiUrl("/payments/method")),
-                    fetch(apiUrl("/tables/all")),
-                    fetch(apiUrl("/rooms")),
+                    fetch(apiUrl("/tables/tables-with-menu-orders")),
+                    fetch(apiUrl("/rooms/rooms-with-menu-orders")),
                     fetch(apiUrl("/payments/status")),
                 ]);
 
@@ -88,29 +87,7 @@ const CreatePayment = ({ onCreate, onCancel }) => {
     return (
         <div className="max-w-lg mx-auto p-4 shadow-md rounded">
             <form onSubmit={handleSubmit} className="mb-6">
-                <div className="flex flex-row gap-4 mb-4">
-                    <div className="w-full">
-                        <label htmlFor="reservationId" className="block text-gray-700">
-                            Reservation:
-                        </label>
-                        <Autocomplete
-                            id="reservationId"
-                            options={data.reservations}
-                            getOptionLabel={(option) =>
-                                `${option.id} - ${option.customer.lastName}`
-                            }
-                            onChange={(event, value) =>
-                                handleChange("reservationId", value ? value.id : null)
-                            }
-                            renderInput={(params) => (
-                                <TextField {...params} variant="outlined" placeholder="Choisir..."/>
-                            )}
-                            className="w-full"
-                        />
-                    </div>
 
-
-                </div>
 
                 <div className="flex flex-row gap-4 mb-4">
                     <div className="w-1/2">
@@ -167,21 +144,30 @@ const CreatePayment = ({ onCreate, onCancel }) => {
 
 
                 <div className="flex flex-row gap-2">
-                    <div className="mb-4 w-1/2">
-                        <label className="block text-gray-700">Amount:</label>
-                        <input
-                            type="number"
-                            step="0.01"
-                            min="0"
-                            value={isNaN(payload.amount) ? "" : payload.amount}
-                            onChange={(e) =>
-                                handleChange("amount", parseFloat(e.target.value) ?? 0.0)
-                            }
-                            className="w-full px-3 py-4 border rounded focus:outline focus:outline-blue-700"
-                            required
-                        />
-                    </div>
 
+                    <div className="w-1/2">
+                        <div className="w-full">
+                            <label htmlFor="reservationId" className="block text-gray-700">
+                                Reservation:
+                            </label>
+                            <Autocomplete
+                                id="reservationId"
+                                options={data.reservations}
+                                getOptionLabel={(option) =>
+                                    `${option.id} - ${option.customer.lastName}`
+                                }
+                                onChange={(event, value) =>
+                                    handleChange("reservationId", value ? value.id : null)
+                                }
+                                renderInput={(params) => (
+                                    <TextField {...params} variant="outlined" placeholder="Choisir..."/>
+                                )}
+                                className="w-full"
+                            />
+                        </div>
+
+
+                    </div>
                     <div className="w-1/2">
                         <label htmlFor="paymentMethod" className="block text-gray-700">
                             Payment Method:

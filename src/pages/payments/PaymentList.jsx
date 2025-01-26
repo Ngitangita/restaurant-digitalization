@@ -67,13 +67,12 @@ function PaymentList() {
 
   const handleEditStatus = (payment) => {
     setSelectedPaymentId(payment.id);
-    
     setStatus(payment.status);
     setShowEditModal(true);
   };
 
   const handleUpdateStatus = async () => {
-    setIsGenerateInvoice(status === 'PAID');
+    setIsGenerateInvoice(true);
     setPaymentId(selectedPaymentId)
     try {
       const url = apiUrl(`/payments/update/status/${selectedPaymentId}`);
@@ -200,7 +199,6 @@ function PaymentList() {
                 <td className={`cursor-pointer text-center  ${payment.status.toLowerCase() === "unpaid" ? 'text-red-500 font-bold' : ''}`}>
                   <button
                     onClick={() => {
-                      if (payment.status.toLowerCase() === 'unpaid')
                           handleEditStatus(payment)
                     }}
                     className='w-full flex flex-row gap-1 items-center justify-center text-center'>
