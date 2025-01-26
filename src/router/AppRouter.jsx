@@ -69,7 +69,7 @@ function AppRouter() {
                         <Route path="floorList" element={<FloorList />} />
                         <Route path="calendar" element={<TheCalendar />} />
                         <Route path="commandes" element={<MenuOrdersList />} />
-                        <Route path="payment" element={<PaymentList />} />
+                        <Route path="payments" element={<PaymentList />} />
                         <Route path="reservations" element={<ReservationList />} />
                         <Route path="stocks" element={<Stocks />} />
                         <Route path="PurchaseList" element={<PurchaseList />} />
