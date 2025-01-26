@@ -1,5 +1,5 @@
-import Header from "../header/Header";
-import Sidebar from "../sidebar/Sidebar";
+import Header from "../headers/Header";
+import Sidebar from "../sidebars/Sidebar";
 import {Outlet, useLocation} from 'react-router-dom'
 
 const noMainPath = ["/authentification"];

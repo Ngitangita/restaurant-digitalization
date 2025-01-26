@@ -2,7 +2,7 @@ import {apiUrl, fetchJson} from "../../services/api.js";
 import {useForm} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {z} from "zod";
-import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
+import useToast from "../menus/menu-orders/(tantely)/hooks/useToast.jsx";
 
 const unitSchema = z.object({
     name: z.string().min(1, "Le nom de l'unité est requis"),

@@ -1,11 +1,11 @@
 import  { useEffect, useState } from 'react';
 import { apiUrl } from '../../services/api';
 import { MdInfoOutline, MdEdit, MdDelete } from "react-icons/md";
-import CreatePayment from '../../components/payment/CreatePayment';
+import CreatePayment from '../../components/payments/CreatePayment';
 import { convertStatusToPayment } from '../../services/convertStatus';
-import useToast from '../../components/gestionDesMenus/menuOrder/(tantely)/hooks/useToast';
-import UpdateStatusPayment from '../../components/updateStatus/UpdateStatusPayment';
-import UpdateMethodPayment from '../../components/updateStatus/UpdateMethodPayment';
+import useToast from '../../components/menus/menu-orders/(tantely)/hooks/useToast';
+import UpdateStatusPayment from '../../components/status/UpdateStatusPayment';
+import UpdateMethodPayment from '../../components/status/UpdateMethodPayment';
 import Invoices from "../invoices/Invoices.jsx";
 import dayjs from "dayjs";
 
@@ -143,8 +143,8 @@ function PaymentList() {
       void fetchPayments();
       showSuccess("Payment supprimée avec succès.");
     } catch (error) {
-      console.error('Erreur lors de la suppression du payment:', error);
-      showError("Erreur lors de la suppression du payment.");
+      console.error('Erreur lors de la suppression du payments:', error);
+      showError("Erreur lors de la suppression du payments.");
     }
   };
 

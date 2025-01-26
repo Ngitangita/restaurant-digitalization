@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import {  apiUrl } from '../../services/api';
-import CreateReservation from '../../components/createReservation/CreateReservation';
+import CreateReservation from '../../components/reservations/CreateReservation';
 import { MdInfoOutline, MdDelete, MdEdit } from 'react-icons/md';
-import useToast from '../../components/gestionDesMenus/menuOrder/(tantely)/hooks/useToast';
+import useToast from '../../components/menus/menu-orders/(tantely)/hooks/useToast';
 import { convertStatusToReservation } from '../../services/convertStatus';
-import UpdateStatusReservation from '../../components/updateStatus/UpdateStatusReservation';
+import UpdateStatusReservation from '../../components/status/UpdateStatusReservation';
 
 function ReservationList() {
   const [reservations, setReservations] = useState([]);

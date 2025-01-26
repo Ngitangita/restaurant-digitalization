@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { apiUrl, fetchJson } from '../../services/api';
 import {useNavigate} from "react-router-dom";
-import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
+import useToast from "../menus/menu-orders/(tantely)/hooks/useToast.jsx";
 
 const schema = z.object({
   name: z.string().min(1, "Le nom est requis"),

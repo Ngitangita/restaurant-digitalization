@@ -5,7 +5,7 @@ import { MdDelete, MdInfoOutline } from 'react-icons/md';
 import { FaRegEdit } from 'react-icons/fa';
 import EditModal from './EditModal';
 import dayjs from "dayjs";
-import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
+import useToast from "../menus/menu-orders/(tantely)/hooks/useToast.jsx";
 import TextField from '@mui/material/TextField';
 
 const CategoriesList = () => {

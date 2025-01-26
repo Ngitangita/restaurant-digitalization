@@ -5,7 +5,7 @@ import {MdDelete, MdEdit, MdInfoOutline} from 'react-icons/md';
 import EditTable from './EditTable';
 import TextField from '@mui/material/TextField';
 import {convertStatusToTable} from "../../services/convertStatus.js";
-import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
+import useToast from "../menus/menu-orders/(tantely)/hooks/useToast.jsx";
 
 function TablesList() {
     const [tables, setTables] = useState([]);

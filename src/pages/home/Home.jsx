@@ -1,5 +1,5 @@
 
-import OperationStatistics from "../Stocks/OperationStatistics";
+import OperationStatistics from "../stocks/OperationStatistics";
 
 
 

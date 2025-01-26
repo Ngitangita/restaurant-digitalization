@@ -3,7 +3,7 @@ import { FaRegEdit } from "react-icons/fa";
 import { MdDelete, MdInfoOutline } from "react-icons/md";
 import { apiUrl, fetchJson } from '../../services/api';
 import CreateUnit from "./CreateUnit.jsx";
-import useToast from "../gestionDesMenus/menuOrder/(tantely)/hooks/useToast.jsx";
+import useToast from "../menus/menu-orders/(tantely)/hooks/useToast.jsx";
 
 function UnitsList() {
     const [units, setUnits] = useState([]);
