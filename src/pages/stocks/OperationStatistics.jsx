@@ -1,8 +1,18 @@
 import { useEffect, useState } from "react";
 import { apiUrl, fetchJson } from "../../services/api";
-import {  TextField, Autocomplete, Typography } from "@mui/material";
+import { TextField, Autocomplete, Typography } from "@mui/material";
+import { Bar } from "react-chartjs-2";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 
-import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function OperationStatistics() {
   const [totalStocks, setTotalStocks] = useState([]);
@@ -25,7 +35,7 @@ function OperationStatistics() {
       }
 
       if (maxTotalQuantity !== null && maxTotalQuantity !== undefined) {
-        queryParams.append("maxTotalQuantity", maxTotalQuantity );
+        queryParams.append("maxTotalQuantity", maxTotalQuantity);
       }
 
       if (date) {
@@ -33,9 +43,8 @@ function OperationStatistics() {
       }
       const url = `${apiUrl("/operations/statistic")}?${queryParams.toString()}`;
 
-
       try {
-        const data = await fetchJson(url);        
+        const data = await fetchJson(url);
         setTotalStocks(data);
       } catch (error) {
         console.error("Error fetching operation statistics", error);
@@ -56,95 +65,115 @@ function OperationStatistics() {
       }
     })();
   }, []);
-  
+
+
+  const chartData = {
+    labels: totalStocks.map((stock) => stock.ingredientName),
+    datasets: [
+      {
+        label: "Quantité Totale",
+        data: totalStocks.map((stock) => stock.totalQuantity),
+        backgroundColor: [
+          'rgba(255, 99, 132, 0.2)',
+          'rgba(255, 159, 64, 0.2)',
+          'rgba(255, 205, 86, 0.2)',
+          'rgba(75, 192, 192, 0.2)',
+          'rgba(54, 162, 235, 0.2)',
+          'rgba(153, 102, 255, 0.2)',
+          'rgba(201, 203, 207, 0.2)'
+        ],
+        borderColor: [
+          'rgb(255, 99, 132)',
+          'rgb(255, 159, 64)',
+          'rgb(255, 205, 86)',
+          'rgb(75, 192, 192)',
+          'rgb(54, 162, 235)',
+          'rgb(153, 102, 255)',
+          'rgb(201, 203, 207)'
+        ],
+        borderWidth: 1
+      },
+    ],
+  };
 
   return (
-    <div className="container bg-white w-[1009px] darkBody mx-auto p-10 pb-14">
-      <h2 className="text-xl font-semibold mb-4">Statistiques des Opérations</h2>
+      <div className="container bg-white w-[1009px] darkBody mx-auto p-10 pb-14">
+        <h2 className="text-xl font-semibold mb-4">Statistiques des Opérations</h2>
 
-      <div className="flex gap-4 mb-4">
+        <div className="flex gap-4 mb-4">
           <Autocomplete
-            options={ingredients}
-            getOptionLabel={(option) => option.name || "Nom indisponible"}
-            className="w-[20%]"
-            onChange={(_e, v) => setIngredientId(v?.id ?? null)}
-            renderInput={(params) => (
-              <TextField
-                {...params}
-                label="Nom de l'ingrédient"
-                variant="outlined"
-                fullWidth
-              />
-            )}
+              options={ingredients}
+              getOptionLabel={(option) => option.name || "Nom indisponible"}
+              className="w-[20%]"
+              onChange={(_e, v) => setIngredientId(v?.id ?? null)}
+              renderInput={(params) => (
+                  <TextField
+                      {...params}
+                      label="Nom de l'ingrédient"
+                      variant="outlined"
+                      fullWidth
+                  />
+              )}
           />
 
-        <input
-          type="number"
-          value={minTotalQuantity || ""}
-          onChange={(e) => setMinTotalQuantity(e.target.value ? Number(e.target.value) : "")}
-          placeholder="Quantité min"
-          className="border  outline-none focus:border-blue-500 border-gray-300 p-2 rounded-lg"
-        />
+          <input
+              type="number"
+              value={minTotalQuantity || ""}
+              onChange={(e) => setMinTotalQuantity(e.target.value ? Number(e.target.value) : "")}
+              placeholder="Quantité min"
+              className="border  outline-none focus:border-blue-500 border-gray-300 p-2 rounded-lg"
+          />
 
-        <input
-          type="number"
-          value={maxTotalQuantity || ""}
-          onChange={(e) => setMaxTotalQuantity(e.target.value ? Number(e.target.value) : "")}
-          placeholder="Quantité max"
-          className="border outline-none focus:border-blue-500 border-gray-300 p-2 rounded-lg"
-        />
-        <input
-          type="date"
-          value={date || ""}
-          onChange={(e) => setDate(e.target.value)}
-          className="border outline-none focus:border-blue-500 border-gray-300 p-2 rounded-lg"
-        />
-      </div>
+          <input
+              type="number"
+              value={maxTotalQuantity || ""}
+              onChange={(e) => setMaxTotalQuantity(e.target.value ? Number(e.target.value) : "")}
+              placeholder="Quantité max"
+              className="border outline-none focus:border-blue-500 border-gray-300 p-2 rounded-lg"
+          />
+          <input
+              type="date"
+              value={date || ""}
+              onChange={(e) => setDate(e.target.value)}
+              className="border outline-none focus:border-blue-500 border-gray-300 p-2 rounded-lg"
+          />
+        </div>
 
-      <div className="mb-6 w-[calc(100%-100px)]">
-        {totalStocks.length ? (
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={totalStocks}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="ingredientName" />
-              <YAxis />
-              <Tooltip />
-              <Bar dataKey="totalQuantity" fill="#8884d8" />
-            </BarChart>
-          </ResponsiveContainer>
-        ) : (
-          <Typography variant="body1" textAlign="center" color="textSecondary">
-            Aucune donnée disponible pour l'instant.
-          </Typography>
-        )}
-      </div>
+        <div className="mb-6 w-[calc(100%-100px)]">
+          {totalStocks.length ? (
+              <Bar data={chartData} options={{ responsive: true }} />
+          ) : (
+              <Typography variant="body1" textAlign="center" color="textSecondary">
+                Aucune donnée disponible pour l'instant.
+              </Typography>
+          )}
+        </div>
 
-
-      <table className="min-w-full bg-white shadow-md rounded-lg">
-        <thead className="bg-gray-200 text-gray-700">
+        <table className="min-w-full bg-white shadow-md rounded-lg">
+          <thead className="bg-gray-200 text-gray-700">
           <tr>
             <th className="py-2 px-4">Ingrédient</th>
             <th className="py-2 px-4">Quantité Totale</th>
           </tr>
-        </thead>
-        <tbody>
+          </thead>
+          <tbody>
           {totalStocks.length > 0 ? (
-            totalStocks.map((stock) => (
-              <tr key={stock.ingredientName} className="border-b border-gray-200">
-                <td className="py-2 px-4">{stock.ingredientName}</td>
-                <td className="py-2 px-4">{stock.totalQuantity} (en {stock.unitAbbreviation})</td>
-              </tr>
-            ))
+              totalStocks.map((stock) => (
+                  <tr key={stock.ingredientName} className="border-b border-gray-200">
+                    <td className="py-2 px-4">{stock.ingredientName}</td>
+                    <td className="py-2 px-4">{stock.totalQuantity} (en {stock.unitAbbreviation})</td>
+                  </tr>
+              ))
           ) : (
-            <tr>
-              <td colSpan="2" className="py-4 text-center text-gray-500">
-                Aucune donnée disponible
-              </td>
-            </tr>
+              <tr>
+                <td colSpan="2" className="py-4 text-center text-gray-500">
+                  Aucune donnée disponible
+                </td>
+              </tr>
           )}
-        </tbody>
-      </table>
-    </div>
+          </tbody>
+        </table>
+      </div>
   );
 }
 
