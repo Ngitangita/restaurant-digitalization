@@ -1,15 +1,20 @@
 import { useState } from "react";
 import useToast from "../menus/menu-orders/(tantely)/hooks/useToast";
 import { apiUrl, fetchJson } from "../../services/api";
+import {useAuthStore} from "../../stores/useAuthStore.js";
+import {jwtDecode} from "jwt-decode";
+import {useNavigate} from "react-router-dom";
 
 export function UpdatePassword() {
-  const [email, setEmail] = useState("");
   const [oldPassword, setOldPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const token = useAuthStore(state => state.token)
+  const logout = useAuthStore(state => state.logout)
   const [error, setError] = useState("");
   const [success, ] = useState("");
   const { showSuccess, showError } = useToast()
+  const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,21 +24,22 @@ export function UpdatePassword() {
       showError("Les mots de passe ne correspondent pas.")
       return;
     }
-
+    const decoded = jwtDecode(token);
     try {
       const payload = {
-        email,
+        email: decoded.sub,
         oldPassword,
         newPassword,
         confirmPassword,
       }
        await fetchJson(apiUrl("/password/change"), 'POST', payload);
         showSuccess("Mot de passe mis à jour avec succès !")
-        setEmail("");
         setOldPassword("");
         setNewPassword("");
         setConfirmPassword("");
-       
+       logout()
+       navigate('/')
+
     } catch (err) {
       showError("Une erreur réseau est survenue. Veuillez réessayer.")
       console.error(err);
@@ -51,17 +57,6 @@ export function UpdatePassword() {
       </div>
 
       <div className="space-y-4 max-w-md">
-        <div>
-          <label className="block text-sm font-medium">Email</label>
-          <input
-            type="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-1 block w-full focus:outline focus:outline-1 focus:outline-blue-600 p-2 border border-gray-300 rounded-sm"
-          />
-        </div>
-
         <div>
           <label className="block text-sm font-medium">Ancien mot de passe</label>
           <input
@@ -103,7 +98,6 @@ export function UpdatePassword() {
         <button
           type="button"
           onClick={() => {
-            setEmail("");
             setOldPassword("");
             setNewPassword("");
             setConfirmPassword("");

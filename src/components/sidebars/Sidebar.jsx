@@ -127,7 +127,7 @@ export const SidebarToggleButton = ({ handleSidebarToggle, openSidebar }) => (
 export default function Sidebar() {
   const location = useLocation();
   const navigate = useNavigate()
-  const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
+  const removeAuth = useAuthStore((state) => state.logout);
   const [activeTab, setActiveTab] = useState(null);
   const [isToggleSubmenu, setIsToggleSubmenu] = useState({});
   const [openSidebar, setOpenSidebar] = useState(false);
@@ -157,9 +157,11 @@ export default function Sidebar() {
     if (window.innerWidth < 1024) {
       setOpenSidebar(false);
     }
-    setIsAuthenticated(false)
+    removeAuth();
     navigate("/authentification")
   }
+
+
 
   return (
     <>
@@ -234,7 +236,7 @@ export default function Sidebar() {
             onClick={logout}
           >
             <MdOutlineLogin className="text-gray-500 text-xl" />
-            <span className="ml-2 text-gray-700">Authentification</span>
+            <span className="ml-2 text-gray-700">Se déconnecter</span>
           </button>
         </div>
       </div>

@@ -9,13 +9,13 @@ import { useAuthStore } from "../../stores/useAuthStore.js";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast.jsx";
 
 const LoginSchema = z.object({
-  email: z.string().email({ message: "Adresse e-mail invalide" }),
+  email: z.string().min(2, { message: "Non d'utilisater ou adresse e-mail invalide" }),
   password: z.string().min(4, { message: "Le mot de passe est incorrecte" }),
 });
 
 const SignupSchema = z.object({
   name: z.string().min(2, { message: "Le nom doit comporter au moins 2 caractères" }),
-  email: z.string().email({ message: "Adresse e-mail invalide" }),
+  email: z.string().min(2, { message: "Non d'utilisater ou adresse e-mail invalide" }),
   password: z.string().min(4, { message: "Le mot de passe doit comporter au moins 4 caractères" }),
   confirmePassword: z.string().min(4, { message: "Le mot de passe doit comporter au moins 4 caractères" }),
 }).refine((data) => data.password === data.confirmePassword, {
@@ -25,6 +25,8 @@ const SignupSchema = z.object({
 
 export default function Authentication() {
   const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
+  const setToken = useAuthStore((state) => state.setToken);
+  const token = useAuthStore((state) => state.token);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
   const [type, setType] = useState("userIconSingin");
   const [, setSignupError] = useState("");
@@ -34,7 +36,6 @@ export default function Authentication() {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast()
-
   const {
     register: loginRegister,
     handleSubmit: loginSubmit,
@@ -57,7 +58,7 @@ export default function Authentication() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate(-1);
+      navigate("/");
     }
   }, [isAuthenticated, navigate]);
 
@@ -70,8 +71,11 @@ export default function Authentication() {
       });
       if (response?.status >= 200 && response.status < 300 && response.data) {
         setIsAuthenticated(true);
-        showSuccess("Connexion réussie ! Bienvenue.");
-        navigate("/");
+        await setToken(response.data?.token || null)
+        if (token){
+          showSuccess("Connexion réussie ! Bienvenue.");
+          navigate("/");
+        }
       }
     } catch (error) {
       console.error("Échec de la connexion :", error);
@@ -161,7 +165,7 @@ export default function Authentication() {
                 <form onSubmit={loginSubmit(handleLogin)} className="flex flex-col gap-4 text-white">
                   <FormField
                     label="Votre e-mail"
-                    type="email"
+                    type="text"
                     placeholder="nom@mail.com"
                     register={loginRegister}
                     errors={loginErrors}
