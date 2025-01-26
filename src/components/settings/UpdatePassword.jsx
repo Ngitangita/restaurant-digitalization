@@ -41,8 +41,14 @@ export function UpdatePassword() {
        navigate('/')
 
     } catch (err) {
-      showError("Une erreur réseau est survenue. Veuillez réessayer.")
-      console.error(err);
+      try {
+        const errorResponse = JSON.parse(err.message);
+        if (errorResponse.message) {
+          showError(Object.values(errorResponse.message).join(" "));
+        }
+      } catch {
+        showError("Une erreur réseau est survenue. Veuillez réessayer.");
+      }
     }
   };
 

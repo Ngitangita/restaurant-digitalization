@@ -41,10 +41,11 @@ export const fetchJson = async (urlOrFunc, method = 'GET', data = null, headers 
     }
 
     try {
-        const response = await fetch(url, options); 
+        const response = await fetch(url, options);
 
         if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
+            const text = await response.text();
+            throw new Error(text);
         }
 
         if (response.status === 204) {
@@ -58,7 +59,6 @@ export const fetchJson = async (urlOrFunc, method = 'GET', data = null, headers 
 
         return await response.text();
     } catch (error) {
-        console.error('Fetch error:', error);
         throw error;
     }
 };
