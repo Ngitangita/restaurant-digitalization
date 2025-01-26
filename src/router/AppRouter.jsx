@@ -67,7 +67,7 @@ function AppRouter() {
                         <Route path="roomList" element={<RoomList />} />
                         <Route path="tableList" element={<TablesList />} />
                         <Route path="floorList" element={<FloorList />} />
-                        <Route path="calendar" element={<TheCalendar />} />
+                        <Route path="calendars" element={<TheCalendar />} />
                         <Route path="commandes" element={<MenuOrdersList />} />
                         <Route path="payments" element={<PaymentList />} />
                         <Route path="reservations" element={<ReservationList />} />

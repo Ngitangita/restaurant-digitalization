@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 
 class ErrorBoundary extends React.Component {
+    static _error;
     constructor(props) {
         super(props);
         this.state = { hasError: false };

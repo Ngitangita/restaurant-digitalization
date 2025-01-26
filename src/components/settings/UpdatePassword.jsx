@@ -15,7 +15,7 @@ export function UpdatePassword() {
           <input
             type="password"
             name="password"
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full focus:outline focus:outline-1 focus:outline-blue-600 p-2 border border-gray-300 rounded-sm"
           />
         </div>
 
@@ -24,7 +24,7 @@ export function UpdatePassword() {
           <input
             type="password"
             name="confirmPassword"
-            className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            className="mt-1 block w-full focus:outline focus:outline-1 focus:outline-blue-600 p-2 border border-gray-300 rounded-sm "
           />
         </div>
       </div>

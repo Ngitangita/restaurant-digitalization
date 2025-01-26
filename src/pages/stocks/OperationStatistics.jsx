@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { apiUrl, fetchJson } from "../../services/api";
-import { Box, TextField, Autocomplete, Typography } from "@mui/material";
+import {  TextField, Autocomplete, Typography } from "@mui/material";
 
 import { BarChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer } from "recharts";
 
@@ -59,7 +59,7 @@ function OperationStatistics() {
   
 
   return (
-    <div className="container bg-white w-[1109px] darkBody mx-auto p-10 pb-14">
+    <div className="container bg-white w-[1009px] darkBody mx-auto p-10 pb-14">
       <h2 className="text-xl font-semibold mb-4">Statistiques des Opérations</h2>
 
       <div className="flex gap-4 mb-4">

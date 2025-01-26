@@ -5,6 +5,8 @@ import { MdInfoOutline, MdDelete, MdEdit } from 'react-icons/md';
 import useToast from '../../components/menus/menu-orders/(tantely)/hooks/useToast';
 import { convertStatusToReservation } from '../../services/convertStatus';
 import UpdateStatusReservation from '../../components/status/UpdateStatusReservation';
+import {truncate} from "../../services/truncate.js";
+import formatDate from "../../services/formatDate.js";
 
 function ReservationList() {
   const [reservations, setReservations] = useState([]);
@@ -133,7 +135,7 @@ function ReservationList() {
             <CreateReservation
               onCreate={reservation => {
                 setReservations(prev => [...prev, reservation]);
-                toggleModal();
+                toggleModal('savedModal');
               }}
               createReservationModal={() => toggleModal('')}
               rooms={rooms}
@@ -172,8 +174,8 @@ function ReservationList() {
                 </td>
               </tr>) : (reservations.map((reservation) => (
                 <tr key={reservation.id} className="hover:bg-gray-100 text-center border-y">
-                  <td className="px-4 py-2">{reservation.reservationStart}</td>
-                  <td className="px-4 py-2">{reservation.reservationEnd}</td>
+                  <td className="px-4 py-2">{formatDate(reservation.reservationStart)}</td>
+                  <td className="px-4 py-2">{formatDate(reservation.reservationEnd)}</td>
                   <td className="px-4 py-2">{reservation.customer.firstName} {reservation.customer.lastName}</td>
                   <td className={`py-2 px-4 cursor-pointer ${(reservation.status.toLowerCase() !== "confirmed" && reservation.status.toLowerCase() !== "completed") ? 'text-red-500 font-bold' : ''}`}>
                     <button
@@ -189,7 +191,7 @@ function ReservationList() {
 
                     </button>
                   </td>
-                  <td className="px-4 py-2">{reservation.description}</td>
+                  <td className="px-4 py-2">{truncate(reservation.description, 20)}</td>
                   <td className="py-2 px-4 flex flex-row gap-2 justify-center">
                     <button
                       className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
