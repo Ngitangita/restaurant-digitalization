@@ -16,7 +16,6 @@ const Invoices = ({ paymentId }) => {
             try {
                 const data = await fetchJson(apiUrl(`/invoices/${paymentId}`));
                 setInvoices(data);
-                console.log(data);
             } catch (error) {
                 console.log('Erreur lors de la récupération des unités: ' + error.message);
                 setError('Erreur lors de la récupération des unités: ' + error.message);
