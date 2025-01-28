@@ -71,7 +71,7 @@ function OperationStatistics() {
     labels: totalStocks.map((stock) => stock.ingredientName),
     datasets: [
       {
-        label: "Quantité Totale",
+        label: "Quantité Disponible",
         data: totalStocks.map((stock) => stock.totalQuantity),
         backgroundColor: [
           'rgba(255, 99, 132, 0.2)',
