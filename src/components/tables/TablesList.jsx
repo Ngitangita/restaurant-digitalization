@@ -168,9 +168,9 @@ function TablesList() {
     };
 
     return (
-        <div className="container mx-auto p-4 bg-white darkBody">
+        <div className="container mx-auto pl-4 bg-white darkBody">
+            <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 border">
             <h1 className="text-2xl font-bold mb-4">Liste des Tables</h1>
-            <div className='flex flex-row gap-4'>
                 <button
                     className="bg-blue-500 text-white rounded hover:bg-blue-600 px-4 py-2 mb-4"
                     onClick={() => setShowCreateModal(true)}
@@ -205,7 +205,7 @@ function TablesList() {
                 />
             </div>
 
-            <table className="min-w-full shadow-md rounded-lg overflow-hidden bg-white darkBody">
+            <table className="min-w-full shadow-md rounded-lg overflow-hidden bg-white darkBody relative top-[70px]">
                 <thead>
                 <tr className="bg-gray-200">
                     <th className="py-2 px-4">Numéro</th>
@@ -219,14 +219,14 @@ function TablesList() {
                     <tr className="text-center">
                         <td colSpan="7" className="py-4 text-gray-500">
                             <div className="flex justify-center items-center flex-col">
-                                <MdInfoOutline className="text-4xl flex inline-block mb-2 text-gray-400"/>
+                                <MdInfoOutline className="text-4xl inline-block mb-2 text-gray-400"/>
                                 Aucune table disponible
                             </div>
                         </td>
 
                     </tr>
                 ) : (
-                    filteredTables.toSorted((a, b) => a.id - b.id).map((table) => (
+                    filteredTables.toSorted((a, b) => b.id - a.id).map((table) => (
                         <tr key={table.id} className="hover:bg-gray-100 text-center border-y">
                             <td className="py-2 px-4">{table.number}</td>
                             <td className="py-2 px-4">{table.capacity}</td>

@@ -91,7 +91,7 @@ function UnitsList() {
 
     return (
         <div className="container mx-auto p-4 bg-white darkBody">
-            <div className='flex flex-row gap-4'>
+            <div className='flex flex-row gap-4 fixed z-50'>
                 <button
                     className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 ml-2"
                     onClick={toggleModal}
@@ -99,7 +99,8 @@ function UnitsList() {
                     Créer un unité
                 </button>
             </div>
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody relative
+            top-10">
                 <thead>
                 <tr className="bg-gray-200">
                     <th className="py-2 px-4">Nom</th>
@@ -118,7 +119,7 @@ function UnitsList() {
                         </td>
                     </tr>
                 ) : (
-                    units.toSorted((a, b) => a.id - b.id).map((unit) => (
+                    units.toSorted((a, b) => b.id - a.id).map((unit) => (
                         <tr key={unit.id} className="hover:bg-gray-100 text-center">
                             <td className="py-2 px-4">{unit.name}</td>
                             <td className="py-2 px-4">{unit.abbreviation}</td>

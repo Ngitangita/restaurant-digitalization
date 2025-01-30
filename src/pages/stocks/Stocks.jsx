@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import { apiUrl, fetchJson } from "../../services/api";
-import { FaRegEdit } from 'react-icons/fa';
+import { FaRegEdit } from "react-icons/fa";
 import OperationDetails from "./OperationDetails";
 import CreateStock from "../../components/stocks/CreateStock";
 import dayjs from "dayjs";
-import TextField from '@mui/material/TextField';
-import { MdInfoOutline} from 'react-icons/md';
+import TextField from "@mui/material/TextField";
+import { MdInfoOutline } from "react-icons/md";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast";
 
 function StockList() {
@@ -25,13 +25,14 @@ function StockList() {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [operationDetails, setOperationDetails] = useState(null);
   const [selectedOperationId, setSelectedOperationId] = useState(null);
-  const { showSuccess, showError } = useToast()
+  const { showSuccess, showError } = useToast();
 
   useEffect(() => {
-
     setIsLoading(true);
     setError(null);
-    const url = `${apiUrl("/stocks")}?size=${size}&page=${page - 1}&ingredientName=${ingredientName}&quantityMin=${quantityMin}&quantityMax=${quantityMax}&startDate=${startDate}&endDate=${endDate}`;
+    const url = `${apiUrl("/stocks")}?size=${size}&page=${
+      page - 1
+    }&ingredientName=${ingredientName}&quantityMin=${quantityMin}&quantityMax=${quantityMax}&startDate=${startDate}&endDate=${endDate}`;
 
     fetchJson(url)
       .then((d) => {
@@ -44,8 +45,15 @@ function StockList() {
         showError("Une erreur s'est produite lors du chargement des stocks.");
         setIsLoading(false);
       });
-  }, [size, page, ingredientName, quantityMin, quantityMax, startDate, endDate]);
-
+  }, [
+    size,
+    page,
+    ingredientName,
+    quantityMin,
+    quantityMax,
+    startDate,
+    endDate,
+  ]);
 
   useEffect(() => {
     setPage(1);
@@ -68,15 +76,19 @@ function StockList() {
 
   const handleStockCreated = (data) => {
     const q = parseFloat(data.quantity);
-    const ingredientId = parseInt(data.ingredientId)
+    const ingredientId = parseInt(data.ingredientId);
 
-    setStocks(stocks.map(s => s.ingredientId == ingredientId ? ({
-      ... s,
-      quantity: s.quantity + q
-    }): s))
+    setStocks(
+      stocks.map((s) =>
+        s.ingredientId == ingredientId
+          ? {
+              ...s,
+              quantity: s.quantity + q,
+            }
+          : s
+      )
+    );
 
-    
-  
     setIsModalOpen(false);
     setSelectedStock(null);
     showSuccess("Le stock a été mis à jour avec succès.");
@@ -105,17 +117,20 @@ function StockList() {
               <button
                 type="button"
                 className="flex items-center"
-                onClick={() => setIngredientName('')}
-                style={{ cursor: 'pointer', background: 'none', border: 'none' }}
-              >
-              </button>
+                onClick={() => setIngredientName("")}
+                style={{
+                  cursor: "pointer",
+                  background: "none",
+                  border: "none",
+                }}
+              ></button>
             ),
           }}
           sx={{
-            width: '250px',
-            height: '50px',
-            zIndex: '0px',
-            '.MuiInputBase-root': { height: '40px' },
+            width: "250px",
+            height: "50px",
+            zIndex: "0px",
+            ".MuiInputBase-root": { height: "40px" },
           }}
         />
         <input
@@ -162,22 +177,38 @@ function StockList() {
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan="7" className="text-center py-2">Chargement...</td>
+                <td colSpan="7" className="text-center py-2">
+                  Chargement...
+                </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan="7" className="text-center py-2 text-red-500">{error}</td>
+                <td colSpan="7" className="text-center py-2 text-red-500">
+                  {error}
+                </td>
               </tr>
             ) : stocks.length > 0 ? (
-              stocks.map((stock) => (
-                <tr key={stock.id} className='text-center'>
-                  <td className="border-b p-2">{dayjs(stock.createdAt).format('YYYY-MM-DD HH:mm')}</td>
-                  <td className="border-b p-2">{dayjs(stock.updatedAt).format('YYYY-MM-DD HH:mm')}</td>
+              stocks
+              .toSorted((a, b) => b.id - a.id)
+              .map((stock) => (
+                <tr key={stock.id} className="text-center">
+                  <td className="border-b p-2">
+                    {dayjs(stock.createdAt).format("YYYY-MM-DD HH:mm")}
+                  </td>
+                  <td className="border-b p-2">
+                    {dayjs(stock.updatedAt).format("YYYY-MM-DD HH:mm")}
+                  </td>
                   <td className="border-b p-2">{stock.ingredientName}</td>
-                  <td className={`border-b p-2 ${stock.quantity <= 5 ? 'text-red-500 font-bold' : ''}`}>
+                  <td
+                    className={`border-b p-2 ${
+                      stock.quantity <= 5 ? "text-red-500 font-bold" : ""
+                    }`}
+                  >
                     {stock.quantity}
                     {stock.quantity <= 5 && (
-                      <div className="text-red-500 text-[10px]">⚠️ Stock faible! Ajoutez du stock.</div>
+                      <div className="text-red-500 text-[10px]">
+                        ⚠️ Stock faible! Ajoutez du stock.
+                      </div>
                     )}
                   </td>
                   <td className="border-b p-2 flex justify-center">
@@ -197,10 +228,12 @@ function StockList() {
                 </tr>
               ))
             ) : (
-              <tr>
-                <td colSpan="5" className="text-center py-4">
-                  <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
-                  Aucun stock trouvé
+              <tr className="text-center">
+                <td colSpan="6" className="py-4 text-gray-500">
+                  <div className="flex flex-col items-center justify-center">
+                    <MdInfoOutline className="text-4xl mb-2 text-gray-400" />
+                    Aucun stock trouvé
+                  </div>
                 </td>
               </tr>
             )}
@@ -210,19 +243,25 @@ function StockList() {
         {isModalOpen && selectedStock && (
           <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
             <div className="bg-white rounded-lg shadow-lg w-full max-w-md EditModal">
-              <div className='flex flex-row justify-between items-center'>
+              <div className="flex flex-row justify-between items-center">
                 <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le stock</h2>
-                <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
-                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
-                  onClick={toggleModal}>
+                <span
+                  className="hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer"
+                  onClick={toggleModal}
+                >
                   x
                 </span>
               </div>
               <CreateStock
                 onStockCreated={handleStockCreated}
                 createStockModale={toggleModal}
-                ingredientId={selectedStock ? selectedStock.ingredientId.toString() : ''}
-                ingredientName={selectedStock ? selectedStock.ingredientName : ''}
+                ingredientId={
+                  selectedStock ? selectedStock.ingredientId.toString() : ""
+                }
+                ingredientName={
+                  selectedStock ? selectedStock.ingredientName : ""
+                }
               />
             </div>
           </div>
@@ -231,15 +270,22 @@ function StockList() {
         {showDetailsModal && selectedOperationId && (
           <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
             <div className="bg-white rounded-lg w-1/2 DetailsModal">
-              <div className='flex flex-row justify-between items-center'>
-                <h2 className="text-xl pl-8 pt-8 pb-4">Détails de l'Opération</h2>
-                <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
-                            relative bottom-4 text-[30px] hover:text-white cursor-pointer'
-                  onClick={closeDetailsModal}>
+              <div className="flex flex-row justify-between items-center">
+                <h2 className="text-xl pl-8 pt-8 pb-4">
+                  Détails de l'Opération
+                </h2>
+                <span
+                  className="hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative bottom-4 text-[30px] hover:text-white cursor-pointer"
+                  onClick={closeDetailsModal}
+                >
                   x
                 </span>
               </div>
-              <OperationDetails operationId={selectedOperationId} onClose={closeDetailsModal} />
+              <OperationDetails
+                operationId={selectedOperationId}
+                onClose={closeDetailsModal}
+              />
             </div>
           </div>
         )}

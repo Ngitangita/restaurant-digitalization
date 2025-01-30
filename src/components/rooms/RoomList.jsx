@@ -120,10 +120,10 @@ const RoomList = () => {
 
     return (
         <div className="container mx-auto p-4 bg-white darkBody pr-14">
+            <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 border">
             <h2 className="text-2xl font-bold mb-4">Liste des chambres</h2>
-            <div className="flex flex-row gap-4 mb-4">
                 <button
-                    className="bg-blue-500 text-white rounded hover:bg-blue-600 px-4 "
+                     className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 ml-2"
                     onClick={() => toggleModal('create')}
                 >
                     Créer chambre
@@ -161,7 +161,7 @@ const RoomList = () => {
             ) : error ? (
                 <p className="text-center text-red-500">{error}</p>
             ) : (
-                <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody">
+                <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody relative top-[70px]">
                     <thead>
                         <tr className="bg-gray-200">
                             <th className="py-2 px-4">Numéro de Salle</th>
