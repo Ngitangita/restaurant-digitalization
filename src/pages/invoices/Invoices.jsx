@@ -11,235 +11,170 @@ const Invoices = ({ paymentId }) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    void (async () => {
+    const fetchInvoiceData = async () => {
       setIsLoading(true);
       try {
         const data = await fetchJson(apiUrl(`/invoices/${paymentId}`));
         setInvoices(data);
       } catch (error) {
-        console.log(
-          "Erreur lors de la récupération des unités: " + error.message
-        );
-        setError("Erreur lors de la récupération des unités: " + error.message);
+        console.error("Erreur lors de la récupération des factures:", error);
+        setError("Erreur lors de la récupération des factures.");
       } finally {
         setIsLoading(false);
       }
-    })();
+    };
+
+    fetchInvoiceData();
   }, [paymentId]);
-
-  const currentDate = dayjs().format("DD/MM/YYYY HH:mm:ss");
-
-  const roomNumbersString = [
-    ...new Set(
-      invoices?.orders
-        ?.filter((o) => o.room != null)
-        .map((o) => o.room.roomNumber)
-    ),
-  ].join("-");
-
-  const tableNumbersString = [
-    ...new Set(
-      invoices?.orders
-        ?.filter((o) => o.table != null)
-        .map((o) => o.table.number)
-    ),
-  ].join("-");
 
   const generatePDF = () => {
     if (!invoices || !invoices.orders) return;
-  
+
     const doc = new jsPDF({
       unit: "mm",
-      format: [50, 100],
+      format: [80, 120], // Format proche d'un ticket de caisse
     });
-  
-    const marginTop = 5;
-  
-    const groupedOrders = invoices.orders.reduce((acc, invoice) => {
-      const { quantity, menu, cost } = invoice;
-  
-      if (!acc[menu.name]) {
-        acc[menu.name] = {
-          quantity: 0,
-          cost: 0
-        };
-      }
-  
-      acc[menu.name].quantity += quantity;
-      acc[menu.name].cost += cost;
-  
-      return acc;
-    }, {});
-  
-    doc.setFontSize(8);
-    doc.text("UTOPIA", 2, marginTop);
-    doc.text("By Sooatel", 2, marginTop + 4);
-    doc.text("Ankasina Antananarivo", 2, marginTop + 8);
-    doc.text("Tel: 038 96 373 43", 2, marginTop + 12);
-  
+
+    const marginLeft = 5;
+    let startY = 10;
+
     doc.setFontSize(10);
-    doc.text("FACTURE", 25, marginTop + 16, { align: "center" });
-  
+    doc.text("UTOPIA", marginLeft, startY);
+    doc.setFontSize(8);
+    doc.text("By Sooatel", marginLeft, (startY += 4));
+    doc.text("Ankasina Antananarivo", marginLeft, (startY += 4));
+    doc.text("Tel: 038 96 373 43", marginLeft, (startY += 4));
+
+    doc.setFontSize(12);
+    doc.text("FACTURE", 40, (startY += 6), { align: "center" });
+
     const currentDate = dayjs().format("DD/MM/YYYY HH:mm:ss");
     doc.setFontSize(8);
-    doc.text(`Date: ${currentDate}`, 2, marginTop + 20);
+    doc.text(`Date: ${currentDate}`, marginLeft, (startY += 6));
     doc.text(
       `Facture: ${formatToFourDigits(invoices?.payment?.id || 0)}`,
-      2,
-      marginTop + 24
+      marginLeft,
+      (startY += 4)
     );
     doc.text(
       `Paiement: ${invoices?.payment.paymentMethod || "Non spécifié"}`,
-      2,
-      marginTop + 28
+      marginLeft,
+      (startY += 4)
     );
-  
-    let startY = marginTop + 32;
-    doc.setFontSize(8);
-    Object.keys(groupedOrders).forEach((menuName) => {
-      const { quantity, cost } = groupedOrders[menuName];
-      const line = `${quantity}x ${menuName} - ${cost.toFixed(2)} MGA`;
-      doc.text(line, 2, startY);
-      startY += 4;
+
+    // Ligne séparatrice
+    doc.line(marginLeft, (startY += 4), 75, startY);
+
+    // Affichage des commandes
+    invoices.orders.forEach((order) => {
+      doc.text(
+        `Article: ${order.menu.name}`,
+        marginLeft,
+        (startY += 5)
+      );
+      doc.text(
+        `Qté:${order.quantity}x`,
+        marginLeft,
+        (startY += 5)
+      );
+      doc.text(
+        `Prix:${order.cost.toFixed(2)} MGA`,
+        marginLeft,
+        (startY += 5)
+      );
     });
-  
+
+    doc.line(marginLeft, (startY += 6), 75, startY);
+
     const totalAmount = invoices.orders
-      .reduce((sum, invoice) => sum + invoice.cost, 0)
+      .reduce((sum, order) => sum + order.cost, 0)
       .toFixed(2);
-    startY += 4;
-    doc.text(`Montant total: ${totalAmount} MGA`, 2, startY);
-  
-    startY += 8;
-    doc.text("Le responsable", 2, startY);
-    doc.text("Le client", 25, startY);
-  
+    doc.text(`Montant total: ${totalAmount} MGA`, marginLeft, (startY += 6));
+
+    doc.text("Le responsable", marginLeft, (startY += 10));
+    doc.text("Le client", 60, startY);
+
     doc.save("facture.pdf");
   };
-  
-  
+
+  const printInvoice = () => {
+    if (!invoices || !invoices.orders) return;
+
+    const printWindow = window.open("", "_blank");
+    printWindow.document.write(`
+      <html>
+        <head>
+          <title>Facture</title>
+          <style>
+            body { font-family: Arial, sans-serif; text-align: left; padding-left: 10px;}
+            h2 { margin: 0px 0; }
+            table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+           span{padding: 5px; text-align: left; }
+          </style>
+        </head>
+        <body>
+          <h2>UTOPIA</h2>
+          <p>By Sooatel<br/>Ankasina Antananarivo<br/>Tel: 038 96 373 43</p>
+          <hr/>
+          <h3>FACTURE</h3>
+          <p>Date: ${dayjs().format("DD/MM/YYYY HH:mm:ss")}</p>
+          <p>Facture: ${formatToFourDigits(invoices?.payment?.id || 0)}</p>
+          <p>Paiement: ${invoices?.payment.paymentMethod || "Non spécifié"}</p>
+          <hr/>
+          <table>
+            ${invoices.orders
+              .map(
+                (order) =>
+                  `<p>Article: ${order.menu.name}</p>
+                <p>Qté: ${order.quantity}</p><p>Prix: ${order.cost.toFixed(
+                    2
+                  )} MGA</p>`
+              )
+              .join("")}
+          </table>
+          <hr/>
+          <h4>Montant total: ${invoices.orders
+            .reduce((sum, order) => sum + order.cost, 0)
+            .toFixed(2)} MGA</h4>
+          <p>Le responsable --------- Le client</p>
+          <script>
+            window.onload = function() {
+              window.print();
+              window.onafterprint = function() { window.close(); };
+            }
+          </script>
+        </body>
+      </html>
+    `);
+    printWindow.document.close();
+  };
 
   return (
-    <div className="container flex justify-center items-center">
+    <div className="flex justify-center items-center">
       <div className="w-full bg-white rounded p-5 flex flex-col gap-5">
-        <div>
-          <div>
-            <div className="flex flex-col gap-2">
-              <div className="flex flex-row gap-3 items-center">
-                <img
-                  src="/UTOPIA-B.png"
-                  alt="UTOPIA-B"
-                  className="w-16 h-16 rounded-full"
-                />
-                <div className="flex flex-col">
-                  <span className="text-2xl font-bold">By Sooatel</span>
-                  <span className="text-xs">
-                    Ankasina Antananarivo <br /> Tel: 038 96 373 43
-                  </span>
-                </div>
-              </div>
-              <h1 className="text-2xl font-bold underline text-center">
-                Facture
-              </h1>
-            </div>
-            <div className="flex flex-col mb-6">
-              <div className="flex flex-row mt-6 justify-between">
-                <div>
-                  <ul className="list-inside">
-                    <li className="py-1 px-4">Date: {currentDate}</li>
-                    <li className="py-1 px-4">
-                      Numéro de facture:{" "}
-                      {formatToFourDigits(invoices?.payment?.id || 0)}
-                    </li>
-                    <li className="py-1 px-4">
-                      Mode de paiement:{" "}
-                      {invoices?.payment?.paymentMethod || "Non spécifié"}
-                    </li>
-                  </ul>
-                </div>
-                <div>
-                  <ul>
-                    <li className="py-1 px-4">
-                      N° de la table: {tableNumbersString || "___"}
-                    </li>
-                    <li className="py-1 px-4">
-                      N° de la chambre: {roomNumbersString || "___"}
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </div>
+        <h3 className="text-lg font-semibold text-center">Facture</h3>
 
-          {isLoading ? (
-            <p>Chargement des factures...</p>
-          ) : error ? (
-            <p className="text-red-500">{error}</p>
-          ) : invoices?.orders?.length > 0 ? (
-            <table className="w-full border border-gray-200 text-left text-sm">
-              <thead>
-                <tr className="bg-gray-100">
-                  <th className="py-2 px-4 border">Date de commande</th>
-                  <th className="py-2 px-4 border">Numéro de Commande</th>
-                  <th className="py-2 px-4 border">Désignation</th>
-                  <th className="py-2 px-4 border">Quantité</th>
-                  <th className="py-2 px-4 border">Prix U</th>
-                  <th className="py-2 px-4 border">Montant</th>
-                </tr>
-              </thead>
-              <tbody>
-                {invoices.orders.map((invoice, i) => (
-                  <tr key={i}>
-                    <td className="py-2 px-4 border">
-                      {dayjs(invoice?.orderDate).format("DD/MM/YYYY HH:mm:ss")}
-                    </td>
-                    <td className="py-2 px-4 border">
-                      {formatToFourDigits(invoice?.id ?? 0)}
-                    </td>
-                    <td className="py-2 px-4 border">{invoice.menu.name}</td>
-                    <td className="py-2 px-4 border">{invoice.quantity}</td>
-                    <td className="py-2 px-4 border">
-                      {invoice.menu.price} MGA
-                    </td>
-                    <td className="py-2 px-4 border">{invoice.cost} MGA</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p>Aucune facture disponible.</p>
-          )}
-        </div>
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-2">
-            <span>
-              Montant total:{" "}
-              {invoices?.orders
-                ?.reduce((sum, invoice) => sum + invoice.cost, 0)
-                .toFixed(2) || "0.00"}{" "}
-              MGA
-            </span>
-            <p>
-              Somme arrêtée à la présente liste de{" "}
-              {invoices?.orders
-                ?.reduce((sum, invoice) => sum + invoice.cost, 0)
-                .toFixed(2) || "0.00"}{" "}
-              MGA
-            </p>
+        {isLoading && <p>Chargement...</p>}
+        {error && <p className="text-red-500">{error}</p>}
+
+        {!isLoading && invoices && (
+          <div className="flex flex-col gap-6">
+            <button
+              onClick={generatePDF}
+              className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+              disabled={!invoices || !invoices.orders}
+            >
+              Télécharger la Facture PDF
+            </button>
+            <button
+              onClick={printInvoice}
+              className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600"
+              disabled={!invoices || !invoices.orders}
+            >
+              Imprimer la Facture
+            </button>
           </div>
-          <div className="flex flex-row gap-40">
-            <span className="underline">Responsable</span>
-            <span className="underline">Client</span>
-          </div>
-        </div>
-        <div className="flex flex-col gap-6">
-          <button
-            onClick={generatePDF}
-            className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
-            disabled={!invoices || !invoices.orders}
-          >
-            Télécharger la Facture PDF
-          </button>
-        </div>
+        )}
       </div>
     </div>
   );

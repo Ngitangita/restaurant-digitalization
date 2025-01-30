@@ -68,7 +68,7 @@ function OrderSummary() {
         <tbody>
           {orders.length > 0 ? (
             orders
-              .toSorted((a, b) => b.id - a.id)
+              .toSorted((a, b) => a.id - b.id)
               .map((order, i) => (
                 <tr key={i} className="border-b border-gray-200">
                   <td className="py-2 px-4 flex flex-row">
