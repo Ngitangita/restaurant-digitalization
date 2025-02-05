@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -9,19 +9,35 @@ import { useAuthStore } from "../../stores/useAuthStore.js";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast.jsx";
 
 const LoginSchema = z.object({
-  email: z.string().min(2, { message: "Non d'utilisater ou adresse e-mail invalide" }),
+  email: z
+    .string()
+    .min(2, { message: "Non d'utilisater ou adresse e-mail invalide" }),
   password: z.string().min(4, { message: "Le mot de passe est incorrecte" }),
 });
 
-const SignupSchema = z.object({
-  name: z.string().min(2, { message: "Le nom doit comporter au moins 2 caractères" }),
-  email: z.string().min(2, { message: "Non d'utilisater ou adresse e-mail invalide" }),
-  password: z.string().min(4, { message: "Le mot de passe doit comporter au moins 4 caractères" }),
-  confirmePassword: z.string().min(4, { message: "Le mot de passe doit comporter au moins 4 caractères" }),
-}).refine((data) => data.password === data.confirmePassword, {
-  message: "Les mots de passe ne correspondent pas",
-  path: ["confirmePassword"],
-});
+const SignupSchema = z
+  .object({
+    name: z
+      .string()
+      .min(2, { message: "Le nom doit comporter au moins 2 caractères" }),
+    email: z
+      .string()
+      .min(2, { message: "Non d'utilisater ou adresse e-mail invalide" }),
+    password: z
+      .string()
+      .min(4, {
+        message: "Le mot de passe doit comporter au moins 4 caractères",
+      }),
+    confirmePassword: z
+      .string()
+      .min(4, {
+        message: "Le mot de passe doit comporter au moins 4 caractères",
+      }),
+  })
+  .refine((data) => data.password === data.confirmePassword, {
+    message: "Les mots de passe ne correspondent pas",
+    path: ["confirmePassword"],
+  });
 
 export default function Authentication() {
   const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
@@ -35,7 +51,7 @@ export default function Authentication() {
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
-  const { showSuccess, showError } = useToast()
+  const { showSuccess, showError } = useToast();
   const {
     register: loginRegister,
     handleSubmit: loginSubmit,
@@ -71,15 +87,17 @@ export default function Authentication() {
       });
       if (response?.status >= 200 && response.status < 300 && response.data) {
         setIsAuthenticated(true);
-        await setToken(response.data?.token || null)
-        if (token){
+        await setToken(response.data?.token || null);
+        if (token) {
           showSuccess("Connexion réussie ! Bienvenue.");
           navigate("/");
         }
       }
     } catch (error) {
       console.error("Échec de la connexion :", error);
-      showError("Une erreur est survenue lors de la connexion. Veuillez réessayer.");
+      showError(
+        "Une erreur est survenue lors de la connexion. Veuillez réessayer."
+      );
     }
     setIsLoading(false);
     resetLogin();
@@ -96,20 +114,28 @@ export default function Authentication() {
       if (response?.status >= 200 && response.status < 300 && response.data) {
         setIsAuthenticated(true);
         navigate("/");
-        showSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+        showSuccess(
+          "Inscription réussie ! Vous pouvez maintenant vous connecter."
+        );
       }
     } catch (error) {
       if (error.response && error.response.status === 409) {
         if (error.response.data.message.includes("email")) {
-          setSignupError("Cet e-mail est déjà utilisé. Veuillez utiliser un e-mail différent.");
+          setSignupError(
+            "Cet e-mail est déjà utilisé. Veuillez utiliser un e-mail différent."
+          );
           showError("E-mail déjà utilisé.");
         } else if (error.response.data.message.includes("username")) {
-          setSignupError("Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre.");
+          setSignupError(
+            "Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre."
+          );
           showError("Nom d'utilisateur déjà pris.");
         }
       } else {
         console.error("Échec de l'inscription :", error);
-        showError("Une erreur est survenue lors de l'inscription. Veuillez réessayer.");
+        showError(
+          "Une erreur est survenue lors de l'inscription. Veuillez réessayer."
+        );
       }
     }
     setIsLoading(false);
@@ -126,31 +152,47 @@ export default function Authentication() {
         <div className="w-full max-w-md p-5 bg-gradient-to-l from-black/85 to-gray-300/20 rounded-lg">
           <div className="text-center py-2 text-gray-900">
             <div className="mb-4 flex flex-col justify-center items-center py-2">
-              <img src="../public/UTOPIA-B.png" alt="UTOPIA-B" className="w-20 h-20 rounded-full" />
+              <img
+                src="../public/UTOPIA-B.png"
+                alt="UTOPIA-B"
+                className="w-20 h-20 rounded-full"
+              />
               {type === "userIconSingin" ? (
-                <span className="text-2xl font-bold text-white">Connectez-vous à SOOATEL</span>
+                <span className="text-2xl font-bold text-white">
+                  Connectez-vous à SOOATEL
+                </span>
               ) : (
-                <span className="text-2xl font-bold text-white">Créez un nouveau compte</span>
+                <span className="text-2xl font-bold text-white">
+                  Créez un nouveau compte
+                </span>
               )}
             </div>
           </div>
 
           <div className="flex justify-around">
             <button
-              className={`px-4 py-2 rounded-lg ${type === "userIconSingin" ? "bg-gradient-to-r from-gray-800 to-gray-300/80 text-white" : "bg-gray-200"}`}
+              className={`px-4 py-2 rounded-lg ${
+                type === "userIconSingin"
+                  ? "bg-gradient-to-r from-gray-800 to-gray-300/80 text-white"
+                  : "bg-gray-200"
+              }`}
               onClick={() => setType("userIconSingin")}
             >
               Connexion
             </button>
             <button
-              className={`px-4 py-2 rounded-lg ${type === "userIconSingUp" ? "bg-gradient-to-l from-gray-800 to-gray-300/80 text-white" : "bg-gray-200"}`}
+              className={`px-4 py-2 rounded-lg ${
+                type === "userIconSingUp"
+                  ? "bg-gradient-to-l from-gray-800 to-gray-300/80 text-white"
+                  : "bg-gray-200"
+              }`}
               onClick={() => setType("userIconSingUp")}
             >
               Inscription
             </button>
           </div>
 
-          {isLoading ? ( 
+          {isLoading ? (
             <div className="flex justify-center">
               <div
                 className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-middle"
@@ -162,7 +204,10 @@ export default function Authentication() {
           ) : (
             <>
               {type === "userIconSingin" ? (
-                <form onSubmit={loginSubmit(handleLogin)} className="flex flex-col gap-4 text-white">
+                <form
+                  onSubmit={loginSubmit(handleLogin)}
+                  className="flex flex-col gap-4 text-white"
+                >
                   <FormField
                     label="Votre e-mail"
                     type="text"
@@ -173,7 +218,9 @@ export default function Authentication() {
                   />
                   <PasswordInput
                     showPassword={showLoginPassword}
-                    toggleShowPassword={() => setShowLoginPassword(!showLoginPassword)}
+                    toggleShowPassword={() =>
+                      setShowLoginPassword(!showLoginPassword)
+                    }
                     register={loginRegister}
                     name="password"
                     errors={loginErrors}
@@ -184,14 +231,19 @@ export default function Authentication() {
                   >
                     Connexion
                   </button>
-                  <span className="text-white w-36 hover:text-blue-500">
-                    <a href="#" className="text-sm font-medium">
+                  <span >
+                    <Link
+                      to="/authentification/forgot-password"
+                      className="text-blue-500 hover:underline">
                       Mot de passe oublié ?
-                    </a>
+                    </Link>
                   </span>
                 </form>
               ) : (
-                <form onSubmit={signupSubmit(handleSignup)} className="flex flex-col text-white">
+                <form
+                  onSubmit={signupSubmit(handleSignup)}
+                  className="flex flex-col text-white"
+                >
                   <FormField
                     label="Votre nom"
                     type="text"
@@ -210,18 +262,22 @@ export default function Authentication() {
                   />
                   <PasswordInput
                     showPassword={showSignupPassword}
-                    toggleShowPassword={() => setShowSignupPassword(!showSignupPassword)}
+                    toggleShowPassword={() =>
+                      setShowSignupPassword(!showSignupPassword)
+                    }
                     register={signupRegister}
                     name="password"
                     errors={signupErrors}
                   />
                   <PasswordInput
                     showPassword={showConfirmPassword}
-                    toggleShowPassword={() => setShowConfirmPassword(!showConfirmPassword)}
+                    toggleShowPassword={() =>
+                      setShowConfirmPassword(!showConfirmPassword)
+                    }
                     register={signupRegister}
                     name="confirmePassword"
-                      placeholder="Confirmez votre mot de passe"
-                     label="Confirmer le mot de passe"
+                    placeholder="Confirmez votre mot de passe"
+                    label="Confirmer le mot de passe"
                     errors={signupErrors}
                   />
                   <button
@@ -257,7 +313,15 @@ function FormField({ label, type, placeholder, register, errors, name }) {
   );
 }
 
-function PasswordInput({ showPassword, toggleShowPassword, register,placeholder = 'Votre mot de passe', name, errors, label = 'Mot de passe' }) {
+function PasswordInput({
+  showPassword,
+  toggleShowPassword,
+  register,
+  placeholder = "Votre mot de passe",
+  name,
+  errors,
+  label = "Mot de passe",
+}) {
   return (
     <>
       <label className="text-lg font-semibold text-white">{label}</label>
@@ -272,10 +336,16 @@ function PasswordInput({ showPassword, toggleShowPassword, register,placeholder 
           className="absolute top-3 right-4 cursor-pointer"
           onClick={toggleShowPassword}
         >
-          {showPassword ? <FaRegEyeSlash className="text-white" /> : <FaRegEye className="text-white" />}
+          {showPassword ? (
+            <FaRegEyeSlash className="text-white" />
+          ) : (
+            <FaRegEye className="text-white" />
+          )}
         </div>
       </div>
-      {errors[name] && <p className="text-sm text-red-400">{errors[name]?.message}</p>}
+      {errors[name] && (
+        <p className="text-sm text-red-400">{errors[name]?.message}</p>
+      )}
     </>
   );
 }

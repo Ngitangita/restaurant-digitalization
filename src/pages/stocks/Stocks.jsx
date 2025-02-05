@@ -201,11 +201,17 @@ function StockList() {
                   <td className="border-b p-2">{stock.ingredientName}</td>
                   <td
                     className={`border-b p-2 ${
-                      stock.quantity <= 5 ? "text-red-500 font-bold" : ""
+                      stock.quantity <= 12345 && stock.ingredientName.toLowerCase() === "sira"? 
+                      "text-red-500 font-bold" : ""
+                    } ${
+                      stock.quantity <= 112345 && stock.ingredientName.toLowerCase() === "vinegre"? 
+                      "text-red-500 font-bold" : ""
                     }`}
                   >
                     {stock.quantity}
-                    {stock.quantity <= 5 && (
+                    {((stock.quantity <= 12345 && stock.ingredientName.toLowerCase() === "sira")||
+                    (stock.quantity <= 112345 && stock.ingredientName.toLowerCase() === "vinegre"))
+                    && (
                       <div className="text-red-500 text-[10px]">
                         ⚠️ Stock faible! Ajoutez du stock.
                       </div>

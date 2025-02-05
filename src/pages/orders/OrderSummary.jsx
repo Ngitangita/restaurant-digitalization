@@ -4,6 +4,7 @@ import { apiUrl, fetchJson } from "../../services/api";
 import { useNavigate } from "react-router-dom";
 import { MdAddBox, MdPayment, MdInfoOutline } from "react-icons/md";
 import CreateMenuOrder from "../../components/menus/menu-orders/CreateMenuOrder";
+import { convertType } from "../../services/convertType";
 
 function OrderSummary() {
   const [orders, setOrders] = useState([]);
@@ -36,9 +37,12 @@ function OrderSummary() {
     navigate("/payments");
   };
 
-
+  const handleCreatePayment = (type, number) => {
+    console.log(type, number);
+    
+  }
   return (
-    <div className="container bg-white darkBody mx-auto pl-10 pb-14">
+    <div className="container bg-white darkBody mx-auto pl-10 pb-14  pr-10">
       <div className="flex flex-row pt-4 w-full fixed bg-white z-50 gap-[550px]">
         <button
           onClick={() => setIsModalOpen(true)}
@@ -59,6 +63,7 @@ function OrderSummary() {
       <table className="min-w-full bg-white shadow-md rounded-lg text-center relative top-[60px]">
         <thead className="bg-gray-200 text-gray-700">
           <tr>
+          <th className="py-2 px-4"></th>
             <th className="py-2 px-4">Type</th>
             <th className="py-2 px-4">Numero</th>
             <th className="py-2 px-4">Menus</th>
@@ -71,27 +76,36 @@ function OrderSummary() {
               .toSorted((a, b) => a.id - b.id)
               .map((order, i) => (
                 <tr key={i} className="border-b border-gray-200">
-                  <td className="py-2 px-4 flex flex-row">
-                  <label
-                      className="flex items-center space-x-2 cursor-pointer"
-                    >
+                  <td className="py-2 px-4">
+                  <label className="flex items-center space-x-2 cursor-pointer">
                       <input
                         type="checkbox"
                         className="w-5 h-5 accent-blue-500"
                       />
                       <span className="text-gray-800">{order.label}</span>
                     </label>
-                  {order.type}</td>
-                  <td className="py-2 px-4">{order.number}</td>
+                  </td>
                   <td className="py-2 px-4">
+                    {convertType(order.type)}
+                  </td>
+                  <td className="py-2 px-4">{order.number}</td>
+                  <td className="py-2 px-2">
                     {order.menus.map((m) => m.toLowerCase()).join(", ")}
                   </td>
-                  <td className="py-2 px-4 space-x-4">
+                  <td className="py-2 px-4  flex flex-row space-x-4">
                     <button
                       className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                       onClick={() => handleClick(order)}
                     >
                       <BiSolidShow />
+                    </button>
+
+                    <button
+                      className="bg-yellow-500 text-white p-2 rounded hover:bg-yellow-600
+                        flex flex-row gap-2 items-center"
+                      onClick={() => handleCreatePayment(order.label, order.number)}
+                    >
+                      <MdPayment color="white" />
                     </button>
                   </td>
                 </tr>

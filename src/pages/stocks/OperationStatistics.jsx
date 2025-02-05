@@ -160,8 +160,8 @@ function OperationStatistics() {
           {totalStocks.length > 0 ? (
               totalStocks.map((stock) => (
                   <tr key={stock.ingredientName} className="border-b border-gray-200">
-                    <td className="py-2 px-4">{stock.ingredientName}</td>
-                    <td className="py-2 px-4">{stock.totalQuantity} (en {stock.unitAbbreviation})</td>
+                    <td className="py-2 px-4 text-center">{stock.ingredientName}</td>
+                    <td className="py-2 px-4 text-center">{stock.totalQuantity} (en {stock.unitAbbreviation})</td>
                   </tr>
               ))
           ) : (
