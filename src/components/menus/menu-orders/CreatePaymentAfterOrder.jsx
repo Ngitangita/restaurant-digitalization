@@ -1,11 +1,13 @@
-import { useState, useEffect } from "react";
-import useToast from "../menus/menu-orders/(tantely)/hooks/useToast";
-import { apiUrl } from "../../services/api";
+import {useState, useEffect, useMemo} from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
+import useToast from "./(tantely)/hooks/useToast.jsx";
+import {apiUrl} from "../../../services/api.js"
 
-const CreatePaymentAfterOrder = ({  type, number }) => {
+const CreatePaymentAfterOrder = ({  type, number, onCancel }) => {
     const { showSuccess, showError } = useToast();
+    const [defaultValueTab, setDefaultValueTab] = useState([])
+    const [defaultValueRoo, setDefaultValueRoo] = useState([])
 
     const [payload, setPayload] = useState({
         tableNumbers: [],
@@ -27,15 +29,28 @@ const CreatePaymentAfterOrder = ({  type, number }) => {
             const [ methodsRes, tablesRes, roomsRes, statusesRes] =
                 await Promise.all([
                     fetch(apiUrl("/payments/method")),
-                    fetch(apiUrl("/tables/tables-with-menu-orders")),
-                    fetch(apiUrl("/rooms/rooms-with-menu-orders")),
+                    fetch(apiUrl("/tables/all")),
+                    fetch(apiUrl("/rooms")),
                     fetch(apiUrl("/payments/status")),
                 ]);
 
+            const resTables = await tablesRes.json();
+            const resRooms =  await roomsRes.json()
+
+            if (type === 'table'){
+                const selectTables = (resTables || []).find(t => t.number === number) || null
+                setDefaultValueTab(() => selectTables ? [selectTables] : [])
+            }
+
+            if (type === 'room'){
+                const selectRoom = (resRooms || []).find(t => t.roomNumber === number) || null
+                setDefaultValueRoo(() => selectRoom ? [selectRoom] : [])
+            }
+
             setData({
                 methods: await methodsRes.json(),
-                tables: await tablesRes.json(),
-                rooms: await roomsRes.json(),
+                tables: resTables,
+                rooms: resRooms,
                 statuses: await statusesRes.json(),
             });
         } catch (error) {
@@ -47,6 +62,25 @@ const CreatePaymentAfterOrder = ({  type, number }) => {
     useEffect(() => {
         void fetchData();
     }, []);
+
+
+    const defaultValueTable = () => {
+        if (type === 'table'){
+            const selectTables = (data.tables || []).find(t => t.number === number) || null
+            return selectTables ? [selectTables] : []
+        }
+        return []
+    }
+
+
+    const defaultValueRoom = () => {
+        if (type === 'room'){
+            const selectRooms = (data.rooms || []).find(r => r.roomNumber === number)
+            return selectRooms ? [selectRooms] : []
+        }
+        return []
+    }
+
 
     const handleChange = (field, value) => {
         setPayload((prev) => ({ ...prev, [field]: value }));
@@ -81,8 +115,6 @@ const CreatePaymentAfterOrder = ({  type, number }) => {
     return (
         <div className="max-w-lg mx-auto p-4 shadow-md rounded">
             <form onSubmit={handleSubmit} className="mb-6">
-
-
                 <div className="flex flex-row gap-4 mb-4">
                     <div className="w-1/2">
                         <label htmlFor="tableNumbers" className="block text-gray-700">
@@ -92,12 +124,13 @@ const CreatePaymentAfterOrder = ({  type, number }) => {
                             id="tableNumbers"
                             multiple
                             options={data.tables}
+                            defaultValue={defaultValueTab}
                             getOptionLabel={(option) => `Table ${option.number}`}
                             onChange={(event, value) =>
-                                handleChange(
-                                    "tableNumbers",
-                                    value.map((table) => table.number)
-                                )
+                                    handleChange(
+                                        "tableNumbers",
+                                        value.map((table) => table.number)
+                                    )
                             }
                             renderInput={(params) => (
                                 <TextField
@@ -116,6 +149,7 @@ const CreatePaymentAfterOrder = ({  type, number }) => {
                         <Autocomplete
                             id="roomNumbers"
                             multiple
+                            defaultValue={defaultValueRoo}
                             options={data.rooms}
                             getOptionLabel={(option) => `Chambre ${option.roomNumber}`}
                             onChange={(event, value) =>
@@ -178,6 +212,7 @@ const CreatePaymentAfterOrder = ({  type, number }) => {
                 <div className="flex justify-between mt-4">
                     <button
                         type="button"
+                        onClick={onCancel}
                         className="bg-gray-300 text-gray-800 rounded p-2 hover:bg-gray-400"
                     >
                         Annuler

@@ -1,11 +1,11 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { FaRegEyeSlash, FaRegEye } from "react-icons/fa";
-import { axiosConf } from "../../services/api";
-import { useAuthStore } from "../../stores/useAuthStore.js";
+import {useEffect, useState} from "react";
+import {Link, useNavigate} from "react-router-dom";
+import {useForm} from "react-hook-form";
+import {z} from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {FaRegEye, FaRegEyeSlash} from "react-icons/fa";
+import {axiosConf} from "../../services/api";
+import {useAuthStore} from "../../stores/useAuthStore.js";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast.jsx";
 
 const LoginSchema = z.object({
@@ -15,41 +15,13 @@ const LoginSchema = z.object({
   password: z.string().min(4, { message: "Le mot de passe est incorrecte" }),
 });
 
-const SignupSchema = z
-  .object({
-    name: z
-      .string()
-      .min(2, { message: "Le nom doit comporter au moins 2 caractères" }),
-    email: z
-      .string()
-      .min(2, { message: "Non d'utilisater ou adresse e-mail invalide" }),
-    password: z
-      .string()
-      .min(4, {
-        message: "Le mot de passe doit comporter au moins 4 caractères",
-      }),
-    confirmePassword: z
-      .string()
-      .min(4, {
-        message: "Le mot de passe doit comporter au moins 4 caractères",
-      }),
-  })
-  .refine((data) => data.password === data.confirmePassword, {
-    message: "Les mots de passe ne correspondent pas",
-    path: ["confirmePassword"],
-  });
-
 export default function Authentication() {
   const setIsAuthenticated = useAuthStore((state) => state.setIsAuthenticated);
   const setToken = useAuthStore((state) => state.setToken);
   const token = useAuthStore((state) => state.token);
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
-  const [type, setType] = useState("userIconSingin");
-  const [, setSignupError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showLoginPassword, setShowLoginPassword] = useState(false);
-  const [showSignupPassword, setShowSignupPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
   const { showSuccess, showError } = useToast();
   const {
@@ -59,16 +31,6 @@ export default function Authentication() {
     reset: resetLogin,
   } = useForm({
     resolver: zodResolver(LoginSchema),
-    mode: "onSubmit",
-  });
-
-  const {
-    register: signupRegister,
-    handleSubmit: signupSubmit,
-    formState: { errors: signupErrors },
-    reset: resetSignup,
-  } = useForm({
-    resolver: zodResolver(SignupSchema),
     mode: "onSubmit",
   });
 
@@ -103,44 +65,6 @@ export default function Authentication() {
     resetLogin();
   };
 
-  const handleSignup = async (data) => {
-    setIsLoading(true);
-    try {
-      const response = await axiosConf.post("/sign-up", {
-        username: data.name,
-        email: data.email,
-        password: data.password,
-      });
-      if (response?.status >= 200 && response.status < 300 && response.data) {
-        setIsAuthenticated(true);
-        navigate("/");
-        showSuccess(
-          "Inscription réussie ! Vous pouvez maintenant vous connecter."
-        );
-      }
-    } catch (error) {
-      if (error.response && error.response.status === 409) {
-        if (error.response.data.message.includes("email")) {
-          setSignupError(
-            "Cet e-mail est déjà utilisé. Veuillez utiliser un e-mail différent."
-          );
-          showError("E-mail déjà utilisé.");
-        } else if (error.response.data.message.includes("username")) {
-          setSignupError(
-            "Ce nom d'utilisateur est déjà pris. Veuillez en choisir un autre."
-          );
-          showError("Nom d'utilisateur déjà pris.");
-        }
-      } else {
-        console.error("Échec de l'inscription :", error);
-        showError(
-          "Une erreur est survenue lors de l'inscription. Veuillez réessayer."
-        );
-      }
-    }
-    setIsLoading(false);
-    resetSignup();
-  };
 
   if (isAuthenticated) {
     return null;
@@ -157,39 +81,10 @@ export default function Authentication() {
                 alt="UTOPIA-B"
                 className="w-20 h-20 rounded-full"
               />
-              {type === "userIconSingin" ? (
                 <span className="text-2xl font-bold text-white">
                   Connectez-vous à SOOATEL
                 </span>
-              ) : (
-                <span className="text-2xl font-bold text-white">
-                  Créez un nouveau compte
-                </span>
-              )}
             </div>
-          </div>
-
-          <div className="flex justify-around">
-            <button
-              className={`px-4 py-2 rounded-lg ${
-                type === "userIconSingin"
-                  ? "bg-gradient-to-r from-gray-800 to-gray-300/80 text-white"
-                  : "bg-gray-200"
-              }`}
-              onClick={() => setType("userIconSingin")}
-            >
-              Connexion
-            </button>
-            <button
-              className={`px-4 py-2 rounded-lg ${
-                type === "userIconSingUp"
-                  ? "bg-gradient-to-l from-gray-800 to-gray-300/80 text-white"
-                  : "bg-gray-200"
-              }`}
-              onClick={() => setType("userIconSingUp")}
-            >
-              Inscription
-            </button>
           </div>
 
           {isLoading ? (
@@ -203,7 +98,6 @@ export default function Authentication() {
             </div>
           ) : (
             <>
-              {type === "userIconSingin" ? (
                 <form
                   onSubmit={loginSubmit(handleLogin)}
                   className="flex flex-col gap-4 text-white"
@@ -239,55 +133,6 @@ export default function Authentication() {
                     </Link>
                   </span>
                 </form>
-              ) : (
-                <form
-                  onSubmit={signupSubmit(handleSignup)}
-                  className="flex flex-col text-white"
-                >
-                  <FormField
-                    label="Votre nom"
-                    type="text"
-                    placeholder="votre nom"
-                    register={signupRegister}
-                    errors={signupErrors}
-                    name="name"
-                  />
-                  <FormField
-                    label="Votre e-mail"
-                    type="email"
-                    placeholder="nom@mail.com"
-                    register={signupRegister}
-                    errors={signupErrors}
-                    name="email"
-                  />
-                  <PasswordInput
-                    showPassword={showSignupPassword}
-                    toggleShowPassword={() =>
-                      setShowSignupPassword(!showSignupPassword)
-                    }
-                    register={signupRegister}
-                    name="password"
-                    errors={signupErrors}
-                  />
-                  <PasswordInput
-                    showPassword={showConfirmPassword}
-                    toggleShowPassword={() =>
-                      setShowConfirmPassword(!showConfirmPassword)
-                    }
-                    register={signupRegister}
-                    name="confirmePassword"
-                    placeholder="Confirmez votre mot de passe"
-                    label="Confirmer le mot de passe"
-                    errors={signupErrors}
-                  />
-                  <button
-                    type="submit"
-                    className="w-full mt-4 px-4 py-2 bg-gradient-to-r from-blue-500 to-gray-300/80 text-white rounded-lg"
-                  >
-                    Inscription
-                  </button>
-                </form>
-              )}
             </>
           )}
         </div>

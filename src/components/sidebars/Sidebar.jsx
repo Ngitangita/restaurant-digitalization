@@ -11,7 +11,7 @@ import {
 } from "react-icons/md";
 import { useTitleStore } from '../../stores/useTitleStore';
 import {useAuthStore} from "../../stores/useAuthStore.js";
-import { Person2 } from '@mui/icons-material';
+import {Person2, Person2Outlined} from '@mui/icons-material';
 
 const menuItems = [
   {
@@ -103,6 +103,12 @@ const menuItems = [
     title: "Clients",
     icon: <Person2 />,
     path: "/customers",
+    subItems: [],
+  },
+  {
+    title: "Users",
+    icon: <Person2Outlined />,
+    path: "/users",
     subItems: [],
   },
   {

@@ -27,7 +27,6 @@ function OrdersByRoom() {
         const url = apiUrl(`/menu-orders/all/room/${roomNumber}`);
         try {
             const rawData = await fetchJson(url);
-            console.log(rawData)
             if (rawData.length > 0) {
                 const room = rawData[0].room;
                 // eslint-disable-next-line no-unused-vars

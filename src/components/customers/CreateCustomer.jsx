@@ -15,7 +15,7 @@ const CustomerSchema = z.object({
 
 const CreateCustomer = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const navigate = useNavigate(); // Hook pour la navigation
+  const navigate = useNavigate();
   
   const { register, handleSubmit, formState: { errors }, reset } = useForm({
     resolver: zodResolver(CustomerSchema),
@@ -27,7 +27,7 @@ const CreateCustomer = () => {
     try {
       await fetchJson(apiUrl("/customers"), 'POST', data);
       reset();
-      navigate("/customers"); // Redirection vers la liste des clients après enregistrement
+      navigate("/customers");
     } catch (error) {
       console.error("Erreur lors de la création du client :", error);
     } finally {

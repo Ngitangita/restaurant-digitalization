@@ -100,7 +100,7 @@ export function UpdatePassword() {
       {error && <p className="text-red-500 text-sm">{error}</p>}
       {success && <p className="text-green-500 text-sm">{success}</p>}
 
-      <div className="flex justify-end gap-4">
+      <div className="flex justify-between gap-4">
         <button
           type="button"
           onClick={() => {
@@ -111,7 +111,7 @@ export function UpdatePassword() {
           }}
           className="px-4 py-2 border border-gray-500 text-gray-500 rounded-md hover:bg-gray-100"
         >
-          Annuler
+          Réinitialiser le formulaire
         </button>
         <button
           type="submit"

@@ -34,6 +34,8 @@ import OrdersByTable from "../pages/orders/OrdersByTable.jsx";
 import CustomerList from "../components/customers/CustomerList.jsx";
 import CreateCustomer from "../components/customers/CreateCustomer.jsx";
 import ForgotPassword from "../components/settings/ForgotPassword.jsx";
+import Users from "../pages/users/Users.jsx";
+import CreateUser from "../pages/users/CreateUser.jsx";
 
 function ProtectedRoute() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -62,6 +64,8 @@ function AppRouter() {
           <Route element={<Layout showHeaderAndSidebar={isAuthenticated} />}>
             <Route index element={<Home />} />
             <Route path="ingredients" element={<Ingredients />} />
+            <Route path="users" element={<Users />} />
+            <Route path="users/create" element={<CreateUser />} />
             <Route path="customers" element={<CustomerList />} />
             <Route path="customers/create" element={<CreateCustomer />} />
             <Route path="orders" element={<Outlet />}>

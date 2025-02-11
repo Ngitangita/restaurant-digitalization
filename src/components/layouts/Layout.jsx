@@ -2,7 +2,7 @@ import Header from "../headers/Header";
 import Sidebar from "../sidebars/Sidebar";
 import {Outlet, useLocation} from 'react-router-dom'
 
-const noMainPath = ["/authentification"];
+const noMainPath = ["/authentification","/authentification/forgot-password"];
 
 function Layout({ showHeaderAndSidebar }) {
   const location = useLocation();
