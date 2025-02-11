@@ -5,7 +5,7 @@ import * as z from "zod";
 import { AiOutlineEye, AiOutlineEyeInvisible } from "react-icons/ai";
 import useToast from "../menus/menu-orders/(tantely)/hooks/useToast.jsx";
 import {apiUrl, fetchJson, fetchJsonWithParams} from "../../services/api.js";
-import {useNavigate} from "react-router-dom";
+import {Link, useNavigate} from "react-router-dom";
 
 const emailSchema = z.object({
   email: z.string().email("Email invalide"),
@@ -89,6 +89,14 @@ export default function ForgotPassword() {
                 <form onSubmit={handleEmailSubmit(sendOtp)} className="flex flex-col">
                   <InputField label="Votre Email" type="email" placeholder="nom@mail.com" register={registerEmail} errors={emailErrors} name="email" />
                   <button type="submit" className="mt-4 bg-blue-500 text-white py-2 rounded">Envoyer OTP</button>
+                
+                 <span >
+                    <Link
+                      to="/authentification"
+                      className="text-blue-500 hover:underline">
+                      Se reconnecter
+                    </Link>
+                  </span>
                 </form>
             )}
 

@@ -9,11 +9,14 @@ import {convertStatusToPayment} from "../../services/convertStatus.js";
 import {convertMethodToPayment} from "../../services/convertMethodToPayment.js";
 import {formatPriceInAriary} from "../../services/formatePrice.js";
 import CreatePaymentAfterOrder from "../../components/menus/menu-orders/CreatePaymentAfterOrder.jsx";
+import Invoices from "../invoices/Invoices.jsx";
 
 function OrderSummary() {
   const [orders, setOrders] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isPayment, setIsPayment] = useState(false);
+  const [isGenerateInvoice, setIsGenerateInvoice] = useState(false)
+  const [paymentId, setPaymentId] = useState(null)
   const [t, setT] = useState(null)
   const [n, setN] = useState(null)
   const navigate = useNavigate();
@@ -251,6 +254,22 @@ function OrderSummary() {
             </div>
         )}
 
+
+      {isGenerateInvoice && (
+                <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+                  <div className="bg-white rounded-lg shadow-lg max-w-4xl EditModal relative">
+                    <span className='hover:bg-red-500 px-5  flex text-center justify-between items-center
+                                  absolute top-0  right-0 rounded text-[30px] hover:text-white cursor-pointer'
+                          onClick={() => setIsGenerateInvoice(false)}>
+                      x
+                    </span>
+                    <Invoices
+                        paymentId={paymentId}
+                    />
+                  </div>
+                </div>
+            )}
+
         {isPayment && (
             <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
               <div className="relative top-6 bg-white rounded-lg shadow-lg w-full max-w-md EditModal">
@@ -265,6 +284,14 @@ function OrderSummary() {
                     number={n}
                     type={t}
                     onCancel={() => {
+                      setIsPayment(false);
+                      setT(null)
+                      setN(null)
+                    }}
+                    onSuccess={(id) => {
+                      setPaymentId(id)
+                      setIsGenerateInvoice(true)
+                      void fetchApi()
                       setIsPayment(false);
                       setT(null)
                       setN(null)

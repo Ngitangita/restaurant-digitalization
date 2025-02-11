@@ -1,14 +1,14 @@
-import {useState, useEffect, useMemo} from "react";
+import { useState, useEffect } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import useToast from "./(tantely)/hooks/useToast.jsx";
-import {apiUrl} from "../../../services/api.js"
+import { apiUrl } from "../../../services/api.js";
 
-const CreatePaymentAfterOrder = ({  type, number, onCancel }) => {
+const CreatePaymentAfterOrder = ({ type, number, onCancel, onSuccess }) => {
     const { showSuccess, showError } = useToast();
-    const [defaultValueTab, setDefaultValueTab] = useState([])
-    const [defaultValueRoo, setDefaultValueRoo] = useState([])
-
+    const [selectedTables, setSelectedTables] = useState([]);
+    const [selectedRooms, setSelectedRooms] = useState([]);
+    
     const [payload, setPayload] = useState({
         tableNumbers: [],
         roomNumbers: [],
@@ -26,25 +26,24 @@ const CreatePaymentAfterOrder = ({  type, number, onCancel }) => {
 
     const fetchData = async () => {
         try {
-            const [ methodsRes, tablesRes, roomsRes, statusesRes] =
-                await Promise.all([
-                    fetch(apiUrl("/payments/method")),
-                    fetch(apiUrl("/tables/all")),
-                    fetch(apiUrl("/rooms")),
-                    fetch(apiUrl("/payments/status")),
-                ]);
+            const [methodsRes, tablesRes, roomsRes, statusesRes] = await Promise.all([
+                fetch(apiUrl("/payments/method")),
+                fetch(apiUrl("/tables/all")),
+                fetch(apiUrl("/rooms")),
+                fetch(apiUrl("/payments/status")),
+            ]);
 
             const resTables = await tablesRes.json();
-            const resRooms =  await roomsRes.json()
+            const resRooms = await roomsRes.json();
 
-            if (type === 'table'){
-                const selectTables = (resTables || []).find(t => t.number === number) || null
-                setDefaultValueTab(() => selectTables ? [selectTables] : [])
+            if (type === "table") {
+                const selected = resTables.find((t) => t.number === number) || null;
+                setSelectedTables(selected ? [selected] : []);
             }
 
-            if (type === 'room'){
-                const selectRoom = (resRooms || []).find(t => t.roomNumber === number) || null
-                setDefaultValueRoo(() => selectRoom ? [selectRoom] : [])
+            if (type === "room") {
+                const selected = resRooms.find((r) => r.roomNumber === number) || null;
+                setSelectedRooms(selected ? [selected] : []);
             }
 
             setData({
@@ -63,54 +62,38 @@ const CreatePaymentAfterOrder = ({  type, number, onCancel }) => {
         void fetchData();
     }, []);
 
-
-    const defaultValueTable = () => {
-        if (type === 'table'){
-            const selectTables = (data.tables || []).find(t => t.number === number) || null
-            return selectTables ? [selectTables] : []
-        }
-        return []
-    }
-
-
-    const defaultValueRoom = () => {
-        if (type === 'room'){
-            const selectRooms = (data.rooms || []).find(r => r.roomNumber === number)
-            return selectRooms ? [selectRooms] : []
-        }
-        return []
-    }
-
-
     const handleChange = (field, value) => {
         setPayload((prev) => ({ ...prev, [field]: value }));
     };
 
-
-    const handleSubmit = async (event) => {
+    const handleSubmit = async (event) => {        
         event.preventDefault();
+
+        const prePayload = {
+            ... payload,
+            roomNumbers: selectedRooms.map(r => r.roomNumber),
+            tableNumbers: selectedTables.map(t => t.number)
+        }
+        
         try {
             const response = await fetch(apiUrl("/payments"), {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(payload),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(prePayload),
             });
 
             if (!response.ok) {
                 throw new Error("Erreur lors de la création du paiement.");
             }
 
-            const result = await response.json();
-            console.log("Paiement créé :", result);
+            const json = await response.json()
             showSuccess("Paiement soumis avec succès !");
+            onSuccess(json.id ?? number)
         } catch (error) {
             console.error(error);
             showError("Erreur lors de la soumission du paiement.");
         }
     };
-
 
     return (
         <div className="max-w-lg mx-auto p-4 shadow-md rounded">
@@ -124,20 +107,16 @@ const CreatePaymentAfterOrder = ({  type, number, onCancel }) => {
                             id="tableNumbers"
                             multiple
                             options={data.tables}
-                            defaultValue={defaultValueTab}
+                            value={selectedTables}
                             getOptionLabel={(option) => `Table ${option.number}`}
-                            onChange={(event, value) =>
-                                    handleChange(
-                                        "tableNumbers",
-                                        value.map((table) => table.number)
-                                    )
-                            }
+                            onChange={(event, value) => {
+                                console.log(value);
+                                
+                                setSelectedTables(value);
+                                handleChange("tableNumbers", value.map((table) => table.number));
+                            }}
                             renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    variant="outlined"
-                                    placeholder="Choisir des tables..."
-                                />
+                                <TextField {...params} variant="outlined" placeholder="Choisir des tables..." />
                             )}
                             className="w-full"
                         />
@@ -149,27 +128,20 @@ const CreatePaymentAfterOrder = ({  type, number, onCancel }) => {
                         <Autocomplete
                             id="roomNumbers"
                             multiple
-                            defaultValue={defaultValueRoo}
                             options={data.rooms}
+                            value={selectedRooms}
                             getOptionLabel={(option) => `Chambre ${option.roomNumber}`}
-                            onChange={(event, value) =>
-                                handleChange(
-                                    "roomNumbers",
-                                    value.map((room) => room.roomNumber)
-                                )
-                            }
+                            onChange={(event, value) => {
+                                setSelectedRooms(value);
+                                handleChange("roomNumbers", value.map((room) => room.roomNumber));
+                            }}
                             renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    variant="outlined"
-                                    placeholder="Choisir des chambres..."
-                                />
+                                <TextField {...params} variant="outlined" placeholder="Choisir des chambres..." />
                             )}
                             className="w-full"
                         />
                     </div>
                 </div>
-
 
                 <div className="flex flex-row gap-2">
                     <div className="w-full">
@@ -180,18 +152,9 @@ const CreatePaymentAfterOrder = ({  type, number, onCancel }) => {
                             id="paymentMethod"
                             options={data.methods}
                             getOptionLabel={(option) => option.toLowerCase()}
-                            onChange={(event, value) =>
-                                handleChange(
-                                    "paymentMethod",
-                                    value ?? ""
-                                )
-                            }
+                            onChange={(event, value) => handleChange("paymentMethod", value ?? "")}
                             renderInput={(params) => (
-                                <TextField
-                                    {...params}
-                                    variant="outlined"
-                                    placeholder="Choisir..."
-                                />
+                                <TextField {...params} variant="outlined" placeholder="Choisir..." />
                             )}
                             className="w-full"
                         />
