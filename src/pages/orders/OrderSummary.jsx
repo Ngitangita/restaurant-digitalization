@@ -16,6 +16,7 @@ import CreatePaymentAfterOrder from "../../components/menus/menu-orders/CreatePa
 import Invoices from "../invoices/Invoices.jsx";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast.jsx";
 import UpdateStatusPayment from "../../components/status/UpdateStatusPayment.jsx";
+import { TextField } from "@mui/material";
 
 function OrderSummary() {
   const [orders, setOrders] = useState([]);
@@ -28,13 +29,14 @@ function OrderSummary() {
   const navigate = useNavigate();
   const [statuses, setStatuses] = useState([]);
   const [statusesPayment, setStatusesPayment] = useState([]);
-  
+
   const [showEditModal, setShowEditModal] = useState(false);
   const [showEditModalPayment, setShowEditModalPayment] = useState(false);
   const [status, setStatus] = useState("");
   const [statusPayment, setStatusPayment] = useState("");
   const [selectedPaymentId, setSelectedPaymentId] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
   const { showError, showSuccess } = useToast();
 
   useEffect(() => {
@@ -53,12 +55,12 @@ function OrderSummary() {
       .catch((error) => console.log(error));
   }, []);
 
-  
   const fetchApi = async () => {
     const url = apiUrl("/menu-orders/grouped");
     try {
       const data = await fetchJson(url);
       const orderData = groupByPaymentId(data);
+
       setOrders(orderData);
     } catch (error) {
       console.error(error);
@@ -114,7 +116,7 @@ function OrderSummary() {
   }
 
   const handleEditStatus = (order) => {
-    setSelectedOrderId(order.orderId);
+    setSelectedOrderId(order.orderIds);
     setStatus(order.orderStatus);
     setShowEditModal(true);
   };
@@ -125,15 +127,14 @@ function OrderSummary() {
     setShowEditModalPayment(true);
   };
 
-
   const handleUpdateStatusPayment = async () => {
-    setPaymentId(selectedPaymentId)
+    setPaymentId(selectedPaymentId);
     try {
       const url = apiUrl(`/payments/update/status/${selectedPaymentId}`);
       const res = await fetch(url, {
-        method: 'PUT',
+        method: "PUT",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(statusPayment),
       });
@@ -141,10 +142,10 @@ function OrderSummary() {
       if (res.ok) {
         setShowEditModalPayment(false);
         setSelectedPaymentId(null);
+        setIsGenerateInvoice(true);
         void fetchApi();
         showSuccess("Statut mis à jour avec succès.");
       }
-
     } catch {
       showError("Erreur lors de la mise à jour du statut.");
     }
@@ -152,13 +153,19 @@ function OrderSummary() {
 
   const handleUpdateStatus = async () => {
     try {
-      const url = apiUrl(`/menu-orders/${selectedOrderId}/status`);
+      const url = apiUrl(`/menu-orders/orderIds/status`);
+      const payload = {
+        orderIds: selectedOrderId,
+        orderStatus: status,
+      };
+      console.log(payload);
+
       const res = await fetch(url, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(status),
+        body: JSON.stringify(payload),
       });
 
       if (res.ok) {
@@ -172,9 +179,13 @@ function OrderSummary() {
     }
   };
 
+  const filteredMenuOrders = searchTerm ? orders.filter((order) => 
+     String(order.number).includes(searchTerm) 
+): orders
+
   return (
     <div className="container bg-white darkBody mx-auto pl-10 pb-14 pr-10">
-      <div className="flex flex-row pt-4 w-full fixed bg-white z-50 gap-[550px]">
+      <div className="flex flex-row justify-between border pt-4 w-[950px] fixed bg-white z-50 pb-2">
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600
@@ -182,7 +193,37 @@ function OrderSummary() {
         >
           <MdAddBox /> Ajouter une commande
         </button>
-
+        <div>
+          <TextField
+            id="outlined-search"
+            label="Rechercher chambre / table"
+            type="number"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            variant="outlined"
+            size="small"
+            fullWidth
+            InputProps={{
+              endAdornment: searchTerm && (
+                <button
+                  type="button"
+                  className="flex items-center"
+                  onClick={() => setSearchTerm("")}
+                  style={{
+                    cursor: "pointer",
+                    background: "none",
+                    border: "none",
+                  }}
+                ></button>
+              ),
+            }}
+            sx={{
+              width: "250px",
+              height: "50px",
+              ".MuiInputBase-root": { height: "40px" },
+            }}
+          />
+        </div>
         <button
           className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600
                         flex flex-row gap-2 items-center"
@@ -192,7 +233,7 @@ function OrderSummary() {
         </button>
       </div>
 
-      <table className="min-w-full bg-white shadow-md rounded-lg text-center relative top-[60px]">
+      <table className="min-w-full bg-white shadow-md rounded-lg text-center relative top-[80px]">
         <thead className="bg-gray-200 text-gray-700">
           <tr>
             <th className="py-2 px-4">Status</th>
@@ -203,8 +244,8 @@ function OrderSummary() {
           </tr>
         </thead>
         <tbody>
-          {orders.length > 0 ? (
-            orders
+          {filteredMenuOrders.length > 0 ? (
+            filteredMenuOrders
               .toSorted((a, b) => a.id - b.id)
               .map((order, i) => (
                 <Fragment key={i}>
@@ -228,7 +269,13 @@ function OrderSummary() {
                     <tr className="border-gray-200">
                       <td colSpan="6" className="py-2 text-gray-500">
                         <div className="flex justify-between items-center mx-4 mr-[calc(5rem+2px)]">
-                          <p className="text-sm font-semibold text-green-600 mr-auto px-4">
+                          <p
+                            className={`cursor-pointer text-center text-sm font-semibold text-green-600 mr-auto ${
+                              order.payment.status.toLowerCase() === "unpaid"
+                                ? "text-red-500 font-bold"
+                                : ""
+                            }`}
+                          >
                             <button
                               onClick={() => {
                                 handleEditStatusPayment(order.payment);
@@ -277,10 +324,10 @@ function OrderSummary() {
                   )}
 
                   <tr className="border-gray-200 border-b">
-                    <td className="py-2 px-4 cursor-pointer">
+                    <td className="py-2 px-4 cursor-pointer text-green-600">
                       <button
                         onClick={() => handleEditStatus(order)}
-                        className={`w-full flex flex-col gap-1 items-center ${
+                        className={`w-full flex flex-col gap-1 items-center  ${
                           order.orderStatus?.toLowerCase() !== "delivered"
                             ? "text-red-500 font-bold"
                             : ""
