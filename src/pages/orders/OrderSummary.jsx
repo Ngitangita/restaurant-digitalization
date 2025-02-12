@@ -187,10 +187,11 @@ function OrderSummary() {
       : true;
     const matchStatus = searchBoxDelivered ? order.orderStatus.toLowerCase() !== "not_delivered" : true;
     const matchStatusDelivered = searchBoxNoDelivered ? order.orderStatus.toLowerCase() !== "delivered" : true;
-    const matchStatusNoPaid = searchBoxNoPaid ? order.payment.status.toLowerCase() !== "paid" : true;
-    const matchStatusPaid = searchBoxPaid ? order.payment.status.toLowerCase() !== "unpaid" : true;
+    const matchStatusNoPaid = searchBoxNoPaid ? order.payment?.status.toLowerCase() !== "paid" : true;
+    const matchStatusPaid = searchBoxPaid ? order.payment?.status.toLowerCase() !== "unpaid" : true;
     return matchNumber && matchStatus && matchStatusDelivered && matchStatusPaid && matchStatusNoPaid;
   });
+
   return (
     <div className="container bg-white darkBody mx-auto pl-10 pb-14 pr-10">
       <div className="flex flex-row justify-between border pt-4 w-[950px] fixed bg-white z-50 pb-2">

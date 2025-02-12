@@ -3,6 +3,7 @@ import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import useToast from "./(tantely)/hooks/useToast.jsx";
 import { apiUrl } from "../../../services/api.js";
+import { convertStatusToPayment } from "../../../services/convertStatus.js";
 
 const CreatePaymentAfterOrder = ({ type, number, onCancel, onSuccess }) => {
     const { showSuccess, showError } = useToast();
@@ -144,7 +145,7 @@ const CreatePaymentAfterOrder = ({ type, number, onCancel, onSuccess }) => {
                 </div>
 
                 <div className="flex flex-row gap-2">
-                    <div className="w-full">
+                    <div className="w-1/2">
                         <label htmlFor="paymentMethod" className="block text-gray-700">
                             Payment Method:
                         </label>
@@ -160,15 +161,15 @@ const CreatePaymentAfterOrder = ({ type, number, onCancel, onSuccess }) => {
                         />
                     </div>
 
-                    <div className="w-full">
+                    <div className="w-1/2">
                         <label htmlFor="paymentMethod" className="block text-gray-700">
                             Payment Status:
                         </label>
                         <Autocomplete
-                            id="paymentStatus"
+                            id="status"
                             options={data.statuses}
-                            getOptionLabel={(option) => option.toLowerCase()}
-                            onChange={(event, value) => handleChange("paymentStatuus", value ?? "")}
+                            getOptionLabel={(option) => convertStatusToPayment(option.toLowerCase())}
+                            onChange={(event, value) => handleChange("status", value ?? "")}
                             renderInput={(params) => (
                                 <TextField {...params} variant="outlined" placeholder="Choisir..." />
                             )}
