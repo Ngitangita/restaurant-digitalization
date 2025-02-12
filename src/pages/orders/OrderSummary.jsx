@@ -189,8 +189,7 @@ function OrderSummary() {
     const matchStatusDelivered = searchBoxNoDelivered ? order.orderStatus.toLowerCase() !== "delivered" : true;
     const matchStatusNoPaid = searchBoxNoPaid ? order.payment.status.toLowerCase() !== "paid" : true;
     const matchStatusPaid = searchBoxPaid ? order.payment.status.toLowerCase() !== "unpaid" : true;
-    const matchStatusPaidNoDelivered = searchBoxPaid && searchBoxNoDelivered ? (order.payment.status.toLowerCase() && order.orderStatus.toLowerCase()) !== "unpaid" && "delivered" : true;
-    return matchNumber && matchStatus && matchStatusDelivered && matchStatusPaid && matchStatusNoPaid && matchStatusPaidNoDelivered;
+    return matchNumber && matchStatus && matchStatusDelivered && matchStatusPaid && matchStatusNoPaid;
   });
   return (
     <div className="container bg-white darkBody mx-auto pl-10 pb-14 pr-10">

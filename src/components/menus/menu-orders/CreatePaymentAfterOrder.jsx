@@ -159,6 +159,22 @@ const CreatePaymentAfterOrder = ({ type, number, onCancel, onSuccess }) => {
                             className="w-full"
                         />
                     </div>
+
+                    <div className="w-full">
+                        <label htmlFor="paymentMethod" className="block text-gray-700">
+                            Payment Status:
+                        </label>
+                        <Autocomplete
+                            id="paymentStatus"
+                            options={data.statuses}
+                            getOptionLabel={(option) => option.toLowerCase()}
+                            onChange={(event, value) => handleChange("paymentStatuus", value ?? "")}
+                            renderInput={(params) => (
+                                <TextField {...params} variant="outlined" placeholder="Choisir..." />
+                            )}
+                            className="w-full"
+                        />
+                    </div>
                 </div>
 
                 <div className="mb-4">
