@@ -16,7 +16,7 @@ import CreatePaymentAfterOrder from "../../components/menus/menu-orders/CreatePa
 import Invoices from "../invoices/Invoices.jsx";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast.jsx";
 import UpdateStatusPayment from "../../components/status/UpdateStatusPayment.jsx";
-import { TextField } from "@mui/material";
+import { Checkbox, TextField } from "@mui/material";
 
 function OrderSummary() {
   const [orders, setOrders] = useState([]);
@@ -29,14 +29,17 @@ function OrderSummary() {
   const navigate = useNavigate();
   const [statuses, setStatuses] = useState([]);
   const [statusesPayment, setStatusesPayment] = useState([]);
-
+  const [searchBoxNoDelivered, setSearchBoxNoDelivered] = useState(false);
+  const [searchBoxDelivered, setSearchBoxDelivered] = useState(false);
+  const [searchBoxPaid, setSearchBoxPaid] = useState(false);
+  const [searchBoxNoPaid, setSearchBoxNoPaid] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showEditModalPayment, setShowEditModalPayment] = useState(false);
   const [status, setStatus] = useState("");
   const [statusPayment, setStatusPayment] = useState("");
   const [selectedPaymentId, setSelectedPaymentId] = useState(null);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
   const { showError, showSuccess } = useToast();
 
   useEffect(() => {
@@ -99,7 +102,7 @@ function OrderSummary() {
           totalAmount: 0,
           menus: [],
           orderStatus: item.orderStatus,
-          orderId: item.orderId,
+          orderIds: item.orderIds,
           payment: item.payment,
         };
       }
@@ -109,13 +112,11 @@ function OrderSummary() {
 
       return acc;
     }, {});
-
     const groupedArray = Object.values(grouped);
-
     return [...nullPayments, ...groupedArray];
   }
 
-  const handleEditStatus = (order) => {
+  const handleEditStatus = (order) => {    
     setSelectedOrderId(order.orderIds);
     setStatus(order.orderStatus);
     setShowEditModal(true);
@@ -179,20 +180,63 @@ function OrderSummary() {
     }
   };
 
-  const filteredMenuOrders = searchTerm ? orders.filter((order) => 
-     String(order.number).includes(searchTerm) 
-): orders
 
+  const filteredMenuOrders = orders.filter((order) => {
+    const matchNumber = searchTerm
+      ? String(order.number).includes(searchTerm)
+      : true;
+    const matchStatus = searchBoxDelivered ? order.orderStatus.toLowerCase() !== "not_delivered" : true;
+    const matchStatusDelivered = searchBoxNoDelivered ? order.orderStatus.toLowerCase() !== "delivered" : true;
+    const matchStatusNoPaid = searchBoxNoPaid ? order.payment.status.toLowerCase() !== "paid" : true;
+    const matchStatusPaid = searchBoxPaid ? order.payment.status.toLowerCase() !== "unpaid" : true;
+    const matchStatusPaidNoDelivered = searchBoxPaid && searchBoxNoDelivered ? (order.payment.status.toLowerCase() && order.orderStatus.toLowerCase()) !== "unpaid" && "delivered" : true;
+    return matchNumber && matchStatus && matchStatusDelivered && matchStatusPaid && matchStatusNoPaid && matchStatusPaidNoDelivered;
+  });
   return (
     <div className="container bg-white darkBody mx-auto pl-10 pb-14 pr-10">
       <div className="flex flex-row justify-between border pt-4 w-[950px] fixed bg-white z-50 pb-2">
         <button
           onClick={() => setIsModalOpen(true)}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600
+          className="bg-blue-500 text-white px-4 rounded hover:bg-blue-600
                         flex flex-row gap-2 items-center"
         >
           <MdAddBox /> Ajouter une commande
         </button>
+        <div>
+          <h4>Afficher seulement les commandes:</h4>
+          <Checkbox
+            id="searchBoxNoDelivered"
+            checked={searchBoxNoDelivered}
+            onChange={(e) => setSearchBoxNoDelivered(e.target.checked)}
+          />
+          <label htmlFor="searchBoxNoDelivered">
+             non livré
+          </label>
+          <Checkbox
+            id="searchBoxDelivered"
+            checked={searchBoxDelivered}
+            onChange={(e) => setSearchBoxDelivered(e.target.checked)}
+          />
+          <label htmlFor="searchBoxDelivered">
+            livré
+          </label>
+          <Checkbox
+            id="searchBoxNoPaid"
+            checked={searchBoxNoPaid}
+            onChange={(e) => setSearchBoxNoPaid(e.target.checked)}
+          />
+          <label htmlFor="searchBoxNoPaid">
+             non payé
+          </label>
+          <Checkbox
+            id="searchBoxPaid"
+            checked={searchBoxPaid}
+            onChange={(e) => setSearchBoxPaid(e.target.checked)}
+          />
+          <label htmlFor="searchBoxPaid">
+            Payé
+          </label>
+        </div>
         <div>
           <TextField
             id="outlined-search"
@@ -218,7 +262,7 @@ function OrderSummary() {
               ),
             }}
             sx={{
-              width: "250px",
+              width: "150px",
               height: "50px",
               ".MuiInputBase-root": { height: "40px" },
             }}
