@@ -120,7 +120,7 @@ const RoomList = () => {
 
     return (
         <div className="container mx-auto p-4 bg-white darkBody pr-14">
-            <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 border">
+            <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 darkBody">
             <h2 className="text-2xl font-bold mb-4">Liste des chambres</h2>
                 <button
                      className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 ml-2"

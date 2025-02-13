@@ -110,7 +110,7 @@ const IngredientList = () => {
 
   return (
     <div className="darkBody container mx-auto pl-4 pr-12 bg-white">
-      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 border">
+      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 darkBody">
       <h1 className="text-2xl font-bold mb-4">Liste des Ingrédients</h1>
       {error && <p className="text-red-500">{error}</p>}
         <button
@@ -232,7 +232,7 @@ const IngredientList = () => {
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
           <div className="bg-white p-8 rounded-lg shadow-lg DeleteModal">
             <p>
-              Êtes-vous sûr de vouloir supprimer l'ingrédient{" "}
+              Êtes-vous sûr de vouloir supprimer l&apos;ingrédient{" "}
               {ingredientToDelete?.name} ?
             </p>
             <div className="flex justify-between mt-4">
@@ -257,7 +257,7 @@ const IngredientList = () => {
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
           <div className="bg-white rounded-lg shadow-lg EditModal">
             <div className="flex flex-row justify-between items-center">
-              <h2 className="text-xl pl-8 pt-8 pb-4">Modifier l'ingrédient</h2>
+              <h2 className="text-xl pl-8 pt-8 pb-4">Modifier l&apos;ingrédient</h2>
               <span
                 className="hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
                             relative bottom-4 text-[30px] hover:text-white cursor-pointer"

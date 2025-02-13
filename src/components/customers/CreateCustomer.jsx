@@ -37,7 +37,8 @@ const CreateCustomer = () => {
 
   return (
       <div className="container bg-white w-[1109px] darkBody mx-auto p-10 pb-14">
-          <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg ">
+          <form onSubmit={handleSubmit(onSubmit)} className="max-w-2xl mx-auto p-6 bg-white 
+          shadow-lg rounded-lg CreateModal">
               <h2 className="text-2xl text-center font-semibold mb-4">Créer un Client</h2>
 
               <div className="flex flex-row gap-6 justify-between">
@@ -106,7 +107,8 @@ const CreateCustomer = () => {
 
               <div className="text-right flex justify-between">
                   <button type="button"
-                          className="bg-gray-300 text-gray-800 p-2 px-4 rounded-md hover:bg-gray-400 ml-2">
+                    className="bg-gray-300 text-gray-800 p-2 px-4 rounded-md hover:bg-gray-400 ml-2"
+                    onClick={() => navigate("/customers")}>
                       Annuler
                   </button>
 

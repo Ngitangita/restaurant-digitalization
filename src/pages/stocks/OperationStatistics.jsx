@@ -144,13 +144,13 @@ function OperationStatistics() {
               <Bar data={chartData} options={{ responsive: true }} />
           ) : (
               <Typography variant="body1" textAlign="center" color="textSecondary">
-                Aucune donnée disponible pour l'instant.
+                Aucune donnée disponible pour l&apos;instant.
               </Typography>
           )}
         </div>
 
-        <table className="min-w-full bg-white shadow-md rounded-lg">
-          <thead className="bg-gray-200 text-gray-700">
+        <table className="min-w-full bg-white shadow-md rounded-lg darkBody">
+          <thead className="bg-gray-200 text-gray-700 ">
           <tr>
             <th className="py-2 px-4">Ingrédient</th>
             <th className="py-2 px-4">Quantité Totale</th>

@@ -108,7 +108,7 @@ const CategoriesList = () => {
 
   return (
     <div className="container mx-auto pr-14 pl-6 darkBody bg-white">
-      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 border">
+      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 darkBody">
         <h1 className="text-2xl font-bold mb-4">Liste des catégories</h1>
         {error && <p className="text-red-500">{error}</p>}
         <button

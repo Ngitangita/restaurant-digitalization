@@ -169,7 +169,7 @@ function TablesList() {
 
     return (
         <div className="container mx-auto pl-4 bg-white darkBody">
-            <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 border">
+            <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 darkBody">
             <h1 className="text-2xl font-bold mb-4">Liste des Tables</h1>
                 <button
                     className="bg-blue-500 text-white rounded hover:bg-blue-600 px-4 py-2 mb-4"

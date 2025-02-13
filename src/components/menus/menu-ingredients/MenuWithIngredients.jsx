@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import { apiUrl, fetchJson } from "../../../services/api";
 import ManageMenuIngredients from "./ManageMenuIngredients";
@@ -102,10 +102,10 @@ function MenuWithIngredients() {
       <p className="mb-4">{menu.menuDesc}</p>
 
       <h2 className="text-xl font-bold mt-6">Ingrédients :</h2>
-      <table className="min-w-full shadow-md rounded-lg overflow-hidden mt-4">
+      <table className="min-w-full shadow-md rounded-lg overflow-hidden mt-4 z-40">
         <thead>
           <tr className="bg-gray-200">
-            <th className="py-2 px-4">Nom de l'ingrédient</th>
+            <th className="py-2 px-4">Nom de l&apos;ingrédient</th>
             <th className="py-2 px-4">Quantité</th>
             <th className="py-2 px-4">Unité</th>
             <th className="py-2 px-4">Créé le</th>
@@ -115,7 +115,7 @@ function MenuWithIngredients() {
         </thead>
         <tbody>
           {nonEmptyIngredients.length === 0 ? (
-            <tr className="hover:bg-gray-100 text-center border-y">
+            <tr className="hover:bg-gray-100 text-center border-y z-40">
               <td
                 colSpan="6"
                 className="py-4 text-gray-500"
@@ -128,7 +128,7 @@ function MenuWithIngredients() {
             </tr>
           ) : (
             nonEmptyIngredients.map((ingredient, i) => (
-              <tr key={i} className="hover:bg-gray-100 text-center border-y">
+              <tr key={i} className="hover:bg-gray-100 text-center border-y z-40">
                 <td className="py-2 px-4">{ingredient.ingredientName}</td>
                 <td className="py-2 px-4">{ingredient.quantity}</td>
                 <td className="py-2 px-4">{ingredient.unitName}</td>
@@ -156,10 +156,10 @@ function MenuWithIngredients() {
           <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md DeleteModal">
             <h2 className="text-lg font-bold mb-4">Confirmer la suppression</h2>
             <p>
-              Voulez-vous vraiment supprimer l'ingredient{" "}
+              Voulez-vous vraiment supprimer l&apos;ingredient{" "}
               {ingredientToDelete?.ingredientName} ?
             </p>
-            <div className="mt-4">
+            <div className="mt-4 flex justify-between">
             <button
                 className="bg-gray-300 text-black rounded p-2 hover:bg-gray-400"
                 onClick={cancelDelete}
