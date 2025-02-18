@@ -1,8 +1,10 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { apiUrl, fetchJson } from '../../services/api';
+import useToast from '../menus/menu-orders/(tantely)/hooks/useToast';
+import { convertMethodToPayment } from '../../services/convertMethodToPayment';
 
 const schema = z.object({
   ingredientId: z.string().min(1, "L'ingrédient est requis"),
@@ -13,61 +15,104 @@ const schema = z.object({
     message: "Le coût doit être supérieur à zéro",
   }),
   description: z.string().max(255, "La description ne doit pas dépasser 255 caractères").optional(),
+  method: z.string().min(1, "La méthode de paiement est requise"),
 });
 
 function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredientName }) {
   const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
   });
-  
+
+  const [methods, setMethods] = useState([])
+
+  const { showSuccess, showError } = useToast()
+
   useEffect(() => {
+    const fetchPaymentMethods = async () => {
+      try {
+        const data = await fetchJson(apiUrl("/payments/method"));
+        setMethods(data); 
+      } catch (error) {
+        showError("Failed to fetch payment methods");
+      }
+    };
+    fetchPaymentMethods();
+
     if (ingredientId) {
       setValue("ingredientId", ingredientId);
     }
   }, [ingredientId, setValue]);
 
   const onSubmit = async (data) => {
+    const formattedData = {
+      ...data,
+      quantity: parseFloat(data.quantity),
+      cost: parseFloat(data.cost)
+    };
     try {
+      const url = apiUrl("/stocks/add");
+      await fetchJson(url,
+        'POST',
+        formattedData
+      );
 
-      const url = apiUrl("/stocks/add")
-      const res = await fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-    });
-
-    if(res.ok){
-        onStockCreated?.(data); 
-    }
-      
+      showSuccess("Stock ajouté avec succès !");
+      onStockCreated?.(data);
       reset();
-      
     } catch (error) {
-      console.error('Erreur lors de la soumission:', error);
+      if (error) {
+        const jsonErr = JSON.parse(error.message);
+        const message = jsonErr?.message;
+        showError(message || "Fonds insuffisants pour ce retrait.");
+      } else {
+        showError("Erreur lors de l'ajout du stock.");
+      }
+
+      console.error(error);
     }
   };
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 p-8">
-      <div>
-        <label htmlFor="ingredient" className="block text-gray-700">Ingrédient</label>
-        <input
-          id="ingredient"
-          type="text"
-          value={ingredientName} 
-          readOnly 
-          className={`block w-full p-2 border rounded-md ${errors.ingredientId ? 'border-red-500' : 'border-gray-300'}`}
-        />
-        <input
-          type="hidden"
-          value={ingredientId}
-          {...register("ingredientId", { required: true })} 
-        />
-        {errors.ingredientId && <p className="text-red-500">{errors.ingredientId.message}</p>}
-      </div>
+      <div className='flex flex-row gap-20'>
+        <div>
+          <label htmlFor="ingredient" className="block text-gray-700">Ingrédient</label>
+          <input
+            id="ingredient"
+            type="text"
+            value={ingredientName}
+            readOnly
+            className={`block w-full p-2 border rounded-md ${errors.ingredientId ? 'border-red-500' : 'border-gray-300'}`}
+          />
+          <input
+            type="hidden"
+            value={ingredientId}
+            {...register("ingredientId", { required: true })}
+          />
+          {errors.ingredientId && <p className="text-red-500">{errors.ingredientId.message}</p>}
+        </div>
 
+        <div>
+          <label htmlFor="method" className="block text-gray-700">Forme de paiement</label>
+          {methods.length > 0 ? (
+            <select
+              id="method"
+              {...register("method")}
+              className={`block w-full p-2 border rounded-md ${errors.method ? 'border-red-500' : 'border-gray-300'}`}
+            >
+              <option disabled value="">Sélectionner une méthode</option>
+              {methods.map(item => (
+                <option value={item} key={item}> {convertMethodToPayment(item)}</option>
+              ))}
+            </select>
+          ) : (
+            <p className="text-gray-500">Aucune méthode de paiement disponible</p>
+          )}
+          {errors.method && <p className="text-red-500">{errors.method.message}</p>}
+        </div>
+
+      
+      </div>
       <div className='flex flex-row gap-20'>
         <div>
           <label htmlFor="quantity" className="block text-gray-700">Quantité</label>
@@ -92,10 +137,12 @@ function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredie
         </div>
       </div>
 
+
       <div>
         <label htmlFor="description" className="block text-gray-700">Description (facultatif)</label>
         <textarea
           id="description"
+          type="text"
           {...register("description")}
           className={`block w-full p-2 border rounded-md ${errors.description ? 'border-red-500' : 'border-gray-300'}`}
         />

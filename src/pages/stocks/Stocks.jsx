@@ -91,7 +91,6 @@ function StockList() {
 
     setIsModalOpen(false);
     setSelectedStock(null);
-    showSuccess("Le stock a été mis à jour avec succès.");
     setTimeout(() => setSuccessMessage(null), 3000);
     setPage(1);
   };

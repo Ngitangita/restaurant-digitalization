@@ -21,6 +21,30 @@ const menuItems = [
     subItems: [],
   },
   {
+    title: "Caisses",
+    icon: <MdKeyboardCommandKey />,
+    path: "/cashs",
+    subItems: [],
+  },
+  {
+    title: "Commandes",
+    icon: <MdKeyboardCommandKey />,
+    path: "/orders/summary",
+    subItems: [],
+  },
+  {
+    title: "stocks",
+    icon: <AiOutlineStock />,
+    path: "/stocks",
+    subItems: [],
+  },
+  {
+    title: "Achat des stocks",
+    icon: <AiOutlineStock />,
+    path: "/purchaseList",
+    subItems: [],
+  },
+  {
     title: "Menus",
     icon: <MdMenuBook />,
     path: "/menuList",
@@ -62,28 +86,11 @@ const menuItems = [
     path: "/floorList",
     subItems: [],
   },
-  {
-    title: "Commandes",
-    icon: <MdKeyboardCommandKey />,
-    path: "/orders/summary",
-    subItems: [],
-  },
+  
   {
     title: "Payments",
     path: "/payments",
     icon: <MdPayment />,
-    subItems: [],
-  },
-  {
-    title: "stocks",
-    icon: <AiOutlineStock />,
-    path: "/stocks",
-    subItems: [],
-  },
-  {
-    title: "Achat des stocks",
-    icon: <AiOutlineStock />,
-    path: "/purchaseList",
     subItems: [],
   },
   {

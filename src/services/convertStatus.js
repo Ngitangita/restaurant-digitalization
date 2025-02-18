@@ -64,3 +64,12 @@ export const convertStatusToOrder = (status) => {
     
         return statusMap[status.toUpperCase()] || status;
     };
+
+ export const convertDepositWithdraw = (type) => {
+    const types = new Map([
+        ['in', 'Dépôt'],    
+        ['out', 'Retrait'],   
+    ]);
+
+    return types.get(type.toLowerCase()) || 'Type de transaction inconnu'; 
+};
