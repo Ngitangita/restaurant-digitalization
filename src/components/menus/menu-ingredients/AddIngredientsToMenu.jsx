@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
@@ -172,7 +172,7 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
                     onClick={addIngredient}
                     className="bg-blue-500 text-white rounded px-4 py-2 hover:bg-blue-600 mb-2"
                 >
-                    Ajouter l'ingrédient
+                    Ajouter l&apos;ingrédient
                 </button>
             </div>
             <div>
@@ -215,7 +215,7 @@ const AddIngredientsToMenu = ({ onAddIngredients, ingredients, closeModal }) => 
             </div>
 
 
-            <div className="mt-4 flex flex-wrap flex-row justify-between">
+            <div className="mt-4 flex flex-wrap flex-row justify-between z-50">
                 <button type="button" onClick={closeModal} className="bg-gray-500 text-white rounded px-4 py-2 hover:bg-gray-600 ml-2">
                     Annuler
                 </button>

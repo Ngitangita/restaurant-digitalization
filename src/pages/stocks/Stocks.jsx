@@ -11,7 +11,7 @@ import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToas
 function StockList() {
   const [stocks, setStocks] = useState([]);
   const [page, setPage] = useState(1);
-  const [size, setSize] = useState(8);
+  const [size, ] = useState(8);
   const [ingredientName, setIngredientName] = useState("");
   const [quantityMin, setQuantityMin] = useState("");
   const [quantityMax, setQuantityMax] = useState("");
@@ -23,7 +23,7 @@ function StockList() {
   const [selectedStock, setSelectedStock] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [operationDetails, setOperationDetails] = useState(null);
+  const [, setOperationDetails] = useState(null);
   const [selectedOperationId, setSelectedOperationId] = useState(null);
   const { showSuccess, showError } = useToast();
 
@@ -200,16 +200,12 @@ function StockList() {
                   <td className="border-b p-2">{stock.ingredientName}</td>
                   <td
                     className={`border-b p-2 ${
-                      stock.quantity <= 12345 && stock.ingredientName.toLowerCase() === "sira"? 
-                      "text-red-500 font-bold" : ""
-                    } ${
-                      stock.quantity <= 112345 && stock.ingredientName.toLowerCase() === "vinegre"? 
+                      stock.quantity <= 10? 
                       "text-red-500 font-bold" : ""
                     }`}
                   >
                     {stock.quantity}
-                    {((stock.quantity <= 12345 && stock.ingredientName.toLowerCase() === "sira")||
-                    (stock.quantity <= 112345 && stock.ingredientName.toLowerCase() === "vinegre"))
+                    {(stock.quantity <= 10)
                     && (
                       <div className="text-red-500 text-[10px]">
                         ⚠️ Stock faible! Ajoutez du stock.
@@ -277,7 +273,7 @@ function StockList() {
             <div className="bg-white rounded-lg w-1/2 DetailsModal">
               <div className="flex flex-row justify-between items-center">
                 <h2 className="text-xl pl-8 pt-8 pb-4">
-                  Détails de l'Opération
+                  Détails de l&rsquo;Opération
                 </h2>
                 <span
                   className="hover:bg-red-500 px-5 flex justify-center items-center w-[40px]

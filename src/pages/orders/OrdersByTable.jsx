@@ -83,7 +83,7 @@ function OrdersByTable() {
     }, 0);
 
     return (
-        <div className="container mx-auto bg-white dark:bg-gray-800 text-black dark:text-white p-10 pb-14">
+        <div className="container mx-auto bg-white text-black darkBody p-10 pb-14">
             {fetchState.isLoading && (
                 <p className="text-center text-lg font-semibold text-gray-500">Chargement en cours...</p>
             )}
@@ -154,10 +154,9 @@ function OrdersByTable() {
                 </div>
             )}
             {isOpenModal && (
-                <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center z-50">
-                    <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-                        <h2 className="text-xl font-bold text-gray-800">Confirmer la suppression</h2>
-                        <p className="text-gray-600 mt-2">Êtes-vous sûr de vouloir supprimer cette commande ?</p>
+                <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                    <div className="bg-white p-6 rounded-lg shadow-lg w-96 DeleteModal">
+                        <p className="mt-2">Êtes-vous sûr de vouloir supprimer cette commande ?</p>
                         <div className="mt-4 flex justify-between ">
                             <button
                                 onClick={() => setIsOpenModal(false)}

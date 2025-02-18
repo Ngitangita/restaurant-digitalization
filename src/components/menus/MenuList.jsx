@@ -184,7 +184,7 @@ const MenuList = () => {
 
   return (
     <div className="container bg-white darkBody mx-auto pl-10 h-auto">
-      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50">
+      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 darkBody">
         <h1 className="text-2xl font-bold mb-4">Liste des Menus</h1>
         {error && <p className="text-red-500">{error}</p>}
         <button

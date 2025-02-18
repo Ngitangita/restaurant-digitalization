@@ -18,7 +18,7 @@ const Users = () => {
         try {
             const data = await fetchJson(apiUrl("/users"));
             setUsers(data);
-        } catch (err) {
+        } catch {
             setError("Erreur lors du chargement des utilisateurs.");
         } finally {
             setLoading(false);
@@ -72,7 +72,7 @@ const Users = () => {
                     <tr className="bg-gray-100">
                         <th className="border border-gray-300 px-4 py-2">ID</th>
                         <th className="border border-gray-300 px-4 py-2">Email</th>
-                        <th className="border border-gray-300 px-4 py-2">Nom d'utilisateur</th>
+                        <th className="border border-gray-300 px-4 py-2">Nom d&apos;utilisateur</th>
                         <th className="border border-gray-300 px-4 py-2">Créé le</th>
                         <th className="border border-gray-300 px-4 py-2">Actions</th>
                     </tr>
@@ -102,8 +102,7 @@ const Users = () => {
 
             {showModal && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-md shadow-md w-96">
-                        <h2 className="text-xl font-bold mb-4 text-center">Confirmer la suppression</h2>
+                    <div className="bg-white p-6 rounded-md shadow-md w-96 DeleteModal">
                         <p className="text-center mb-4">Voulez-vous vraiment
                             supprimer <strong>{selectedUser?.username}</strong> ?</p>
                         <div className="flex justify-between gap-4">
