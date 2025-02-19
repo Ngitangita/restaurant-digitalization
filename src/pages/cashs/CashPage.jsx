@@ -7,6 +7,7 @@ import { z } from 'zod';
 import useToast from '../../components/menus/menu-orders/(tantely)/hooks/useToast';
 import { convertDepositWithdraw } from '../../services/convertStatus';
 import { convertMethodToPayment } from '../../services/convertMethodToPayment';
+import CountUp from 'react-countup';
 
 const schema = z.object({
   amount: z.number().min(0.01, "Le montant doit être positif"),
@@ -82,7 +83,7 @@ const CashPage = () => {
       ) : (
         <>
           <div className="bg-gray-100 p-4 rounded-lg mb-4 shadow-md">
-            <h2 className="text-xl">Solde actuel : {balance} ar</h2>
+              <h2 className="text-xl">Solde actuel : <CountUp start={0} separator=' ' end={balance} /> ar</h2>
           </div>
 
           <Button variant="contained" color="primary" onClick={handleOpenModal}>
