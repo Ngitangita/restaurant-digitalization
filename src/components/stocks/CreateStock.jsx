@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { apiUrl, fetchJson } from '../../services/api';
 import useToast from '../menus/menu-orders/(tantely)/hooks/useToast';
 import { convertMethodToPayment } from '../../services/convertMethodToPayment';
+import { getArticle } from '../../services/getArticle';
 
 const schema = z.object({
   ingredientId: z.string().min(1, "L'ingrédient est requis"),
@@ -19,20 +20,21 @@ const schema = z.object({
 });
 
 function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredientName }) {
-  const { register, handleSubmit, reset, setValue, formState: { errors } } = useForm({
+  const { register, handleSubmit,  watch, reset, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
   });
 
   const [methods, setMethods] = useState([])
-
   const { showSuccess, showError } = useToast()
+  const quantity = watch("quantity") || "0";
+  const cost = watch("cost") || "0";
 
   useEffect(() => {
     const fetchPaymentMethods = async () => {
       try {
         const data = await fetchJson(apiUrl("/payments/method"));
         setMethods(data); 
-      } catch (error) {
+      } catch {
         showError("Failed to fetch payment methods");
       }
     };
@@ -70,6 +72,12 @@ function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredie
 
       console.error(error);
     }
+  };
+
+  const calculateTotal = () => {
+    const qty = parseFloat(quantity) || 0;
+    const price = parseFloat(cost) || 0;
+    return (qty * price).toFixed(2);
   };
 
   return (
@@ -126,7 +134,7 @@ function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredie
         </div>
 
         <div>
-          <label htmlFor="cost" className="block text-gray-700">Coût</label>
+          <label htmlFor="cost" className="block text-gray-700">Prix Unitaire</label>
           <input
             id="cost"
             type="text"
@@ -147,6 +155,9 @@ function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredie
           className={`block w-full p-2 border rounded-md ${errors.description ? 'border-red-500' : 'border-gray-300'}`}
         />
         {errors.description && <p className="text-red-500">{errors.description.message}</p>}
+      </div>
+      <div className="mt-2 text-gray-800 font-semibold">
+        Total prix {getArticle(ingredientName)} {calculateTotal()} Ar
       </div>
 
       <div className="flex flex-row gap-44">

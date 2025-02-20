@@ -32,6 +32,14 @@ const menuItems = [
     path: "/orders/summary",
     subItems: [],
   },
+
+  {
+    title: "Payments",
+    path: "/payments",
+    icon: <MdPayment />,
+    subItems: [],
+  },
+  
   {
     title: "stocks",
     icon: <AiOutlineStock />,
@@ -87,12 +95,6 @@ const menuItems = [
     subItems: [],
   },
   
-  {
-    title: "Payments",
-    path: "/payments",
-    icon: <MdPayment />,
-    subItems: [],
-  },
   {
     title: "Réservations",
     icon: <RiReservedLine />,

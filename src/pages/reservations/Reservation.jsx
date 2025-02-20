@@ -123,7 +123,7 @@ function ReservationList() {
 
       {isModalOpen && modalType === 'create' && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="CreateModal bg-white rounded-lg shadow-lg  w-full max-w-3xl">
+          <div className="CreateModal bg-white rounded-lg shadow-lg ">
             <div className='flex flex-row justify-between items-center'>
               <h2 className="text-xl pl-8 pt-8 pb-4">Créer une nouvelle réservation</h2>
               <span className='hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
@@ -152,7 +152,8 @@ function ReservationList() {
           <tr className="bg-gray-100">
             <th className="px-4 py-2">Date de début</th>
             <th className="px-4 py-2">Date de fin</th>
-            <th className="px-4 py-2">Client</th>
+            <th className="px-4 py-2">Nom du client</th>
+            <th className="px-4 py-2">Tèl du client</th>
             <th className="px-4 py-2">Statut</th>
             <th className="px-4 py-2">Description</th>
             <th className="px-4 py-2">Action</th>
@@ -176,7 +177,8 @@ function ReservationList() {
                 <tr key={reservation.id} className="hover:bg-gray-100 text-center border-y">
                   <td className="px-4 py-2">{formatDate(reservation.reservationStart)}</td>
                   <td className="px-4 py-2">{formatDate(reservation.reservationEnd)}</td>
-                  <td className="px-4 py-2">{reservation.customer.firstName} {reservation.customer.lastName}</td>
+                  <td className="px-4 py-2">{reservation.customer.name}</td>
+                  <td className="px-4 py-2">{reservation.customer.phoneNumber}</td>
                   <td className={`py-2 px-4 cursor-pointer ${(reservation.status.toLowerCase() !== "confirmed" && reservation.status.toLowerCase() !== "completed") ? 'text-red-500 font-bold' : ''}`}>
                     <button
                       onClick={() => toggleModal('editStatus', reservation)}

@@ -11,7 +11,7 @@ import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToas
 function StockList() {
   const [stocks, setStocks] = useState([]);
   const [page, setPage] = useState(1);
-  const [size, ] = useState(8);
+  const [size] = useState(8);
   const [ingredientName, setIngredientName] = useState("");
   const [quantityMin, setQuantityMin] = useState("");
   const [quantityMax, setQuantityMax] = useState("");
@@ -25,7 +25,7 @@ function StockList() {
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [, setOperationDetails] = useState(null);
   const [selectedOperationId, setSelectedOperationId] = useState(null);
-  const { showSuccess, showError } = useToast();
+  const { showError } = useToast();
 
   useEffect(() => {
     setIsLoading(true);
@@ -97,7 +97,14 @@ function StockList() {
 
   return (
     <div className="darkBody container mx-auto p-4 bg-white pb-10 pr-14">
-      <h1 className="text-2xl font-bold mb-4">Liste des Stocks</h1>
+      <div className="flex flex-row items-center gap-20">
+        <h1 className="text-2xl font-bold mb-4">Liste des Stocks</h1>
+        <strong>
+          {" "}
+          Quantité totale du stock des ingrédients :{" "}
+          {stocks.reduce((acc, stock) => acc + stock.quantity, 0)}
+        </strong>
+      </div>
       {error && <p className="text-red-500">{error}</p>}
       {successMessage && <p className="text-green-500">{successMessage}</p>}
 
@@ -188,46 +195,44 @@ function StockList() {
               </tr>
             ) : stocks.length > 0 ? (
               stocks
-              .toSorted((a, b) => b.id - a.id)
-              .map((stock) => (
-                <tr key={stock.id} className="text-center">
-                  <td className="border-b p-2">
-                    {dayjs(stock.createdAt).format("YYYY-MM-DD HH:mm")}
-                  </td>
-                  <td className="border-b p-2">
-                    {dayjs(stock.updatedAt).format("YYYY-MM-DD HH:mm")}
-                  </td>
-                  <td className="border-b p-2">{stock.ingredientName}</td>
-                  <td
-                    className={`border-b p-2 ${
-                      stock.quantity <= 10? 
-                      "text-red-500 font-bold" : ""
-                    }`}
-                  >
-                    {stock.quantity}
-                    {(stock.quantity <= 10)
-                    && (
-                      <div className="text-red-500 text-[10px]">
-                        ⚠️ Stock faible! Ajoutez du stock.
-                      </div>
-                    )}
-                  </td>
-                  <td className="border-b p-2 flex justify-center">
-                    <button
-                      className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
-                      onClick={() => toggleModal(stock)}
+                .toSorted((a, b) => b.id - a.id)
+                .map((stock) => (
+                  <tr key={stock.id} className="text-center">
+                    <td className="border-b p-2">
+                      {dayjs(stock.createdAt).format("YYYY-MM-DD HH:mm")}
+                    </td>
+                    <td className="border-b p-2">
+                      {dayjs(stock.updatedAt).format("YYYY-MM-DD HH:mm")}
+                    </td>
+                    <td className="border-b p-2">{stock.ingredientName}</td>
+                    <td
+                      className={`border-b p-2 ${
+                        stock.quantity <= 10 ? "text-red-500 font-bold" : ""
+                      }`}
                     >
-                      <FaRegEdit />
-                    </button>
-                    <button
-                      className="bg-green-500 text-white rounded p-2 hover:bg-green-600"
-                      onClick={() => fetchOperationDetails(stock.id)}
-                    >
-                      Voir Détails
-                    </button>
-                  </td>
-                </tr>
-              ))
+                      {stock.quantity}
+                      {stock.quantity <= 10 && (
+                        <div className="text-red-500 text-[10px]">
+                          ⚠️ Stock faible! Ajoutez du stock.
+                        </div>
+                      )}
+                    </td>
+                    <td className="border-b p-2 flex justify-center">
+                      <button
+                        className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
+                        onClick={() => toggleModal(stock)}
+                      >
+                        <FaRegEdit />
+                      </button>
+                      <button
+                        className="bg-green-500 text-white rounded p-2 hover:bg-green-600"
+                        onClick={() => fetchOperationDetails(stock.id)}
+                      >
+                        Voir Détails
+                      </button>
+                    </td>
+                  </tr>
+                ))
             ) : (
               <tr className="text-center">
                 <td colSpan="6" className="py-4 text-gray-500">
