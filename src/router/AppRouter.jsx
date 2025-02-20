@@ -37,6 +37,7 @@ import ForgotPassword from "../components/settings/ForgotPassword.jsx";
 import Users from "../pages/users/Users.jsx";
 import CreateUser from "../pages/users/CreateUser.jsx";
 import CashPage from "../pages/cashs/CashPage.jsx";
+import CategoriesIngredientList from "../components/ingredients/CategorieIngredientList.jsx";
 
 function ProtectedRoute() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -82,6 +83,7 @@ function AppRouter() {
               element={<MenuWithIngredients />}
             />
             <Route path="categoriesListe" element={<CategoriesList />} />
+            <Route path="categoriesIngredientList" element={<CategoriesIngredientList />} />
             <Route path="roomList" element={<RoomList />} />
             <Route path="tableList" element={<TablesList />} />
             <Route path="floorList" element={<FloorList />} />

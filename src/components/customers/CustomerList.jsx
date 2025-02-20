@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
-import { MdAddBox, MdDelete, MdInfoOutline } from "react-icons/md";
+import { MdDelete, MdInfoOutline } from "react-icons/md";
 import { apiUrl, fetchJson } from "../../services/api";
-import { useNavigate } from "react-router-dom";
+import CreateCategorieIngredient from "../ingredients/CreateCategorieIngredient";
 
 function CustomerList() {
   const [customers, setCustomers] = useState([]);
@@ -10,7 +10,6 @@ function CustomerList() {
   const [selectedCustomer, setSelectedCustomer] = useState(null);
   const [page] = useState(1);
   const [size] = useState(8);
-  const navigate = useNavigate();
   const [customerData, setCustomerData] = useState({
     firstName: "",
     lastName: "",
@@ -86,21 +85,11 @@ function CustomerList() {
 
   return (
     <div className="container mx-auto p-4">
-      <button
-        onClick={() => navigate("/customers/create")}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 
-                        flex flex-row gap-2 items-center mb-2"
-      >
-        <MdAddBox /> Ajouter une client
-      </button>
       <table className="min-w-full shadow-md rounded-lg overflow-hidden">
         <thead>
           <tr className="bg-gray-200">
             <th className="py-2 px-4">Prénom</th>
-            <th className="py-2 px-4">Nom</th>
             <th className="py-2 px-4">Téléphone</th>
-            <th className="py-2 px-4">Email</th>
-            <th className="py-2 px-4">Adresse</th>
             <th className="py-2 px-4">Action</th>
           </tr>
         </thead>
@@ -117,12 +106,9 @@ function CustomerList() {
           ) : (
             customers.map((customer) => (
               <tr key={customer.id} className="hover:bg-gray-100 text-center">
-                <td className="py-2 px-4">{customer.firstName}</td>
-                <td className="py-2 px-4">{customer.lastName}</td>
+                <td className="py-2 px-4">{customer.name}</td>
                 <td className="py-2 px-4">{customer.phoneNumber}</td>
-                <td className="py-2 px-4">{customer.email}</td>
-                <td className="py-2 px-4">{customer.address}</td>
-                <td className="py-2 px-4 w-[120px] flex flex-row gap-2 justify-end">
+                <td className="py-2 px-4 w-[300px] flex flex-row gap-2 justify-end">
                   <button
                     className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
                     onClick={() => handleEdit(customer)}
@@ -197,6 +183,7 @@ function CustomerList() {
           </div>
         </div>
       )}
+      <CreateCategorieIngredient/>
     </div>
   );
 }

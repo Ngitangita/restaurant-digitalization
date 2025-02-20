@@ -211,7 +211,7 @@ function ReservationList() {
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
             <p className="mb-6">Êtes-vous sûr de vouloir supprimer la réservation du
-              Mme/Mr {reservationToDelete?.customer.lastName} ?</p>
+              Mme/Mr {reservationToDelete?.customer.name} ?</p>
             <div className="flex justify-between">
               <button
                 className="bg-red-300 text-gray-800 py-2 px-4 rounded-md hover:bg-red-400"

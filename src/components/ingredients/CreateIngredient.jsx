@@ -8,13 +8,15 @@ import useToast from "../menus/menu-orders/(tantely)/hooks/useToast.jsx";
 
 const schema = z.object({
   name: z.string().min(1, "Le nom est requis"),
-  unit: z.string({ message: "l'unité est requis" })
+  unit: z.string({ message: "l'unité est requis" }),
+  ingredientGroup: z.string({ message: "l'ingredient groups est requis" })
 });
 
 
 
 function CreateIngredient({ onModalOpen, onToggle }) {
   const [units, setUnits] = useState([]);
+  const [ingredientGroups, setIngredientGroups] = useState([]);
   const {showSuccess, showError} = useToast()
 
   const {
@@ -39,19 +41,30 @@ function CreateIngredient({ onModalOpen, onToggle }) {
     }
   };
 
+  const fetchIngredientGroup = async () => {
+    try {
+      const dt = await fetchJson(apiUrl("/ingredients/groups"));
+      setIngredientGroups(dt);
+    } catch (error) {
+      console.error('Erreur lors de la récupération des ingredients groups:', error);
+      showError('Impossible de charger les ingredients groups');
+    }
+  };
+
   useEffect(() => {
     void fetchUnits();
+    void fetchIngredientGroup();
   }, []);
 
   const onSubmit = async (data) => {
     try {
       await fetchJson(apiUrl("/ingredients"), 'POST', {
         name: data.name,
-        unitId: parseInt(data.unit, 10)
+        unitId: parseInt(data.unit, 10),
+        groupId: parseInt(data.ingredientGroup, 10)
       });
       onModalOpen(false);
       showSuccess('Ingrédient créé avec succès');
-      console.log('Ingrédient créé avec succès:', data);
       reset();
     } catch (error) {
       console.error('Erreur lors de la soumission:', error);
@@ -63,6 +76,20 @@ function CreateIngredient({ onModalOpen, onToggle }) {
   return (
     <div className='p-8'>
       <form onSubmit={handleSubmit(onSubmit)} className="m-0 p-4 w-full rounded-md">
+      <div className="mb-4">
+          <label htmlFor="ingredientGroup" className="block text-gray-700">Ingredient Categorie</label>
+          <select
+            id="ingredientGroup"
+            {...register("ingredientGroup")}
+            className={`Input mt-1 block w-full p-2 outline-none border rounded-md ${errors.ingredientGroup ? 'border-red-500' : 'border-gray-300'}`}
+          >
+            <option value="">Sélectionnez une ingredientGroup</option>
+            {ingredientGroups.map((ingredientGroup) => (
+              <option key={ingredientGroup.id} value={ingredientGroup.id}>{ingredientGroup.name}</option>
+            ))}
+          </select>
+          {errors.ingredientGroup && <p className="text-red-500 text-sm">{errors.ingredientGroup.message}</p>}
+        </div>
         <div className="mb-4">
           <label htmlFor="name" className="block text-gray-700">Nom</label>
           <input

@@ -11,6 +11,7 @@ function CreateReservation({ onCreate, createReservationModal, rooms, tables, st
     customer: {
       name: "",
       phoneNumber: "",
+      customerId: null,
     },
     roomIds: [],
     tableIds: [],
@@ -43,7 +44,13 @@ function CreateReservation({ onCreate, createReservationModal, rooms, tables, st
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!formData.customer.name || !formData.customer.phoneNumber || !formData.reservationStart || !formData.reservationEnd || !formData.status || !formData.roomIds || !formData.tableIds) {
+    if (!formData.customer.name || 
+        !formData.customer.phoneNumber || 
+        !formData.reservationStart || 
+        !formData.reservationEnd || 
+        !formData.status || 
+        !formData.roomIds || 
+        !formData.tableIds) {
       showError("Veuillez remplir tous les champs obligatoires.");
       return;
     }
