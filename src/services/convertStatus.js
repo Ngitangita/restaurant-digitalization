@@ -65,11 +65,14 @@ export const convertStatusToOrder = (status) => {
         return statusMap[status.toUpperCase()] || status;
     };
 
- export const convertDepositWithdraw = (type) => {
+
+export const convertDepositWithdraw = (type) => {
     const types = new Map([
-        ['in', 'Dépôt'],    
-        ['out', 'Retrait'],   
+        ['manual_deposit', 'Dépôt manuel'],
+        ['manual_withdrawal', 'Retrait manuel'],
+        ['ingredient_purchase', 'Achat d\'ingrédient'],
+        ['menu_sale_deposit', 'Dépôt de vente du menu']
     ]);
 
-    return types.get(type.toLowerCase()) || 'Type de transaction inconnu'; 
+    return types.get(type.toLowerCase()) || 'Type de transaction inconnu';
 };
