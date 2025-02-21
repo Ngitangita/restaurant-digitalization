@@ -5,16 +5,22 @@ import { convertMethodToPayment } from "../../services/convertMethodToPayment";
 
 const ProfitsList = () => {
   const [profits, setProfits] = useState([]);
+  const [, setMenuProfits] = useState([]);
+  const [totalProfit, setTotalProfit] = useState(0);
+  const [totalMenuProfit, setTotalMenuProfit] = useState(0);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
   const { showSuccess, showError } = useToast();
 
   useEffect(() => {
     fetchProfits();
+    fetchMenuProfits();
+    fetchTotalProfit();
+    fetchTotalMenuProfit();
   }, [startDate, endDate]);
 
   const fetchProfits = async () => {
-    let url = apiUrl("/profits");
+    let url = apiUrl("/benefice");
     if (startDate && endDate) {
       url += `?startDate=${startDate}&endDate=${endDate}`;
     }
@@ -24,6 +30,45 @@ const ProfitsList = () => {
       showSuccess("Données récupérées avec succès");
     } catch (error) {
       showError('Erreur lors de la récupération des profits: ' + error.message);
+    }
+  };
+
+  const fetchMenuProfits = async () => {
+    let url = apiUrl("/menuSaleBenefice");
+    if (startDate && endDate) {
+      url += `?startDate=${startDate}&endDate=${endDate}`;
+    }
+    try {
+      const data = await fetchJson(url);
+      setMenuProfits(data);
+    } catch (error) {
+      showError('Erreur lors de la récupération des profits des ventes de menu: ' + error.message);
+    }
+  };
+
+  const fetchTotalProfit = async () => {
+    let url = apiUrl("/totalBenefice");
+    if (startDate && endDate) {
+      url += `?startDate=${startDate}&endDate=${endDate}`;
+    }
+    try {
+      const data = await fetchJson(url);
+      setTotalProfit(data);
+    } catch (error) {
+      showError('Erreur lors de la récupération du bénéfice total: ' + error.message);
+    }
+  };
+
+  const fetchTotalMenuProfit = async () => {
+    let url = apiUrl("/totalMenuSaleBenefice");
+    if (startDate && endDate) {
+      url += `?startDate=${startDate}&endDate=${endDate}`;
+    }
+    try {
+      const data = await fetchJson(url);
+      setTotalMenuProfit(data);
+    } catch (error) {
+      showError('Erreur lors de la récupération du bénéfice total des ventes de menu: ' + error.message);
     }
   };
 
@@ -52,24 +97,22 @@ const ProfitsList = () => {
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">Méthode de Paiement</th>
-            <th className="border p-2">Total Entrées</th>
-            <th className="border p-2">Total Sorties</th>
             <th className="border p-2">Bénéfices</th>
           </tr>
         </thead>
         <tbody>
           {profits.map((profit, index) => (
             <tr key={index} className="text-center border">
-              <td className="border p-2">{convertMethodToPayment(profit.paymentMethod)}</td>
-              <td className="border p-2">{profit.totalIn.toFixed(2)} Ar</td>
-              <td className="border p-2">{profit.totalOut.toFixed(2)} Ar</td>
-              <td className="border p-2 font-semibold text-green-600">
-                {profit.profit.toFixed(2)} Ar
+              <td className="border p-2">{convertMethodToPayment(profit.modeOfTransaction)}</td>
+              <td className={`border p-2 font-semibold ${profit.profitOrLoss >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                {profit.profitOrLoss.toFixed(2)} Ar
               </td>
             </tr>
           ))}
         </tbody>
       </table>
+      <h3 className="text-lg font-semibold mt-4">Bénéfice Total: {totalProfit.toFixed(2)} Ar</h3>
+      <h3 className="text-lg font-semibold mt-4">Bénéfice Total des Ventes de Menu: {totalMenuProfit.toFixed(2)} Ar</h3>
     </div>
   );
 };
