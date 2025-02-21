@@ -1,19 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Button, TextField, Select, MenuItem, InputLabel, FormControl, Modal, Box, Typography, CircularProgress } from '@mui/material';
-import { apiUrl, fetchJson } from '../../services/api';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
-import useToast from '../../components/menus/menu-orders/(tantely)/hooks/useToast';
-import { convertDepositWithdraw } from '../../services/convertStatus';
-import { convertMethodToPayment } from '../../services/convertMethodToPayment';
-import CountUp from 'react-countup';
+import { useState, useEffect } from "react";
+import {
+  Button,
+  TextField,
+  Select,
+  MenuItem,
+  InputLabel,
+  FormControl,
+  Modal,
+  Box,
+  Typography,
+  CircularProgress,
+} from "@mui/material";
+import { apiUrl, fetchJson } from "../../services/api";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
+import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast";
+import { convertDepositWithdraw } from "../../services/convertStatus";
+import { convertMethodToPayment } from "../../services/convertMethodToPayment";
+import CountUp from "react-countup";
+import ProfitsList from "./ProfitsList";
 
 const schema = z.object({
   amount: z.number().min(0.01, "Le montant doit être positif"),
   transactionType: z.string().min(1, "Type de transaction requis"),
   modeOfTransaction: z.string().min(1, "Mode de paiement requis"),
-  description: z.string().max(500, "La description ne doit pas dépasser 500 caractères").optional(),
+  description: z
+    .string()
+    .max(500, "La description ne doit pas dépasser 500 caractères")
+    .optional(),
 });
 
 const CashPage = () => {
@@ -24,7 +39,12 @@ const CashPage = () => {
   const { showError, showSuccess } = useToast();
   const [openModal, setOpenModal] = useState(false);
 
-  const { register, handleSubmit, formState: { errors }, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm({
     resolver: zodResolver(schema),
   });
 
@@ -34,14 +54,16 @@ const CashPage = () => {
       const [balanceData, statusData, methodsData] = await Promise.all([
         fetchJson(apiUrl("/cash/balance")),
         fetchJson(apiUrl("/cash/status")),
-        fetchJson(apiUrl("/payments/method"))
+        fetchJson(apiUrl("/payments/method")),
       ]);
 
       setBalance(balanceData?.balance || 0);
       setMethods(Array.isArray(methodsData) ? methodsData : []);
       setStatus(Array.isArray(statusData) ? statusData : []);
-    } catch (error) {
-      showError("Une erreur s'est produite lors de la récupération des données.");
+    } catch {
+      showError(
+        "Une erreur s'est produite lors de la récupération des données."
+      );
     } finally {
       setLoading(false);
     }
@@ -58,11 +80,11 @@ const CashPage = () => {
         amount: parseFloat(data.amount),
       };
 
-      await fetchJson(apiUrl("/cash/transaction"), 'POST', formattedData);
+      await fetchJson(apiUrl("/cash/transaction"), "POST", formattedData);
       reset();
       setOpenModal(false);
       showSuccess("Transaction réussie !");
-      void fetchData()
+      void fetchData();
     } catch (error) {
       console.error("Erreur de transaction", error);
       showError("Erreur lors de la transaction.");
@@ -82,17 +104,25 @@ const CashPage = () => {
         </div>
       ) : (
         <>
-          <div className="bg-gray-100 p-4 rounded-lg mb-4 shadow-md">
-              <h2 className="text-xl">Solde actuel : <CountUp start={0} separator=' ' end={balance} /> ar</h2>
+          <div className="bg-gray-100 p-4 rounded-lg mb-4 shadow-md flex flex-row gap-4">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleOpenModal}
+            >
+              Ajouter une Transaction
+            </Button>
+            <h2 className="text-xl">
+              Solde actuel : <CountUp start={0} separator=" " end={balance} />{" "}
+              Ar
+            </h2>
           </div>
-
-          <Button variant="contained" color="primary" onClick={handleOpenModal}>
-            Ajouter une Transaction
-          </Button>
 
           <Modal open={openModal} onClose={handleCloseModal}>
             <Box className="w-full max-w-md mx-auto mt-20 p-6 bg-white rounded-lg shadow-lg">
-              <Typography variant="h6" className="mb-4 text-center">Formulaire de Transaction</Typography>
+              <Typography variant="h6" className="mb-4 text-center">
+                Formulaire de Transaction
+              </Typography>
 
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                 <div>
@@ -102,10 +132,10 @@ const CashPage = () => {
                     variant="outlined"
                     type="number"
                     {...register("amount", {
-                      valueAsNumber: true
+                      valueAsNumber: true,
                     })}
                     error={!!errors.amount}
-                    helperText={errors.amount ? errors.amount.message : ''}
+                    helperText={errors.amount ? errors.amount.message : ""}
                     className="mb-4"
                   />
                 </div>
@@ -128,7 +158,11 @@ const CashPage = () => {
                         <MenuItem value="">Aucun statut disponible</MenuItem>
                       )}
                     </Select>
-                    {errors.transactionType && <p className="text-red-500">{errors.transactionType.message}</p>}
+                    {errors.transactionType && (
+                      <p className="text-red-500">
+                        {errors.transactionType.message}
+                      </p>
+                    )}
                   </FormControl>
                 </div>
 
@@ -142,13 +176,21 @@ const CashPage = () => {
                     >
                       {Array.isArray(methods) && methods.length > 0 ? (
                         methods.map((method, index) => (
-                          <MenuItem key={index} value={method}>{convertMethodToPayment(method)}</MenuItem>
+                          <MenuItem key={index} value={method}>
+                            {convertMethodToPayment(method)}
+                          </MenuItem>
                         ))
                       ) : (
-                        <MenuItem value="">Aucun mode de paiement disponible</MenuItem>
+                        <MenuItem value="">
+                          Aucun mode de paiement disponible
+                        </MenuItem>
                       )}
                     </Select>
-                    {errors.modeOfTransaction && <p className="text-red-500">{errors.modeOfTransaction.message}</p>}
+                    {errors.modeOfTransaction && (
+                      <p className="text-red-500">
+                        {errors.modeOfTransaction.message}
+                      </p>
+                    )}
                   </FormControl>
                 </div>
 
@@ -161,7 +203,9 @@ const CashPage = () => {
                     rows={4}
                     {...register("description")}
                     error={!!errors.description}
-                    helperText={errors.description ? errors.description.message : ''}
+                    helperText={
+                      errors.description ? errors.description.message : ""
+                    }
                     className="mb-4"
                   />
                 </div>
@@ -183,6 +227,7 @@ const CashPage = () => {
           </Modal>
         </>
       )}
+      <ProfitsList />
     </div>
   );
 };
