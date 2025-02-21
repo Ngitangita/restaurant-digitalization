@@ -12,6 +12,7 @@ import {
 import dayjs from "dayjs";
 import { apiUrl } from "../services/api";
 import { convertMethodToPayment } from "../services/convertMethodToPayment";
+import CountUp from "react-countup";
 
 ChartJS.register(
     BarElement,
@@ -93,14 +94,14 @@ export default function ProfitDashboard() {
         <div className="max-w-5xl mx-auto p-6">
             <h1 className="text-2xl font-bold text-center mb-6">Tableau de Bord des Bénéfices</h1>
 
-            <div className="flex md:justify-between justify-center gap-4 mb-6">
+            <div className="flex flex-col md:flex-row md:justify-between justify-center gap-4 mb-6">
                 <div>
                     <label className="block text-sm font-medium">Date de début</label>
                     <input
                         type="date"
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
-                        className="border rounded p-2"
+                        className="border rounded p-2 w-full md:w-auto"
                     />
                 </div>
                 <div>
@@ -109,7 +110,7 @@ export default function ProfitDashboard() {
                         type="date"
                         value={endDate}
                         onChange={(e) => setEndDate(e.target.value)}
-                        className="border rounded p-2"
+                        className="border rounded p-2 w-full md:w-auto"
                     />
                 </div>
             </div>
@@ -120,9 +121,9 @@ export default function ProfitDashboard() {
                     <Bar data={barData} />
                 </div>
 
-                <div >
+                <div>
                     <h2 className="text-xl font-semibold text-center mb-4">Ventes de Menu par Mode de Transaction</h2>
-                    <div className="w-[15em]">
+                    <div className="w-full sm:w-[15em]">
                         <Doughnut data={doughnutData} />
                     </div>
                 </div>
@@ -131,27 +132,37 @@ export default function ProfitDashboard() {
             <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div
                     className={`p-4 rounded-lg text-center
-                    ${totalProfit >= 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}
-                    dark:${totalProfit >= 0 ? 'bg-green-800 text-green-300' : 'bg-red-800 text-red-300'}`}
+                        ${totalProfit >= 0 ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-900'}
+                        dark:${totalProfit >= 0 ? 'bg-green-800 text-green-300' : 'bg-red-800 text-red-400'}`}
                 >
                     <h3 className="text-lg font-medium">{totalProfit >= 0 ? 'Bénéfice' : 'Perte'}</h3>
                     <p className="text-2xl font-bold">
-                        {totalProfit >= 0
-                            ? `${totalProfit.toLocaleString()} Ar`
-                            : `-${Math.abs(totalProfit).toLocaleString()} Ar`}
+                        <CountUp
+                            start={0}
+                            end={Math.abs(totalProfit)}
+                            duration={2}
+                            separator=","
+                            decimals={0}
+                        />{' '}
+                        Ar
                     </p>
                 </div>
 
                 <div
                     className={`p-4 rounded-lg text-center
-                    ${totalMenuProfit >= 0 ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}
-                    dark:${totalMenuProfit >= 0 ? 'bg-blue-800 text-blue-300' : 'bg-gray-800 text-gray-300'}`}
+                        ${totalMenuProfit >= 0 ? 'bg-blue-100 text-blue-600' : 'bg-gray-100 text-gray-600'}
+                        dark:${totalMenuProfit >= 0 ? 'bg-blue-800 text-blue-300' : 'bg-gray-800 text-gray-300'}`}
                 >
                     <h3 className="text-lg font-medium">{totalMenuProfit >= 0 ? 'Bénéfice des Menus' : 'Perte des Menus'}</h3>
                     <p className="text-2xl font-bold">
-                        {totalMenuProfit >= 0
-                            ? `${totalMenuProfit.toLocaleString()} Ar`
-                            : `${Math.abs(totalMenuProfit).toLocaleString()} Ar`}
+                        <CountUp
+                            start={0}
+                            end={Math.abs(totalMenuProfit)}
+                            duration={2}
+                            separator=","
+                            decimals={0}
+                        />{' '}
+                        Ar
                     </p>
                 </div>
             </div>
