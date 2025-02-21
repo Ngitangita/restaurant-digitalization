@@ -1,5 +1,6 @@
+import { generateRandomNumbers } from "./generateRandomNumbers.js";
 import { run } from "./run.js";
-
+const groups = generateRandomNumbers(1, 20)
 const ingredients = [
   { name: "Farine", unitId: 2 },
   { name: "Sucre", unitId: 2 },
@@ -35,4 +36,7 @@ const ingredients = [
 
 console.log(ingredients.length);
 
-run(ingredients, "/ingredients")
+run(ingredients.map((i, index) => ({
+  ...i,
+  groupId: groups[index % groups.length]  
+})), "/ingredients")
