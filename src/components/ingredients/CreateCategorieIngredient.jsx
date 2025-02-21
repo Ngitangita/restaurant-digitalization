@@ -1,17 +1,19 @@
 
 import { useForm } from 'react-hook-form';
 import { apiUrl, fetchJson } from '../../services/api';
+import useToast from '../menus/menu-orders/(tantely)/hooks/useToast';
 
 const CreateCategorieIngredient = ({ onClose, onCategoryCreated }) => {
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const {showError} = useToast()
 
     const onSubmit = async (data) => {
         try {
             await fetchJson(apiUrl("/ingredients/groups"), 'POST', data);
             onCategoryCreated();
             onClose();
-        } catch (error) {
-            console.error('Error creating category:', error);
+        } catch {
+            showError(`categorie ${data.name} existe déjà`)
         }
     };
 

@@ -84,9 +84,8 @@ const CategoriesIngredientList = () => {
     }
 
     try {
-      await fetchJson(apiUrl(`/ingredients/groups`), "PUT", {
-        id: categoryToEdit,
-        name: name,
+      await fetchJson(apiUrl(`/ingredients/groups/${categoryToEdit.id}`), "PUT", {
+        name: categoryToEdit.name,
       });
       setShowEditCategoryModal(false);
       void fetchIngredientGroup();

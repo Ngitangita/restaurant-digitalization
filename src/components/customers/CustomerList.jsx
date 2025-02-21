@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { FaRegEdit } from "react-icons/fa";
 import { MdDelete, MdInfoOutline } from "react-icons/md";
 import { apiUrl, fetchJson } from "../../services/api";
-import CreateCategorieIngredient from "../ingredients/CreateCategorieIngredient";
 
 function CustomerList() {
   const [customers, setCustomers] = useState([]);
@@ -183,7 +182,6 @@ function CustomerList() {
           </div>
         </div>
       )}
-      <CreateCategorieIngredient/>
     </div>
   );
 }
