@@ -51,23 +51,32 @@ const ProfitsList = () => {
       <table className="w-full border-collapse border border-gray-300 mt-4">
         <thead>
           <tr className="bg-gray-200">
-            <th className="border p-2">Méthode de Paiement</th>
-            <th className="border p-2">Total Entrées</th>
-            <th className="border p-2">Total Sorties</th>
-            <th className="border p-2">Bénéfices</th>
+            <th className="border p-2">Mode de Transaction</th>
+            <th className="border p-2 text-red-500">Perte (ariary)</th>
+            <th className="border p-2 text-green-500">Bénéfice (ariary)</th>
           </tr>
         </thead>
         <tbody>
-          {profits.map((profit, index) => (
-            <tr key={index} className="text-center border">
-              <td className="border p-2">{convertMethodToPayment(profit.paymentMethod)}</td>
-              <td className="border p-2">{profit.totalIn.toFixed(2)} Ar</td>
-              <td className="border p-2">{profit.totalOut.toFixed(2)} Ar</td>
-              <td className="border p-2 font-semibold text-green-600">
-                {profit.profit.toFixed(2)} Ar
+          {profits && profits.length > 0 ? (
+            profits.map((profit, index) => (
+              <tr key={index}>
+                <td className="border p-2">{convertMethodToPayment(profit.modeOfTransaction)}</td>
+                <td className="border p-2 text-red-500">
+                  {profit.profitOrLoss < 0 ? `${Math.abs(profit.profitOrLoss).toLocaleString()} Ar` : "-"}
+                </td>
+                <td className="border p-2 text-green-500">
+                  {profit.profitOrLoss > 0 ? `${profit.profitOrLoss.toLocaleString()} Ar` : "-"}
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="3" className="text-center p-4 text-gray-500">
+                Aucune donnée disponible.
               </td>
             </tr>
-          ))}
+          )}
+
         </tbody>
       </table>
     </div>
