@@ -38,6 +38,8 @@ import Users from "../pages/users/Users.jsx";
 import CreateUser from "../pages/users/CreateUser.jsx";
 import CashPage from "../pages/cashs/CashPage.jsx";
 import CategoriesIngredientList from "../components/ingredients/CategorieIngredientList.jsx";
+import History from "../pages/cashs/History.jsx";
+import CashHistoryById from "../pages/cashs/CashHistoryById.jsx";
 
 function ProtectedRoute() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -78,6 +80,8 @@ function AppRouter() {
             </Route>
             <Route path="menuList" element={<MenuList />} />
             <Route path="units" element={<UnitsList />} />
+            <Route path="history" element={<History />} />
+            <Route path="history/:id" element={<CashHistoryById />} />
             <Route
               path="menu-ingredients/menu/:menuId"
               element={<MenuWithIngredients />}

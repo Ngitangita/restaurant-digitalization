@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
 import { apiUrl, fetchJson } from "../../services/api";
 import dayjs from "dayjs";
+import { useNavigate, useParams } from "react-router-dom";
 
-function CashHistoryById({ id, onClose }) {
+function CashHistoryById() {
   const [cashDetails, setCashDetails] = useState(null);
   const [error, setError] = useState(null);
   const [showScrollbar, setShowScrollbar] = useState(false);
+  const {id} = useParams()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (!id) {
@@ -65,10 +68,10 @@ function CashHistoryById({ id, onClose }) {
         </>
       )}
       <button
-        onClick={onClose}
+        onClick={() => navigate("/history")}
         className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
       >
-        Fermer
+       Retour vers l&apos;historique
       </button>
     </div>
   );

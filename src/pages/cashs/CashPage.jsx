@@ -21,6 +21,7 @@ import { convertMethodToPayment } from "../../services/convertMethodToPayment";
 import CountUp from "react-countup";
 import ProfitsList from "./ProfitsList";
 import CashHistory from "./CashHistory";
+import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
   amount: z.number().min(0.01, "Le montant doit être positif"),
@@ -41,6 +42,7 @@ const CashPage = () => {
   const [openModal, setOpenModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [, setCashDetails] = useState(null);
+  const navigate = useNavigate()
 
   const {
     register,
@@ -104,6 +106,7 @@ const CashPage = () => {
 
   const toggleModal = () => {
     setShowDetailsModal(!showDetailsModal);
+    navigate("/history")
   };
 
   return (

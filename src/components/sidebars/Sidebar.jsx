@@ -61,8 +61,18 @@ const menuItems = [
   {
     title: "Catégories",
     icon: <RiReservedLine />,
-    path: "/categoriesListe",
-    subItems: [],
+    subItems: [
+      {
+        title: "Catégories des ingrédients",
+        path: "/categoriesIngredientList",
+        subItems: [],
+      },
+      {
+        title: "Catégories des menu",
+        path: "/categoriesListe",
+        subItems: [],
+      },
+    ],
   },
   {
     title: "Unités",
@@ -76,12 +86,7 @@ const menuItems = [
     path: "/ingredients",
     subItems: [],
   },
-  {
-    title: "CategoriesIngredientList",
-    icon: <RiReservedLine />,
-    path: "/categoriesIngredientList",
-    subItems: [],
-  },
+  
   {
     title: "Tables",
     icon: <MdOutlineCalendarMonth />,
