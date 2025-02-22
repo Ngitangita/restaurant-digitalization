@@ -29,7 +29,7 @@ function OperationDetails({ operationId, onClose }) {
         {error && <div className="bg-red-300 text-red-700 p-2 rounded mb-4">{error}</div>}
         {!error && (
           <>
-            <p><strong>Nom de l'Ingrédient:</strong> {operationDetails.ingredientName}</p>
+            <p><strong>Nom de l&apos;Ingrédient:</strong> {operationDetails.ingredientName}</p>
             <h3 className="text-md font-semibold mt-4">Liste des opérations résumées :</h3>
             <ul className="h-[300px] overflow-y-auto scrollbar-custom border border-collapse p-4"
              onMouseEnter={() => setShowScrollbar(true)}

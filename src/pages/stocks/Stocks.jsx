@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { apiUrl, fetchJson } from "../../services/api";
 import { FaRegEdit } from "react-icons/fa";
 import OperationDetails from "./OperationDetails";
@@ -10,8 +10,6 @@ import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToas
 
 function StockList() {
   const [stocks, setStocks] = useState([]);
-  const [page, setPage] = useState(1);
-  const [size] = useState(8);
   const [ingredientName, setIngredientName] = useState("");
   const [quantityMin, setQuantityMin] = useState("");
   const [quantityMax, setQuantityMax] = useState("");
@@ -19,7 +17,6 @@ function StockList() {
   const [endDate, setEndDate] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null);
   const [selectedStock, setSelectedStock] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -27,40 +24,28 @@ function StockList() {
   const [selectedOperationId, setSelectedOperationId] = useState(null);
   const { showError } = useToast();
 
-  useEffect(() => {
+  const fetchStocks = async () => {
     setIsLoading(true);
     setError(null);
-    const url = `${apiUrl("/stocks")}?size=${size}&page=${
-      page - 1
-    }&ingredientName=${ingredientName}&quantityMin=${quantityMin}&quantityMax=${quantityMax}&startDate=${startDate}&endDate=${endDate}`;
-
-    fetchJson(url)
-      .then((d) => {
-        setStocks(d.items || []);
-        setIsLoading(false);
-      })
-      .catch((e) => {
-        console.error(e);
-        setError("Une erreur s'est produite lors du chargement des stocks.");
-        showError("Une erreur s'est produite lors du chargement des stocks.");
-        setIsLoading(false);
-      });
-  }, [
-    size,
-    page,
-    ingredientName,
-    quantityMin,
-    quantityMax,
-    startDate,
-    endDate,
-  ]);
+    try {
+      const data = await fetchJson(apiUrl("/ingredient-groups"));
+      setStocks(data);
+    } catch (error) {
+      showError(
+        "Une erreur s'est produite lors du chargement des stocks" +
+          error.message
+      );
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    setPage(1);
-  }, [ingredientName, quantityMin, quantityMax, startDate, endDate]);
+    void fetchStocks();
+  }, []);
 
-  const toggleModal = (stock) => {
-    setSelectedStock(stock);
+  const toggleModal = (ingredient) => {
+    setSelectedStock(ingredient);
     setIsModalOpen(!isModalOpen);
   };
 
@@ -74,39 +59,52 @@ function StockList() {
     setOperationDetails(null);
   };
 
-  const handleStockCreated = (data) => {
-    const q = parseFloat(data.quantity);
-    const ingredientId = parseInt(data.ingredientId);
-
-    setStocks(
-      stocks.map((s) =>
-        s.ingredientId == ingredientId
-          ? {
-              ...s,
-              quantity: s.quantity + q,
-            }
-          : s
-      )
-    );
-
+  const handleStockCreated = () => {
+    void fetchStocks();
     setIsModalOpen(false);
     setSelectedStock(null);
-    setTimeout(() => setSuccessMessage(null), 3000);
-    setPage(1);
   };
+
+  const filteredData = stocks.map((s) => ({
+    ...s,
+    ingredients: s.ingredients.filter((i) => {
+      const nameMatch = ingredientName
+        ? i?.name?.toLowerCase().includes(ingredientName.toLowerCase())
+        : true;
+      const quantityMatch =
+        (!quantityMin || i.stock.quantity >= quantityMin) &&
+        (!quantityMax || i.stock.quantity <= quantityMax);
+
+      const createdDate = i.stock.createdAt.split("T")[0];
+      const updatedDate = i.stock.updatedAt.split("T")[0];
+      const start = startDate ? startDate.split("T")[0] : null;
+      const end = endDate ? endDate.split("T")[0] : null;
+
+      const dateMatch =
+        (!start || createdDate >= start) && (!end || updatedDate <= end);
+
+      return nameMatch && quantityMatch && dateMatch;
+    }),
+  }));
 
   return (
     <div className="darkBody container mx-auto p-4 bg-white pb-10 pr-14">
       <div className="flex flex-row items-center gap-20">
         <h1 className="text-2xl font-bold mb-4">Liste des Stocks</h1>
         <strong>
-          {" "}
           Quantité totale du stock des ingrédients :{" "}
-          {stocks.reduce((acc, stock) => acc + stock.quantity, 0)}
+          {stocks.reduce(
+            (acc, stock) =>
+              acc +
+              stock.ingredients.reduce(
+                (sum, ingredient) => sum + (ingredient.stock?.quantity || 0),
+                0
+              ),
+            0
+          )}
         </strong>
       </div>
       {error && <p className="text-red-500">{error}</p>}
-      {successMessage && <p className="text-green-500">{successMessage}</p>}
 
       <div className="flex mb-4">
         <TextField
@@ -177,62 +175,72 @@ function StockList() {
               <th className="py-2 px-4">Modifié le</th>
               <th className="p-2">Ingrédient</th>
               <th className="p-2">Quantité</th>
+              <th className="p-2">Unité</th>
               <th className="p-2">Actions</th>
             </tr>
           </thead>
           <tbody>
             {isLoading ? (
               <tr>
-                <td colSpan="7" className="text-center py-2">
+                <td colSpan="6" className="text-center py-2">
                   Chargement...
                 </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan="7" className="text-center py-2 text-red-500">
+                <td colSpan="6" className="text-center py-2 text-red-500">
                   {error}
                 </td>
               </tr>
-            ) : stocks.length > 0 ? (
-              stocks
-                .toSorted((a, b) => b.id - a.id)
-                .map((stock) => (
-                  <tr key={stock.id} className="text-center">
-                    <td className="border-b p-2">
-                      {dayjs(stock.createdAt).format("YYYY-MM-DD HH:mm")}
-                    </td>
-                    <td className="border-b p-2">
-                      {dayjs(stock.updatedAt).format("YYYY-MM-DD HH:mm")}
-                    </td>
-                    <td className="border-b p-2">{stock.ingredientName}</td>
-                    <td
-                      className={`border-b p-2 ${
-                        stock.quantity <= 10 ? "text-red-500 font-bold" : ""
-                      }`}
-                    >
-                      {stock.quantity}
-                      {stock.quantity <= 10 && (
-                        <div className="text-red-500 text-[10px]">
-                          ⚠️ Stock faible! Ajoutez du stock.
-                        </div>
-                      )}
-                    </td>
-                    <td className="border-b p-2 flex justify-center">
-                      <button
-                        className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
-                        onClick={() => toggleModal(stock)}
-                      >
-                        <FaRegEdit />
-                      </button>
-                      <button
-                        className="bg-green-500 text-white rounded p-2 hover:bg-green-600"
-                        onClick={() => fetchOperationDetails(stock.id)}
-                      >
-                        Voir Détails
-                      </button>
-                    </td>
+            ) : filteredData.length > 0 ? (
+              filteredData.map(({ name, ingredients }, i) => (
+                <React.Fragment key={i}>
+                  <tr className="font-bold bg-gray-100 text-center">
+                    <td colSpan="6">{name}</td>
                   </tr>
-                ))
+                  {ingredients.map((ingredient) => (
+                    <tr key={ingredient.id} className="text-center">
+                      <td className="border-b p-2">
+                        {ingredient?.stock?.createdAt
+                          ? dayjs(ingredient.stock.createdAt).format(
+                              "YYYY-MM-DD HH:mm"
+                            )
+                          : "Non défini"}
+                      </td>
+                      <td className="border-b p-2">
+                        {dayjs(ingredient?.stock?.updatedAt).format(
+                          "YYYY-MM-DD HH:mm"
+                        )}
+                      </td>
+                      <td className="border-b p-2">
+                        {ingredient.name || "N/A"}
+                      </td>
+                      <td className="border-b p-2">
+                        {ingredient?.stock?.quantity}
+                      </td>
+                      <td className="border-b p-2">
+                        {ingredient?.unit?.abbreviation}
+                      </td>
+                      <td className="border-b p-2 flex justify-center">
+                        <button
+                          className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
+                          onClick={() => toggleModal(ingredient)}
+                        >
+                          <FaRegEdit />
+                        </button>
+                        <button
+                          className="bg-green-500 text-white rounded p-2 hover:bg-green-600"
+                          onClick={() =>
+                            fetchOperationDetails(ingredient.stock.id)
+                          }
+                        >
+                          Voir Détails
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </React.Fragment>
+              ))
             ) : (
               <tr className="text-center">
                 <td colSpan="6" className="py-4 text-gray-500">
@@ -262,12 +270,8 @@ function StockList() {
               <CreateStock
                 onStockCreated={handleStockCreated}
                 createStockModale={toggleModal}
-                ingredientId={
-                  selectedStock ? selectedStock.ingredientId.toString() : ""
-                }
-                ingredientName={
-                  selectedStock ? selectedStock.ingredientName : ""
-                }
+                ingredientId={selectedStock ? selectedStock.id : ""}
+                ingredientName={selectedStock ? selectedStock.name : ""}
               />
             </div>
           </div>
@@ -295,22 +299,6 @@ function StockList() {
             </div>
           </div>
         )}
-      </div>
-
-      <div className="flex justify-between mt-4">
-        <button
-          onClick={() => setPage((p) => p - 1)}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
-          disabled={page <= 1}
-        >
-          Previous
-        </button>
-        <button
-          onClick={() => setPage((p) => p + 1)}
-          className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-        >
-          Next
-        </button>
       </div>
     </div>
   );

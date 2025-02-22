@@ -20,6 +20,7 @@ import { convertDepositWithdraw } from "../../services/convertStatus";
 import { convertMethodToPayment } from "../../services/convertMethodToPayment";
 import CountUp from "react-countup";
 import ProfitsList from "./ProfitsList";
+import CashHistory from "./CashHistory";
 
 const schema = z.object({
   amount: z.number().min(0.01, "Le montant doit être positif"),
@@ -38,6 +39,8 @@ const CashPage = () => {
   const [loading, setLoading] = useState(true);
   const { showError, showSuccess } = useToast();
   const [openModal, setOpenModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [, setCashDetails] = useState(null);
 
   const {
     register,
@@ -91,8 +94,17 @@ const CashPage = () => {
     }
   };
 
+  const closeDetailsModal = () => {
+    setShowDetailsModal(false);
+    setCashDetails(null);
+  };
+
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
+
+  const toggleModal = () => {
+    setShowDetailsModal(!showDetailsModal);
+  };
 
   return (
     <div className="w-full p-6 bg-white dark:bg-gray-800 dark:text-white">
@@ -116,6 +128,12 @@ const CashPage = () => {
               Solde actuel : <CountUp start={0} separator=" " end={balance} />{" "}
               Ar
             </h2>
+            <button
+              className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 ml-2"
+              onClick={toggleModal}
+            >
+              Voir historique
+            </button>
           </div>
 
           <Modal open={openModal} onClose={handleCloseModal}>
@@ -228,6 +246,22 @@ const CashPage = () => {
         </>
       )}
       <ProfitsList />
+      {showDetailsModal && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white rounded-lg w-1/2 DetailsModal">
+            <div className="flex flex-row justify-end items-center">
+              <span
+                className="hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
+                            relative text-[30px] hover:text-white cursor-pointer"
+                onClick={closeDetailsModal}
+              >
+                x
+              </span>
+            </div>
+            <CashHistory onClose={closeDetailsModal} />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

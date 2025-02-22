@@ -8,7 +8,6 @@ import { convertMethodToPayment } from '../../services/convertMethodToPayment';
 import { getArticle } from '../../services/getArticle';
 
 const schema = z.object({
-  ingredientId: z.string().min(1, "L'ingrédient est requis"),
   quantity: z.string().refine((val) => parseFloat(val) > 0, {
     message: "La quantité doit être supérieure à zéro",
   }),
@@ -48,9 +47,11 @@ function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredie
   const onSubmit = async (data) => {
     const formattedData = {
       ...data,
+      ingredientId,
       quantity: parseFloat(data.quantity),
       cost: parseFloat(data.cost)
     };
+    
     try {
       const url = apiUrl("/stocks/add");
       await fetchJson(url,
@@ -59,7 +60,7 @@ function CreateStock({ onStockCreated, createStockModale, ingredientId, ingredie
       );
 
       showSuccess("Stock ajouté avec succès !");
-      onStockCreated?.(data);
+      onStockCreated?.();
       reset();
     } catch (error) {
       if (error) {
