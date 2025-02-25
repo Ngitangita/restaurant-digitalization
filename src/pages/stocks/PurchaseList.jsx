@@ -65,6 +65,7 @@ function PurchaseList() {
           <tbody>
             {purchases.length > 0 ? (
               purchases
+              .toSorted((a, b) => b.id - a.id)
               .map((purchase) => (
                 <tr
                   key={purchase.purchaseId}

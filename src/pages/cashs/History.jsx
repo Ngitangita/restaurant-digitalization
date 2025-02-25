@@ -31,8 +31,15 @@ const History = () => {
 
   return (
     <div className="container mx-auto pr-14 pl-6 darkBody bg-white">
-      <h1 className="text-2xl font-bold mb-4">Liste des historiques</h1>
-
+     <div className="flex flex-row gap-4">
+     <h1 className="text-2xl font-bold mb-4">Liste des historiques</h1>
+      <button
+        onClick={() => navigate("/cashs")}
+        className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
+      >
+       Retour vers caisse
+      </button>
+     </div>
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody">
         <thead>
           <tr className="bg-gray-200">
@@ -46,7 +53,9 @@ const History = () => {
         </thead>
         <tbody>
           {histories.length > 0 ? (
-            histories.map((history, i) => (
+            histories
+            .toSorted((a, b) => b.id - a.id)
+            .map((history, i) => (
               <tr key={i} className="border hover:bg-gray-100 transition-all">
                 <td className="p-3 border">
                   {new Date(history.transactionDate).toLocaleString()}

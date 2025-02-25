@@ -79,7 +79,7 @@ function OrdersByTable() {
     };
 
     const totalPrice = fetchState.data.orders.reduce((total, order) => {
-        return total + (order.cost * order.quantity);
+        return total + order.cost;
     }, 0);
 
     return (
