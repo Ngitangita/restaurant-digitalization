@@ -103,7 +103,13 @@ const Invoices = ({ paymentId }) => {
       (startY += 4)
     );
     doc.text(
-      `Paiement: ${invoices?.payment.paymentMethod || "Non spécifié"}`,
+      `Méthode de paiement: ${convertMethodToPayment(invoices?.payment.paymentMethod) || "Non spécifié"}`,
+      marginLeft,
+      (startY += 4)
+    );
+
+    doc.text(
+      `Status de paiement: ${convertStatusToPayment(invoices?.payment.status) || "Non spécifié"}`,
       marginLeft,
       (startY += 4)
     );
