@@ -9,7 +9,7 @@ const ProfitsList = () => {
   const [totalMenuProfit, setTotalMenuProfit] = useState(0);
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
-  const { showSuccess, showError } = useToast();
+  const {  showError } = useToast();
 
   useEffect(() => {
     fetchProfits();
@@ -25,7 +25,6 @@ const ProfitsList = () => {
     try {
       const data = await fetchJson(url);
       setProfits(data);
-      showSuccess("Données récupérées avec succès");
     } catch (error) {
       showError("Erreur lors de la récupération des profits: " + error.message);
     }
