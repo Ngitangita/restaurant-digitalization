@@ -54,9 +54,17 @@ const menuItems = [
   },
   {
     title: "Menus",
-    icon: <MdMenuBook />,
-    path: "/menuList",
-    subItems: [],
+    icon: <MdMenuBook />, 
+    subItems: [
+      {
+        title: "Liste des menus",
+        path: "/menuList",
+      },
+      {
+        title: "Liste des menus vendu",
+        path: "/menuSold",
+      },
+    ],
   },
   {
     title: "Catégories",

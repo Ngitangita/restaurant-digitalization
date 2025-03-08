@@ -91,18 +91,6 @@ function StockList() {
     <div className="darkBody container mx-auto p-4 bg-white pb-10 pr-14">
       <div className="flex flex-row items-center gap-20">
         <h1 className="text-2xl font-bold mb-4">Liste des Stocks</h1>
-        <strong>
-          Quantité totale du stock des ingrédients :{" "}
-          {stocks.reduce(
-            (acc, stock) =>
-              acc +
-              stock.ingredients.reduce(
-                (sum, ingredient) => sum + (ingredient.stock?.quantity || 0),
-                0
-              ),
-            0
-          )}
-        </strong>
       </div>
       {error && <p className="text-red-500">{error}</p>}
 

@@ -121,8 +121,8 @@ function UnitsList() {
                 ) : (
                     units.toSorted((a, b) => b.id - a.id).map((unit) => (
                         <tr key={unit.id} className="hover:bg-gray-100 text-center">
-                            <td className="py-2 px-4">{unit.name}</td>
-                            <td className="py-2 px-4">{unit.abbreviation}</td>
+                            <td className="py-2 px-4">{unit.name.toLowerCase()}</td>
+                            <td className="py-2 px-4">{unit.abbreviation.toLowerCase()}</td>
                             <td className="py-2 px-4 flex flex-row gap-2 justify-center">
                                 <button
                                     className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"

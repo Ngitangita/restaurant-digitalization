@@ -107,7 +107,7 @@ const CategoriesIngredientList = () => {
           onClick={toggleModal}
           className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
         >
-          Créer une catégorie categories
+          Créer une catégorie ingredient
         </button>
         <TextField
           id="outlined-search"

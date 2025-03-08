@@ -40,6 +40,7 @@ import CashPage from "../pages/cashs/CashPage.jsx";
 import CategoriesIngredientList from "../components/ingredients/CategorieIngredientList.jsx";
 import History from "../pages/cashs/History.jsx";
 import CashHistoryById from "../pages/cashs/CashHistoryById.jsx";
+import MostSoldMenus from "../components/menus/MostSoldMenus.jsx";
 
 function ProtectedRoute() {
   const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -79,6 +80,7 @@ function AppRouter() {
               <Route path="by-table/:tableNumber" element={<OrdersByTable />} />
             </Route>
             <Route path="menuList" element={<MenuList />} />
+            <Route path="menuSold" element={<MostSoldMenus/>} />
             <Route path="units" element={<UnitsList />} />
             <Route path="history" element={<History />} />
             <Route path="history/:id" element={<CashHistoryById />} />

@@ -26,6 +26,15 @@ function PurchaseList() {
   useEffect(() => {
     setPage(1);
   }, [startDate, endDate]);
+  const [totalPrice, setTotalPrice] = useState(0);
+
+  useEffect ( () => {
+    const total = purchases.reduce(
+      (sum, item) => sum + item.quantity * item.cost,
+      0
+    );
+    setTotalPrice(total);
+  }, [purchases]);
 
   return (
     <div className="w-full p-4 bg-gray-100 darkBody pr-14">
@@ -33,7 +42,7 @@ function PurchaseList() {
         <div className="bg-red-300 text-red-700 p-2 rounded mb-4">{error}</div>
       )}
 
-      <div className="w-64 relative flex items-center mb-4">
+      <div className="relative flex items-center mb-4">
         <input
           type="datetime-local"
           value={startDate}
@@ -48,6 +57,9 @@ function PurchaseList() {
           onBlur={() => document.activeElement.blur()}
           className="border border-gray-300 p-2 rounded-md outline-none"
         />
+        <p className="mt-4 ml-3 text-xl font-semibold">
+          Prix total : {totalPrice} Ar
+        </p>
       </div>
 
       <div className="overflow-auto">
@@ -65,26 +77,26 @@ function PurchaseList() {
           <tbody>
             {purchases.length > 0 ? (
               purchases
-              .toSorted((a, b) => b.id - a.id)
-              .map((purchase) => (
-                <tr
-                  key={purchase.purchaseId}
-                  className="border-b border-gray-200"
-                >
-                  <td className="py-2 px-4">{purchase.ingredientName}</td>
-                  <td className="py-2 px-4">{purchase.quantity}</td>
-                  <td className="py-2 px-4">{purchase.cost}</td>
-                  <td className="py-2 px-4">
-                    {truncate(purchase.description, 10)}
-                  </td>
-                  <td className="py-2 px-4">
-                    {dayjs(purchase.createdAt).format("YYYY-MM-DD HH:mm")}
-                  </td>
-                  <td className="py-2 px-4">
-                    {dayjs(purchase.updatedAt).format("YYYY-MM-DD HH:mm")}
-                  </td>
-                </tr>
-              ))
+                .toSorted((a, b) => b.id - a.id)
+                .map((purchase) => (
+                  <tr
+                    key={purchase.purchaseId}
+                    className="border-b border-gray-200"
+                  >
+                    <td className="py-2 px-4">{purchase.ingredientName}</td>
+                    <td className="py-2 px-4">{purchase.quantity}</td>
+                    <td className="py-2 px-4">{purchase.cost} Ar</td>
+                    <td className="py-2 px-4">
+                      {truncate(purchase.description, 10)}
+                    </td>
+                    <td className="py-2 px-4">
+                      {dayjs(purchase.createdAt).format("YYYY-MM-DD HH:mm")}
+                    </td>
+                    <td className="py-2 px-4">
+                      {dayjs(purchase.updatedAt).format("YYYY-MM-DD HH:mm")}
+                    </td>
+                  </tr>
+                ))
             ) : (
               <tr className="text-center">
                 <td colSpan="6" className="py-4 text-gray-500">

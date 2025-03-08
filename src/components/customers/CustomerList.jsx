@@ -182,6 +182,7 @@ function CustomerList() {
           </div>
         </div>
       )}
+    
     </div>
   );
 }

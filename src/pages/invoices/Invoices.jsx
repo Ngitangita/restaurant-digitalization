@@ -32,36 +32,41 @@ const Invoices = ({ paymentId }) => {
   const currentDate = dayjs().format("DD/MM/YYYY HH:mm:ss");
 
   const groupOrders = () => {
-  if (!invoices?.orders) return [];
+    if (!invoices?.orders) return [];
 
-  const groupedOrders = [];
-  let tempGroup = [invoices.orders[0]];  
+    const groupedOrders = [];
+    let tempGroup = [invoices.orders[0]];
 
-  invoices.orders.slice(1).forEach((order) => {
-    const lastOrder = tempGroup[tempGroup.length - 1];
+    invoices.orders.slice(1).forEach((order) => {
+      const lastOrder = tempGroup[tempGroup.length - 1];
 
-    const lastOrderIsUnpaid = lastOrder?.payment?.status === "UNPAID";
-    const currentOrderIsUnpaid = order?.payment?.status === "UNPAID";
-    
-    const timeDiff = dayjs(order.orderDate).diff(dayjs(lastOrder.orderDate), "minute");
-    if (lastOrderIsUnpaid || (lastOrder?.payment?.status === "PAID" && currentOrderIsUnpaid) || timeDiff <= 1) {
-      tempGroup.push(order);
-    } else {
+      const lastOrderIsUnpaid = lastOrder?.payment?.status === "UNPAID";
+      const currentOrderIsUnpaid = order?.payment?.status === "UNPAID";
+
+      const timeDiff = dayjs(order.orderDate).diff(
+        dayjs(lastOrder.orderDate),
+        "minute"
+      );
+      if (
+        lastOrderIsUnpaid ||
+        (lastOrder?.payment?.status === "PAID" && currentOrderIsUnpaid) ||
+        timeDiff <= 1
+      ) {
+        tempGroup.push(order);
+      } else {
+        groupedOrders.push(tempGroup);
+        tempGroup = [order];
+      }
+    });
+
+    if (tempGroup.length > 0) {
       groupedOrders.push(tempGroup);
-      tempGroup = [order];
     }
-  });
 
-  if (tempGroup.length > 0) {
-    groupedOrders.push(tempGroup);
-  }
+    return groupedOrders;
+  };
 
-  return groupedOrders;
-};
-
-
-
-  const lastGroup = groupOrders().slice(-1)[0]; 
+  const lastGroup = groupOrders().slice(-1)[0];
   const lastOrder = lastGroup ? lastGroup[lastGroup.length - 1] : null;
 
   const roomNumbersString = [
@@ -103,13 +108,18 @@ const Invoices = ({ paymentId }) => {
       (startY += 4)
     );
     doc.text(
-      `Méthode de paiement: ${convertMethodToPayment(invoices?.payment.paymentMethod) || "Non spécifié"}`,
+      `Méthode de paiement: ${
+        convertMethodToPayment(invoices?.payment.paymentMethod) ||
+        "Non spécifié"
+      }`,
       marginLeft,
       (startY += 4)
     );
 
     doc.text(
-      `Status de paiement: ${convertStatusToPayment(invoices?.payment.status) || "Non spécifié"}`,
+      `Status de paiement: ${
+        convertStatusToPayment(invoices?.payment.status) || "Non spécifié"
+      }`,
       marginLeft,
       (startY += 4)
     );
@@ -130,16 +140,15 @@ const Invoices = ({ paymentId }) => {
     lastGroup.forEach((order) => {
       doc.text(`Article: ${order.menu.name}`, marginLeft, (startY += 5));
       doc.text(`Qté: x${order.quantity}`, marginLeft, (startY += 5));
-      doc.text(
-        `Prix: ${order.cost.toFixed(2)} MGA`,
-        marginLeft,
-        (startY += 5)
-      );
+      doc.text(`Prix: ${order.cost.toFixed(2)} MGA`, marginLeft, (startY += 5));
       doc.line(marginLeft, (startY += 4), 75, startY);
     });
 
     doc.setFontSize(7);
-    const totalAmount = lastGroup.reduce((total, order) => total + order.cost, 0);
+    const totalAmount = lastGroup.reduce(
+      (total, order) => total + order.cost,
+      0
+    );
     doc.text(
       `Montant total: ${totalAmount.toFixed(2)} MGA`,
       marginLeft,
@@ -180,20 +189,31 @@ const Invoices = ({ paymentId }) => {
           <p>Dernière commande: ${dayjs(lastOrder.orderDate).format(
             "DD/MM/YYYY HH:mm:ss"
           )}</p>
-          <p>Paiement méthod: ${convertMethodToPayment(invoices?.payment.paymentMethod) || "Non spécifié"}</p>
-          <p>Paiement status: ${convertStatusToPayment(invoices?.payment.status) || "Non spécifié"}</p>
+          <p>Paiement méthod: ${
+            convertMethodToPayment(invoices?.payment.paymentMethod) ||
+            "Non spécifié"
+          }</p>
+          <p>Paiement status: ${
+            convertStatusToPayment(invoices?.payment.status) || "Non spécifié"
+          }</p>
           <p>N° de la table: ${tableNumbersString || "___"}</p>
           <p>N° de la chambre: ${roomNumbersString || "___"}</p>
 
           <!-- Affichage des commandes -->
-          ${lastGroup.map((order) => `
+          ${lastGroup
+            .map(
+              (order) => `
             <h4>${order.menu.name}</h4>
             <p>Quantité: x${order.quantity}</p>
             <p>Prix: ${order.cost.toFixed(2)} MGA</p>
-          `).join("")}
+          `
+            )
+            .join("")}
 
           <hr/>
-          <h4>Montant total: ${lastGroup.reduce((sum, order) => sum + order.cost, 0).toFixed(2)} MGA</h4>
+          <h4>Montant total: ${lastGroup
+            .reduce((sum, order) => sum + order.cost, 0)
+            .toFixed(2)} MGA</h4>
 
           <p>Utopia vous remercie et à très bientôt!</p>
 
@@ -293,7 +313,13 @@ const Invoices = ({ paymentId }) => {
             </div>
 
             <div className="flex flex-col gap-2">
-            <h4>Montant total: {lastGroup.reduce((sum, order) => sum + order.cost, 0).toFixed(2)} MGA</h4>
+              <h4>
+                Montant total:{" "}
+                {lastGroup
+                  .reduce((sum, order) => sum + order.cost, 0)
+                  .toFixed(2)}{" "}
+                MGA
+              </h4>
             </div>
 
             <div className="flex flex-row justify-between gap-6 pt-5">
