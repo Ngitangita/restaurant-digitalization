@@ -63,12 +63,12 @@ const menuItems = [
     icon: <RiReservedLine />,
     subItems: [
       {
-        title: "Catégories des ingrédients",
+        title: "Ingrédients",
         path: "/categoriesIngredientList",
         subItems: [],
       },
       {
-        title: "Catégories des menu",
+        title: "Menus",
         path: "/categoriesListe",
         subItems: [],
       },
@@ -186,7 +186,6 @@ export default function Sidebar() {
     removeAuth();
     navigate("/authentification")
   }
-
 
 
   return (
