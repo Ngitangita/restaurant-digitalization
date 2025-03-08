@@ -40,6 +40,7 @@ export const fetchJson = async (urlOrFunc, method = 'GET', data = null, headers 
         options.body = JSON.stringify(data);
     }
 
+    // eslint-disable-next-line no-useless-catch
     try {
         const response = await fetch(url, options);
 

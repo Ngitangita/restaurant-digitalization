@@ -47,12 +47,6 @@ const menuItems = [
     subItems: [],
   },
   {
-    title: "Achat des stocks",
-    icon: <AiOutlineStock />,
-    path: "/purchaseList",
-    subItems: [],
-  },
-  {
     title: "Menus",
     icon: <MdMenuBook />, 
     subItems: [
@@ -125,6 +119,13 @@ const menuItems = [
     title: "Calendrier",
     icon: <MdOutlineCalendarMonth />,
     path: "/calendars",
+    subItems: [],
+  },
+
+  {
+    title: "Achat des stocks",
+    icon: <AiOutlineStock />,
+    path: "/purchaseList",
     subItems: [],
   },
   {

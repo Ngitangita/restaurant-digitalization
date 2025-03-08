@@ -23,23 +23,58 @@ function StockList() {
   const [, setOperationDetails] = useState(null);
   const [selectedOperationId, setSelectedOperationId] = useState(null);
   const { showError } = useToast();
-
   const fetchStocks = async () => {
     setIsLoading(true);
     setError(null);
     try {
       const data = await fetchJson(apiUrl("/ingredient-groups"));
-      setStocks(data);
+      const fifoCosts = await Promise.all(
+        data.flatMap(group =>
+          group.ingredients.map(async (ingredient) => {
+            const cost = await fetchFifoCost(ingredient.id);
+            return { ingredientId: ingredient.id, cost };
+          })
+        )
+      );
+      const updatedData = data.map(group => ({
+        ...group,
+        ingredients: group.ingredients.map(ingredient => ({
+          ...ingredient,
+          fifoCost: fifoCosts.find(costObj => costObj.ingredientId === ingredient.id)?.cost || 0
+        }))
+      }));
+  
+      const finalData = updatedData.map(u =>({
+        ...u, 
+        total: u.ingredients.reduce((acc, v) => acc + v.fifoCost, 0)
+      }))
+      
+      setStocks(finalData);
+      
     } catch (error) {
       showError(
-        "Une erreur s'est produite lors du chargement des stocks" +
-          error.message
+        "Une erreur s'est produite lors du chargement des stocks: " + error.message
       );
     } finally {
       setIsLoading(false);
     }
   };
-
+  
+  const fetchFifoCost = async (stockId) => {
+    try {
+      const url = apiUrl(`/purchases/${stockId}/fifo-cost`);
+      const res = await fetch(url);
+      const text = await res.text();
+      if (!res.ok) {
+        throw new Error(text);
+      }
+      return parseFloat(text); 
+    } catch (error) {
+      showError(`Erreur coût FIFO pour stock ${stockId}: ` + error.message);
+      return 0; 
+    }
+  };
+  
   useEffect(() => {
     void fetchStocks();
   }, []);
@@ -181,10 +216,11 @@ function StockList() {
                 </td>
               </tr>
             ) : filteredData.length > 0 ? (
-              filteredData.map(({ name, ingredients }, i) => (
+              filteredData.map(({ name, ingredients, total }, i) => (
                 <React.Fragment key={i}>
                   <tr className="font-bold bg-gray-100 text-center">
-                    <td colSpan="6">{name}</td>
+                    <td colSpan="3">{name}</td>
+                    <td colSpan="3">Total prix: {total} Ar</td>
                   </tr>
                   {ingredients.map((ingredient) => (
                     <tr key={ingredient.id} className="text-center">

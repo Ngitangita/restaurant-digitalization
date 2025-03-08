@@ -102,7 +102,7 @@ function MostSoldMenus() {
                       <td className="p-2">{selectedDate}</td>
                       <td className="p-2">{menu.name || "N/A"}</td>
                       <td className="p-2">{menu.quantityMenuByName}</td>
-                      <td className="p-2">{menu.price * menu.quantityMenuByName} Ar</td>
+                      <td className="p-2">{menu.price} Ar</td>
                       <td className="p-2">{menu.description || "N/A"}</td>
                     </tr>
                   ))}
