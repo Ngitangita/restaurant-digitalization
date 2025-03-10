@@ -5,7 +5,7 @@ import OperationDetails from "./OperationDetails";
 import CreateStock from "../../components/stocks/CreateStock";
 import dayjs from "dayjs";
 import TextField from "@mui/material/TextField";
-import { MdInfoOutline } from "react-icons/md";
+import { MdEdit, MdInfoOutline } from "react-icons/md";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast";
 
 function StockList() {
@@ -29,37 +29,39 @@ function StockList() {
     try {
       const data = await fetchJson(apiUrl("/ingredient-groups"));
       const fifoCosts = await Promise.all(
-        data.flatMap(group =>
+        data.flatMap((group) =>
           group.ingredients.map(async (ingredient) => {
             const cost = await fetchFifoCost(ingredient.id);
             return { ingredientId: ingredient.id, cost };
           })
         )
       );
-      const updatedData = data.map(group => ({
+      const updatedData = data.map((group) => ({
         ...group,
-        ingredients: group.ingredients.map(ingredient => ({
+        ingredients: group.ingredients.map((ingredient) => ({
           ...ingredient,
-          fifoCost: fifoCosts.find(costObj => costObj.ingredientId === ingredient.id)?.cost || 0
-        }))
+          fifoCost:
+            fifoCosts.find((costObj) => costObj.ingredientId === ingredient.id)
+              ?.cost || 0,
+        })),
       }));
-  
-      const finalData = updatedData.map(u =>({
-        ...u, 
-        total: u.ingredients.reduce((acc, v) => acc + v.fifoCost, 0)
-      }))
-      
+
+      const finalData = updatedData.map((u) => ({
+        ...u,
+        total: u.ingredients.reduce((acc, v) => acc + v.fifoCost, 0),
+      }));
+
       setStocks(finalData);
-      
     } catch (error) {
       showError(
-        "Une erreur s'est produite lors du chargement des stocks: " + error.message
+        "Une erreur s'est produite lors du chargement des stocks: " +
+          error.message
       );
     } finally {
       setIsLoading(false);
     }
   };
-  
+
   const fetchFifoCost = async (stockId) => {
     try {
       const url = apiUrl(`/purchases/${stockId}/fifo-cost`);
@@ -68,13 +70,13 @@ function StockList() {
       if (!res.ok) {
         throw new Error(text);
       }
-      return parseFloat(text); 
+      return parseFloat(text);
     } catch (error) {
       showError(`Erreur coût FIFO pour stock ${stockId}: ` + error.message);
-      return 0; 
+      return 0;
     }
   };
-  
+
   useEffect(() => {
     void fetchStocks();
   }, []);
@@ -239,9 +241,24 @@ function StockList() {
                       <td className="border-b p-2">
                         {ingredient.name || "N/A"}
                       </td>
-                      <td className="border-b p-2">
-                        {ingredient?.stock?.quantity}
+                      <td
+                        className={`border-b p-2 ${
+                          ingredient?.stock?.quantity <= 10
+                            ? "text-red-500 text-[14px]"
+                            : ""
+                        }`}
+                      >
+                        {ingredient?.stock?.quantity <= 10 ? (
+                          <div className="flex items-center gap-1">
+                           ⚠️ <MdEdit />
+                            <span>{ingredient?.stock?.quantity}</span>
+                               stock faible
+                          </div>
+                        ) : (
+                          ingredient?.stock?.quantity
+                        )}
                       </td>
+
                       <td className="border-b p-2">
                         {ingredient?.unit?.abbreviation}
                       </td>
