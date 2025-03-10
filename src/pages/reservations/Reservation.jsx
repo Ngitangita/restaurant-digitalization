@@ -154,8 +154,6 @@ function ReservationList() {
             <th className="px-4 py-2">Date de fin</th>
             <th className="px-4 py-2">Nom du client</th>
             <th className="px-4 py-2">Tèl du client</th>
-            <th className="px-4 py-2">Table</th>
-            <th className="px-4 py-2">Chambre</th>
             <th className="px-4 py-2">Statut</th>
             <th className="px-4 py-2">Description</th>
             <th className="px-4 py-2">Action</th>
@@ -181,8 +179,6 @@ function ReservationList() {
                   <td className="px-4 py-2">{formatDate(reservation.reservationEnd)}</td>
                   <td className="px-4 py-2">{reservation.customer.name}</td>
                   <td className="px-4 py-2">{reservation.customer.phoneNumber}</td>
-                  <td className="px-4 py-2">{reservation?.table?.number}</td>
-                  <td className="px-4 py-2">{reservation?.room?.roomNumber}</td>
                   <td className={`py-2 px-4 cursor-pointer ${(reservation.status.toLowerCase() !== "confirmed" && reservation.status.toLowerCase() !== "completed") ? 'text-red-500 font-bold' : ''}`}>
                     <button
                       onClick={() => toggleModal('editStatus', reservation)}
