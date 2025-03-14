@@ -107,8 +107,8 @@ const CategoriesList = () => {
   };
 
   return (
-    <div className="container mx-auto pr-14 pl-6 darkBody bg-white">
-      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 darkBody">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-14 bg-white darkBody">
+      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 darkBody sm:px-6 lg:px-12">
         <h1 className="text-2xl font-bold mb-4">Liste des catégories</h1>
         {error && <p className="text-red-500">{error}</p>}
         <button
@@ -172,8 +172,8 @@ const CategoriesList = () => {
       )}
 
       <table
-        className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody
-      relative top-[70px]"
+       className="min-w-full bg-white shadow-md rounded-lg 
+       overflow-hidden darkBody relative top-[100px] sm:top-[105px] md:top-[60px] lg:top-[70px]"
       >
         <thead>
           <tr className="bg-gray-200">
@@ -260,7 +260,7 @@ const CategoriesList = () => {
 
       {showEditCategoryModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="EditModal bg-white rounded-lg shadow-lg w-[400px] text-center">
+          <div className="EditModal bg-white rounded-lg shadow-lg w-[90%] sm:w-[400px] text-center">
             <div className="flex flex-row justify-between items-center">
               <h2 className="text-xl pl-8 pt-8 pb-4">Modifier la catégorie</h2>
               <span

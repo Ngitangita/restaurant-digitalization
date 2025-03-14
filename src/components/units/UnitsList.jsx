@@ -90,7 +90,7 @@ function UnitsList() {
     }
 
     return (
-        <div className="container mx-auto p-4 bg-white darkBody">
+        <div className="container mx-auto p-4 sm:p-6 md:p-8 bg-white darkBody">
             <div className='flex flex-row gap-4 fixed z-50'>
                 <button
                     className="mb-4 bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 ml-2"
@@ -99,8 +99,7 @@ function UnitsList() {
                     Créer un unité
                 </button>
             </div>
-            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody relative
-            top-10">
+            <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody relative top-10 sm:top-19 md:top-14 lg:top-16">
                 <thead>
                 <tr className="bg-gray-200">
                     <th className="py-2 px-4">Nom</th>
@@ -146,7 +145,7 @@ function UnitsList() {
             <CreateUnit isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} onCreate={handleCreate} />
             {showDeleteModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
+                    <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[90%] sm:w-[400px] text-center">
                         <p className="mb-6">Êtes-vous sûr de vouloir supprimer l&apos;unité {unitToDelete?.name} ?</p>
                         <div className="flex justify-between">
                             <button
@@ -168,7 +167,7 @@ function UnitsList() {
 
             {showEditModal && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                    <div className="EditModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
+                    <div className="EditModal bg-white p-6 rounded-lg shadow-lg w-[90%] sm:w-[400px] text-center">
                         <h2 className="text-lg font-semibold mb-4">Modifier l&apos;unité</h2>
                         <input
                             type="text"

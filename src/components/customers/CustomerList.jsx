@@ -7,14 +7,11 @@ function CustomerList() {
   const [customers, setCustomers] = useState([]);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
-  const [page] = useState(1);
+  const [page, setPage] = useState(1);
   const [size] = useState(8);
   const [customerData, setCustomerData] = useState({
-    firstName: "",
-    lastName: "",
+    name: "",
     phoneNumber: "",
-    email: "",
-    address: "",
   });
   const [showDeleteModal, setShowDeleteModal] = useState(false);
 
@@ -37,7 +34,7 @@ function CustomerList() {
       await fetchJson(apiUrl(`/customers/${selectedCustomer}`), "DELETE");
       setShowDeleteModal(false);
       setSelectedCustomer(null);
-      // fetchCustomers();
+      setPage(1);
     } catch (error) {
       console.error("Erreur lors de la suppression du client:", error);
     }
@@ -51,22 +48,18 @@ function CustomerList() {
   const handleEdit = (customer) => {
     setSelectedCustomer(customer.id);
     setCustomerData({
-      firstName: customer.firstName,
-      lastName: customer.lastName,
+      name: customer.name,
       phoneNumber: customer.phoneNumber,
-      email: customer.email,
-      address: customer.address,
     });
     setShowEditModal(true);
   };
 
   const handleUpdateCustomer = async () => {
     try {
-      await fetchJson(
-        apiUrl(`/customers/${selectedCustomer}`),
-        "PUT",
-        customerData
-      );
+      await fetchJson(apiUrl(`/customers/${selectedCustomer}`), "PUT", {
+        name: customerData.name,
+        phoneNumber: customerData.phoneNumber,
+      });
       setShowEditModal(false);
       setSelectedCustomer(null);
     } catch (error) {
@@ -83,8 +76,8 @@ function CustomerList() {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <table className="min-w-full shadow-md rounded-lg overflow-hidden">
+    <div className="container mx-auto p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12">
+      <table className="w-full">
         <thead>
           <tr className="bg-gray-200">
             <th className="py-2 px-4">Prénom</th>
@@ -108,16 +101,10 @@ function CustomerList() {
                 <td className="py-2 px-4">{customer.name}</td>
                 <td className="py-2 px-4">{customer.phoneNumber}</td>
                 <td className="py-2 px-4 w-[300px] flex flex-row gap-2 justify-end">
-                  <button
-                    className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
-                    onClick={() => handleEdit(customer)}
-                  >
+                  <button className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600" onClick={() => handleEdit(customer)}>
                     <FaRegEdit />
                   </button>
-                  <button
-                    className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
-                    onClick={() => confirmDelete(customer.id)}
-                  >
+                  <button className="bg-red-500 text-white rounded p-2 hover:bg-red-600" onClick={() => confirmDelete(customer.id)}>
                     <MdDelete />
                   </button>
                 </td>
@@ -126,25 +113,14 @@ function CustomerList() {
           )}
         </tbody>
       </table>
+
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
-            <p className="mb-6">
-              Êtes-vous sûr de vouloir supprimer ce client ?
-            </p>
+            <p className="mb-6">Êtes-vous sûr de vouloir supprimer ce client ?</p>
             <div className="flex justify-around">
-              <button
-                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
-                onClick={cancelDelete}
-              >
-                Annuler
-              </button>
-              <button
-                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                onClick={handleDelete}
-              >
-                Supprimer
-              </button>
+              <button className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400" onClick={cancelDelete}>Annuler</button>
+              <button className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600" onClick={handleDelete}>Supprimer</button>
             </div>
           </div>
         </div>
@@ -158,7 +134,7 @@ function CustomerList() {
               <input
                 key={key}
                 name={key}
-                type={key === "email" ? "email" : "text"}
+                type={key === "name" ? "text" : "text"}
                 value={customerData[key]}
                 onChange={handleChange}
                 placeholder={key.charAt(0).toUpperCase() + key.slice(1)}
@@ -166,23 +142,12 @@ function CustomerList() {
               />
             ))}
             <div className="flex justify-around">
-              <button
-                className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400"
-                onClick={() => setShowEditModal(false)}
-              >
-                Annuler
-              </button>
-              <button
-                className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                onClick={handleUpdateCustomer}
-              >
-                Mettre à jour
-              </button>
+              <button className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400" onClick={() => setShowEditModal(false)}>Annuler</button>
+              <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" onClick={handleUpdateCustomer}>Mettre à jour</button>
             </div>
           </div>
         </div>
       )}
-    
     </div>
   );
 }

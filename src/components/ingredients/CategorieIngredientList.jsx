@@ -97,8 +97,8 @@ const CategoriesIngredientList = () => {
   };
 
   return (
-    <div className="container mx-auto pr-14 pl-6 darkBody bg-white">
-      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 darkBody">
+    <div className="container mx-auto pr-14 pl-6 bg-white darkBody sm:px-8 md:px-12 lg:px-16">
+      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 darkBody sm:pt-6 md:pt-8 lg:pt-10">
         <h1 className="text-2xl font-bold mb-4">
           Liste des catégories ingredient
         </h1>
@@ -141,7 +141,8 @@ const CategoriesIngredientList = () => {
       </div>
 
       {isModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+        <div className="fixed inset-0 flex items-center justify-center 
+        z-50 bg-black bg-opacity-50 sm:bg-opacity-60 md:bg-opacity-70">
           <div className="CreateModal bg-white rounded-md shadow-md z-[9999]">
             <div className="flex flex-row justify-between items-center">
               <h2 className="text-xl pl-8 pt-8 pb-4">
@@ -164,9 +165,8 @@ const CategoriesIngredientList = () => {
       )}
 
       <table
-        className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody
-      relative top-[70px]"
-      >
+        className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody relative 
+        top-[140px] sm:top-[110px] md:top-[90px] lg:top-[100px] px-4 sm:px-6 md:px-8">
         <thead>
           <tr className="bg-gray-200">
             <th className="py-2 px-4">Nom</th>
@@ -225,7 +225,7 @@ const CategoriesIngredientList = () => {
 
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center DeleteModal">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] sm:w-[400px] text-center max-w-[500px] DeleteModal">
             <div>
               <p className="mb-6">
                 Êtes-vous sûr de vouloir supprimer le catégorie{" "}
@@ -251,8 +251,8 @@ const CategoriesIngredientList = () => {
       )}
 
       {showEditCategoryModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="EditModal bg-white rounded-lg shadow-lg w-[400px] text-center">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 sm:px-4 md:px-6 lg:px-8">
+          <div className="EditModal bg-white rounded-lg shadow-lg w-[90%] sm:w-[400px] text-center max-w-[600px]">
             <div className="flex flex-row justify-between items-center">
               <h2 className="text-xl pl-8 pt-8 pb-4">Modifier la catégorie</h2>
               <span

@@ -189,8 +189,8 @@ function PaymentList() {
   };
 
   return (
-    <div className="container bg-white darkBody mx-auto pl-10 pb-14 pr-10">
-      <div className="flex flex-row justify-between pt-4 w-[950px] fixed bg-white z-50 pb-2 darkBody">
+    <div className="container bg-white darkBody mx-auto pl-6 sm:pl-8 md:pl-10 pb-14 pr-6 sm:pr-8 md:pr-10">
+      <div className="flex flex-row justify-between pt-4 w-full max-w-[950px] fixed bg-white z-50 pb-2 darkBody">
         <div>
           <h4>Afficher seulement les commandes:</h4>
           <Checkbox
@@ -237,7 +237,8 @@ function PaymentList() {
         </div>
       </div>
 
-      <table className="min-w-full bg-white shadow-md rounded-lg text-center relative top-[90px] darkBody">
+      <table className="min-w-full bg-white shadow-md rounded-lg text-center 
+      relative top-[90px] sm:top-[90px] md:top-[60px] lg:top-[90px] darkBody">
         <thead>
           <tr className="bg-gray-200">
             <th className="py-2 px-4">N° chambre/Table</th>

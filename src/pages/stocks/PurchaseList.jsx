@@ -28,7 +28,7 @@ function PurchaseList() {
   }, [startDate, endDate]);
   const [totalPrice, setTotalPrice] = useState(0);
 
-  useEffect ( () => {
+  useEffect(() => {
     const total = purchases.reduce(
       (sum, item) => sum + item.quantity * item.cost,
       0
@@ -37,18 +37,18 @@ function PurchaseList() {
   }, [purchases]);
 
   return (
-    <div className="w-full p-4 bg-gray-100 darkBody pr-14">
+    <div className="w-full p-4 bg-gray-100 darkBody pr-14 sm:pr-10 md:pr-6 lg:pr-14">
       {error && (
         <div className="bg-red-300 text-red-700 p-2 rounded mb-4">{error}</div>
       )}
 
-      <div className="relative flex items-center mb-4">
+      <div className="relative flex gap-4 items-center mb-4 flex-col sm:flex-row sm:mb-6 md:mb-8 lg:mb-10">
         <input
           type="datetime-local"
           value={startDate}
           onChange={(e) => setStartDate(e.target.value)}
           onBlur={() => document.activeElement.blur()}
-          className="border border-gray-300 p-2 rounded-md mr-2 outline-none"
+          className="border border-gray-300 p-2 rounded-md sm:mr-4 outline-none"
         />
         <input
           type="datetime-local"
@@ -57,13 +57,13 @@ function PurchaseList() {
           onBlur={() => document.activeElement.blur()}
           className="border border-gray-300 p-2 rounded-md outline-none"
         />
-        <p className="mt-4 ml-3 text-xl font-semibold">
+        <p className="mt-4 sm:mt-0 sm:ml-3 text-xl font-semibold">
           Prix total : {totalPrice} Ar
         </p>
       </div>
 
       <div className="overflow-auto">
-        <table className="min-w-full bg-white shadow-md rounded-lg darkBody">
+        <table className="min-w-full bg-white shadow-md rounded-lg darkBody sm:px-6 md:px-8 lg:px-10">
           <thead>
             <tr className="bg-gray-200">
               <th className="py-2 px-4">Nom Ingrédient</th>

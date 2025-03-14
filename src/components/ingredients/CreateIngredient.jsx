@@ -159,7 +159,7 @@ function CreateIngredient({ onModalOpen, onToggle }) {
             </button>
           </div>
 
-          <div className="flex flex-row gap-44 mt-4">
+          <div className="flex flex-row gap-4 sm:gap-6 md:gap-8 lg:gap-12 mt-4">
             <button
               type="button"
               onClick={onToggle}

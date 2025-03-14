@@ -35,12 +35,12 @@ function CreateUnit({isModalOpen, setIsModalOpen, onCreate}) {
         return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-            <div className="CreateModal bg-white p-6 rounded-md shadow-md">
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+            <div className="CreateModal bg-white p-6 rounded-md shadow-md w-[90%] sm:w-[400px] md:w-[500px]" >
                 <h2 className="text-xl mb-4">Créer une nouvelle unité</h2>
                 <form onSubmit={handleSubmitUnit(onSubmitUnit)}>
                     <div className="mb-4">
-                        <label htmlFor="unitName" className="block text-gray-700">Nom de l'unité</label>
+                        <label htmlFor="unitName" className="block text-gray-700">Nom de l&apos;unité</label>
                         <input
                             id="unitName"
                             type="text"
@@ -61,7 +61,7 @@ function CreateUnit({isModalOpen, setIsModalOpen, onCreate}) {
                         {unitErrors.abbreviation &&
                             <p className="text-red-500 text-sm">{unitErrors.abbreviation.message}</p>}
                     </div>
-                    <div className='flex flex-row gap-44'>
+                    <div className="flex flex-row gap-4 sm:gap-8 lg:gap-16 xl:gap-44">
 
                         <button type="button" onClick={() => setIsModalOpen(false)}
                                 className="bg-gray-300 text-gray-800 py-2 px-4 rounded-md hover:bg-gray-400">

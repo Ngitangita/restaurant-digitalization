@@ -109,7 +109,7 @@ const FloorsList = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-white darkBody pr-14">
+    <div className="container mx-auto p-4 bg-white darkBody pr-14 sm:p-6 md:p-8 lg:p-10 xl:p-12">
       <h1 className="text-2xl font-bold mb-4">Liste des étages</h1>
       {error && <p className="text-red-500">{error}</p>}
 
@@ -124,7 +124,8 @@ const FloorsList = () => {
 
       {isModalOpen && (
         <div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
-          <div className="CreateModal bg-white rounded-md shadow-md z-[9999]">
+          <div className="CreateModal bg-white rounded-md shadow-md z-[9999] 
+          sm:w-full md:w-3/4 lg:w-1/2 xl:w-1/3 p-4 sm:p-6 md:p-8">
             <div className="flex flex-row justify-between items-center">
               <h2 className="text-xl pl-8 pt-8 pb-4">
                 {" "}
@@ -147,7 +148,7 @@ const FloorsList = () => {
         </div>
       )}
 
-      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody">
+      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody sm:px-4 md:px-8 lg:px-12">
         <thead>
           <tr className="bg-gray-200">
             <th className="py-2 px-4">N° étage</th>
@@ -198,7 +199,7 @@ const FloorsList = () => {
       </table>
       {showEditFloorModal && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="relative top-6 bg-white rounded-lg shadow-lg w-full max-w-md EditModal">
+          <div className="relative top-6 bg-white rounded-lg shadow-lg w-full max-w-md sm:top-8 md:top-10 lg:top-12 xl:top-16">
             <span
               className="hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
                         relative left-[408px] text-[30px] hover:text-white cursor-pointer"
@@ -217,7 +218,7 @@ const FloorsList = () => {
       )}
       {showDeleteModal && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md DeleteModal">
+          <div className="relative top-6 bg-white p-8 rounded-lg shadow-lg w-full max-w-md sm:top-8 md:top-10 lg:top-12 xl:top-16">
             <p>
               Voulez-vous vraiment supprimer étage n°
               {floorToDelete?.floorNumber} ?

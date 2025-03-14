@@ -57,11 +57,11 @@ const ProfitsList = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg">
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-md rounded-lg sm:max-w-xl sm:p-4 md:max-w-2xl md:p-5 lg:max-w-4xl lg:p-6">
       <h2 className="text-2xl font-semibold mb-4">Bénéfices par Méthode de Paiement</h2>
-      <div className="mb-4">
+      <div className="mb-4 sm:mb-6 md:mb-8 lg:mb-10 xl:mb-12">
         <label className="block text-gray-700">Sélectionner une période :</label>
-        <div className="flex space-x-4">
+        <div className="bg-gray-100 p-4 rounded-lg shadow-md flex flex-col sm:flex-row md:flex-col lg:flex-row">
           <input
             type="date"
             value={startDate}
@@ -77,7 +77,7 @@ const ProfitsList = () => {
           />
         </div>
       </div>
-      <table className="w-full border-collapse border border-gray-300 mt-4">
+      <table className="w-full border-collapse border border-gray-300 mt-4 sm:mt-6 md:mt-8 lg:mt-10 xl:mt-12">
         <thead>
           <tr className="bg-gray-200">
             <th className="border p-2">Méthode de Paiement</th>

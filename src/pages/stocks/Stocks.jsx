@@ -125,83 +125,98 @@ function StockList() {
   }));
 
   return (
-    <div className="darkBody container mx-auto p-4 bg-white pb-10 pr-14">
-      <div className="flex flex-row items-center gap-20">
-        <h1 className="text-2xl font-bold mb-4">Liste des Stocks</h1>
-      </div>
-      {error && <p className="text-red-500">{error}</p>}
+    <div
+      className="darkBody container mx-auto p-4 pt-0"
+    >
+      <div className="flex flex-col w-[1000px] fixed bg-white z-50 darkBody">
+        <div className="flex flex-row items-center gap-20">
+          <h1 className="text-2xl font-bold mb-4">Liste des Stocks</h1>
+        </div>
+        {error && <p className="text-red-500">{error}</p>}
 
-      <div className="flex mb-4">
-        <TextField
-          id="outlined-search"
-          label="Rechercher par nom de l'ingredient"
-          type="search"
-          value={ingredientName}
-          onChange={(e) => setIngredientName(e.target.value)}
-          variant="outlined"
-          size="small"
-          fullWidth
-          InputProps={{
-            endAdornment: ingredientName && (
-              <button
-                type="button"
-                className="flex items-center"
-                onClick={() => setIngredientName("")}
-                style={{
-                  cursor: "pointer",
-                  background: "none",
-                  border: "none",
-                }}
-              ></button>
-            ),
-          }}
-          sx={{
-            width: "250px",
-            height: "50px",
-            zIndex: "0px",
-            ".MuiInputBase-root": { height: "40px" },
-          }}
-        />
-        <input
-          type="number"
-          placeholder="Quantité Min"
-          value={quantityMin}
-          onChange={(e) => setQuantityMin(e.target.value)}
-          className="w-36 border border-gray-300 p-2 rounded-md mr-2 outline-none"
-        />
-        <input
-          type="number"
-          placeholder="Quantité Max"
-          value={quantityMax}
-          onChange={(e) => setQuantityMax(e.target.value)}
-          className="w-36 border border-gray-300 p-2 rounded-md mr-2 outline-none"
-        />
-        <input
-          type="datetime-local"
-          value={startDate}
-          onChange={(e) => setStartDate(e.target.value)}
-          onBlur={() => document.activeElement.blur()}
-          className="border border-gray-300 p-2 rounded-md mr-2 outline-none"
-        />
-        <input
-          type="datetime-local"
-          value={endDate}
-          onChange={(e) => setEndDate(e.target.value)}
-          onBlur={() => document.activeElement.blur()}
-          className="border border-gray-300 p-2 rounded-md outline-none"
-        />
+        <div className="w-auto flex-wrap flex flex-col sm:flex-row sm:space-x-2 mb-4 p-2">
+          <TextField
+            id="outlined-search"
+            label="Rechercher par nom de l'ingredient"
+            type="search"
+            value={ingredientName}
+            onChange={(e) => setIngredientName(e.target.value)}
+            variant="outlined"
+            size="small"
+            fullWidth
+            InputProps={{
+              endAdornment: ingredientName && (
+                <button
+                  type="button"
+                  className="flex items-center"
+                  onClick={() => setIngredientName("")}
+                  style={{
+                    cursor: "pointer",
+                    background: "none",
+                    border: "none",
+                  }}
+                ></button>
+              ),
+            }}
+            sx={{
+              width: {
+                xs: "100%",
+                sm: "250px",
+                md: "300px",
+                lg: "350px",
+              },
+              height: "50px",
+              zIndex: "0",
+              ".MuiInputBase-root": { height: "40px" },
+            }}
+          />
+
+          <div className="flex flex-col sm:flex-row gap-2 mt-2 sm:mt-0 w-full">
+            <input
+              type="number"
+              placeholder="Quantité Min"
+              value={quantityMin}
+              onChange={(e) => setQuantityMin(e.target.value)}
+              className="w-full sm:w-36 border border-gray-300 p-2 rounded-md outline-none"
+            />
+
+            <input
+              type="number"
+              placeholder="Quantité Max"
+              value={quantityMax}
+              onChange={(e) => setQuantityMax(e.target.value)}
+              className="w-full sm:w-36 border border-gray-300 p-2 rounded-md outline-none"
+            />
+
+            <input
+              type="datetime-local"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+              onBlur={() => document.activeElement.blur()}
+              className="w-full sm:w-auto border border-gray-300 p-2 rounded-md outline-none"
+            />
+
+            <input
+              type="datetime-local"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+              onBlur={() => document.activeElement.blur()}
+              className="w-full sm:w-auto border border-gray-300 p-2 rounded-md outline-none"
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="flex-grow overflow-auto">
-        <table className="min-w-full">
+      <div className="flex-grow overflow-auto sm:overflow-x-scroll lg:overflow-auto relative top-[330px] sm:top-[170px] md:top-[150px] lg:top-[175px]">
+        <table className="min-w-full table-auto">
           <thead>
             <tr className="bg-gray-200">
-              <th className="py-2 px-4">Créé le</th>
-              <th className="py-2 px-4">Modifié le</th>
-              <th className="p-2">Ingrédient</th>
-              <th className="p-2">Quantité</th>
-              <th className="p-2">Unité</th>
-              <th className="p-2">Actions</th>
+              <th className="py-2 px-4 text-sm sm:text-base">Créé le</th>
+              <th className="py-2 px-4 text-sm sm:text-base">Modifié le</th>
+              <th className="p-2 text-sm sm:text-base">Ingrédient</th>
+              <th className="p-2 text-sm sm:text-base">Quantité</th>
+              <th className="p-2 text-sm sm:text-base">Unité</th>
+              <th className="p-2 text-sm sm:text-base">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -226,23 +241,23 @@ function StockList() {
                   </tr>
                   {ingredients.map((ingredient) => (
                     <tr key={ingredient.id} className="text-center">
-                      <td className="border-b p-2">
+                      <td className="border-b p-2 text-sm sm:text-base">
                         {ingredient?.stock?.createdAt
                           ? dayjs(ingredient.stock.createdAt).format(
                               "YYYY-MM-DD HH:mm"
                             )
                           : "Non défini"}
                       </td>
-                      <td className="border-b p-2">
+                      <td className="border-b p-2 text-sm sm:text-base">
                         {dayjs(ingredient?.stock?.updatedAt).format(
                           "YYYY-MM-DD HH:mm"
                         )}
                       </td>
-                      <td className="border-b p-2">
+                      <td className="border-b p-2 text-sm sm:text-base">
                         {ingredient.name || "N/A"}
                       </td>
                       <td
-                        className={`border-b p-2 ${
+                        className={`border-b p-2 text-sm sm:text-base ${
                           ingredient?.stock?.quantity <= 10
                             ? "text-red-500 text-[14px]"
                             : ""
@@ -250,19 +265,19 @@ function StockList() {
                       >
                         {ingredient?.stock?.quantity <= 10 ? (
                           <div className="flex items-center gap-1">
-                           ⚠️ <MdEdit />
-                            <span>{ingredient?.stock?.quantity}</span>
-                               stock faible
+                            ⚠️ <MdEdit />
+                            <span>{ingredient?.stock?.quantity}</span> stock
+                            faible
                           </div>
                         ) : (
                           ingredient?.stock?.quantity
                         )}
                       </td>
 
-                      <td className="border-b p-2">
+                      <td className="border-b p-2 text-sm sm:text-base">
                         {ingredient?.unit?.abbreviation}
                       </td>
-                      <td className="border-b p-2 flex justify-center">
+                      <td className="border-b p-2 flex justify-center text-sm sm:text-base">
                         <button
                           className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600 mr-2"
                           onClick={() => toggleModal(ingredient)}
@@ -297,7 +312,7 @@ function StockList() {
 
         {isModalOpen && selectedStock && (
           <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-            <div className="bg-white rounded-lg shadow-lg w-full max-w-md EditModal">
+            <div className="bg-white rounded-lg shadow-lg w-full max-w-md sm:max-w-lg md:max-w-xl">
               <div className="flex flex-row justify-between items-center">
                 <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le stock</h2>
                 <span
@@ -320,7 +335,7 @@ function StockList() {
 
         {showDetailsModal && selectedOperationId && (
           <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-            <div className="bg-white rounded-lg w-1/2 DetailsModal">
+            <div className="bg-white rounded-lg w-full sm:w-1/2 lg:w-1/3 DetailsModal">
               <div className="flex flex-row justify-between items-center">
                 <h2 className="text-xl pl-8 pt-8 pb-4">
                   Détails de l&rsquo;Opération

@@ -128,7 +128,7 @@ function ReservationList() {
   };
 
   return (
-    <div className="darkBody container pr-10 p-6 bg-white shadow-md rounded-md">
+    <div className="darkBody container pr-10 p-6 bg-white rounded-md sm:p-4 md:p-6 lg:p-8 xl:p-10">
       <h1 className="text-2xl font-bold mb-4">Liste des Réservations</h1>
 
       <button
@@ -140,7 +140,7 @@ function ReservationList() {
 
       {isModalOpen && modalType === "create" && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="CreateModal bg-white rounded-lg shadow-lg ">
+          <div className="CreateModal bg-white">
             <div className="flex flex-row justify-between items-center">
               <h2 className="text-xl pl-8 pt-8 pb-4">
                 Créer une nouvelle réservation
@@ -268,7 +268,7 @@ function ReservationList() {
 
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="DeleteModal bg-white p-6 rounded-lg shadow-lg w-[400px] text-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-[400px] text-center sm:w-[350px] md:w-[300px] lg:w-[400px]">
             <p className="mb-6">
               Êtes-vous sûr de vouloir supprimer la réservation du Mme/Mr{" "}
               {reservationToDelete?.customer.name} ?
@@ -293,7 +293,8 @@ function ReservationList() {
 
       {isModalOpen && modalType === "editStatus" && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg max-w-sm EditModal w-1/2">
+          <div className="bg-white rounded-lg shadow-lg max-w-sm w-1/2 sm:w-2/3 md:w-1/2 lg:w-1/3"
+          >
             <div className="flex flex-row justify-between items-center">
               <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statue</h2>
               <span

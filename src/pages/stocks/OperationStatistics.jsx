@@ -154,7 +154,7 @@ function OperationStatistics() {
         />
       </div>
 
-      <div className="mb-6 w-[calc(100%-100px)]">
+      <div className="mb-6 w-[calc(100%-100px)] sm:w-[calc(100%-50px)] md:w-[calc(100%-70px)] lg:w-[calc(100%-90px)] xl:w-[calc(100%-100px)]">
         {totalStocks.length ? (
           <Bar data={chartData} options={{ responsive: true }} />
         ) : (

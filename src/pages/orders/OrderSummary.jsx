@@ -193,7 +193,7 @@ function OrderSummary() {
   });
 
   return (
-    <div className="container bg-white darkBody mx-auto pl-10 pb-14 pr-10">
+    <div className="text-gray-700 p-4 rounded-lg">
       <div className="flex flex-row justify-between pt-4 w-[950px] fixed bg-white z-50 pb-2 darkBody">
         <button
           onClick={() => setIsModalOpen(true)}
@@ -444,7 +444,7 @@ function OrderSummary() {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-          <div className=" mx-auto bg-white rounded CreateModal">
+          <div className="mx-auto bg-white rounded w-full max-w-lg sm:max-w-md CreateModal" >
             <div className="flex flex-row justify-between items-center">
               <h2
                 className="text-center font-serif font-bold

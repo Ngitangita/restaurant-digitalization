@@ -57,7 +57,7 @@ function MostSoldMenus() {
     .filter(Boolean);
 
   return (
-    <div className="darkBody container mx-auto p-4 bg-white pb-10 pr-14">
+    <div className="darkBody container mx-auto p-4 bg-white pb-10 pr-14 sm:px-6 md:px-8 lg:px-14 xl:px-20">
       <h1 className="text-2xl font-bold mb-4">Liste des menus les plus vendus</h1>
 
       <div className="flex mb-4 gap-2">

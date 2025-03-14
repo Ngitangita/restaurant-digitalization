@@ -146,8 +146,8 @@ function CreateMenuOrder({ onClose, onOrderCreated }) {
     };
 
     return (
-        <form onSubmit={handleSubmit(handleConfirm)} className="space-y-4 p-8">
-          <div className="flex flex-row gap-3 items-center">
+        <form onSubmit={handleSubmit(handleConfirm)} className="space-y-4 p-4 sm:p-6 md:p-8 lg:p-10">
+          <div className="flex flex-row gap-2 sm:gap-3 md:gap-4 items-center">
             <Controller
               name="customerId"
               control={control}

@@ -86,7 +86,7 @@ const Users = () => {
                             <td className="border border-gray-300 px-4 py-2">
                                 {formatDate(user.createdAt)}
                             </td>
-                            <td className="border border-gray-300 px-4  flex justify-center items-center py-2">
+                            <td className=" px-4  flex justify-center items-center py-2">
                                 <button
                                     onClick={() => confirmDelete(user)}
                                     className="bg-red-500 text-white px-1 py-1 rounded hover:bg-red-700 transition flex items-center gap-1"

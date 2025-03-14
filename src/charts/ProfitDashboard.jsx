@@ -91,7 +91,7 @@ export default function ProfitDashboard() {
     };
 
     return (
-        <div className="max-w-5xl mx-auto p-6">
+        <div className="max-w-5xl mx-auto p-6 container">
             <h1 className="text-2xl font-bold text-center mb-6">Tableau de Bord des Bénéfices</h1>
 
             <div className="flex flex-col md:flex-row md:justify-between justify-center gap-4 mb-6">

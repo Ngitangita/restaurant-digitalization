@@ -36,7 +36,7 @@ function Layout({ showHeaderAndSidebar }) {
         <div className="
           w-full max-w-[1040px] h-screen flex flex-row flex-wrap gap-7
           max-h-[calc(100%-80px)] fixed bg-white pb-40 layoutDark
-          overflow-y-scroll overflow-x-hidden scrollbar-custom text-gray-500">
+          overflow-y-scroll overflow-x-scroll scrollbar-custom text-gray-500">
           <Outlet />
         </div>
       </main>

@@ -119,7 +119,7 @@ const CashPage = () => {
         </div>
       ) : (
         <>
-          <div className="bg-gray-100 p-4 rounded-lg mb-4 shadow-md flex flex-row gap-4">
+          <div className="bg-gray-100 p-4 rounded-lg mb-4 shadow-md flex flex-col sm:flex-row md:flex-col lg:flex-row gap-4">
             <Button
               variant="contained"
               color="primary"

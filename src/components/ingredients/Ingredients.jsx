@@ -109,8 +109,9 @@ const IngredientList = () => {
   );
 
   return (
-    <div className="darkBody container mx-auto pl-4 pr-12 bg-white">
-      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 darkBody">
+    <div className="darkBody container mx-auto pl-4 pr-12 bg-white sm:pl-6 
+    sm:pr-8 md:pl-8 md:pr-10 lg:pl-10 lg:pr-12">
+      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 darkBody sm:pt-5 md:pt-6 lg:pt-8">
       <h1 className="text-2xl font-bold mb-4">Liste des Ingrédients</h1>
       {error && <p className="text-red-500">{error}</p>}
         <button
@@ -152,7 +153,8 @@ const IngredientList = () => {
 
       {isModalOpen && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center ">
-          <div className="CreateModal bg-white rounded-lg shadow-lg w-full max-w-md">
+          <div  className="CreateModal bg-white rounded-lg shadow-lg w-full 
+          max-w-md sm:max-w-sm md:max-w-md lg:max-w-lg xl:max-w-xl">
             <div className="flex flex-row justify-between items-center">
               <h2 className="text-xl pl-8 pt-8 pb-4">
                 Ajouter un nouvel ingrédient
@@ -173,7 +175,8 @@ const IngredientList = () => {
         </div>
       )}
 
-      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody relative top-[70px]">
+      <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody 
+      relative top-[90px] sm:top-[80px] md:top-[90px] lg:top-[100px]">
         <thead>
           <tr className="bg-gray-200">
             <th className="py-2 px-4">Nom</th>
@@ -230,7 +233,7 @@ const IngredientList = () => {
 
       {showDeleteModal && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="bg-white p-8 rounded-lg shadow-lg DeleteModal">
+          <div className="bg-white p-8 rounded-lg shadow-lg DeleteModal sm:p-6 md:p-8 lg:p-10">
             <p>
               Êtes-vous sûr de vouloir supprimer l&apos;ingrédient{" "}
               {ingredientToDelete?.name} ?
@@ -255,7 +258,8 @@ const IngredientList = () => {
 
       {showEditModal && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="bg-white rounded-lg shadow-lg EditModal">
+          <div className="bg-white rounded-lg shadow-lg EditModal sm:w-full 
+          md:w-[400px] lg:w-[500px] xl:w-[600px] sm:p-4 md:p-6 lg:p-8">
             <div className="flex flex-row justify-between items-center">
               <h2 className="text-xl pl-8 pt-8 pb-4">Modifier l&apos;ingrédient</h2>
               <span

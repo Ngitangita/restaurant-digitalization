@@ -183,8 +183,8 @@ const MenuList = () => {
   };
 
   return (
-    <div className="container bg-white darkBody mx-auto pl-10 h-auto">
-      <div className="flex flex-row gap-4 pt-4 w-full fixed bg-white z-50 darkBody">
+    <div className="container bg-white darkBody mx-auto pl-4 sm:pl-6 md:pl-8 lg:pl-10 h-auto">
+      <div className="flex flex-row gap-2 sm:gap-4 pt-4 w-full fixed bg-white z-50 darkBody">
         <h1 className="text-2xl font-bold mb-4">Liste des Menus</h1>
         {error && <p className="text-red-500">{error}</p>}
         <button
@@ -226,7 +226,7 @@ const MenuList = () => {
 
       {isModalOpen && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div className="CreateModal bg-white rounded-lg shadow-lg w-full max-w-md">
+          <div className="CreateModal bg-white rounded-lg shadow-lg w-full max-w-md sm:max-w-lg md:max-w-xl">
             <div className="flex flex-row justify-between items-center">
               <h2 className="text-xl pl-8 pt-8 pb-4">
                 Créer une nouvelle menu
@@ -253,7 +253,7 @@ const MenuList = () => {
       )}
 
       <table
-        className="min-w-full  darkBody shadow-md rounded-lg relative top-[70px] bg-white"
+        className="min-w-full darkBody shadow-md rounded-lg relative top-[100px] sm:top-[80px] md:top-[60px] lg:top-[70px] bg-white"
       >
         <thead>
           <tr className="bg-gray-200">

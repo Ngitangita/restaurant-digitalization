@@ -28,7 +28,7 @@ function CashHistory({ onClose }) {
   }
 
   return (
-    <div className="p-8 pt-0">
+    <div className="p-8 pt-0 sm:p-6 sm:pt-4 md:p-4 md:pt-2 lg:p-8 lg:pt-0">
         {error && <div className="bg-red-300 text-red-700 p-2 rounded mb-4">{error}</div>}
         {!error && (
           <>
@@ -41,7 +41,7 @@ function CashHistory({ onClose }) {
                overflowY: showScrollbar ? 'scroll' : 'hidden'
              }}>
               {cashDetails.map((cash) => (
-                <li key={cash.id} className="border-b border-gray-300 py-2">
+                <li key={cash.id} className="border-b border-gray-300 py-2 sm:py-1 md:py-2 lg:py-3">
                     <p><strong>Type de transaction:</strong> {convertDepositWithdraw(cash.transactionType)}</p>
                     <p><strong>Methode de payment:</strong> {convertMethodToPayment(cash.modeOfTransaction)}</p>
                   <p><strong>Prix:</strong> {cash.amount}</p>
