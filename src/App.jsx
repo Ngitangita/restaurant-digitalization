@@ -14,10 +14,16 @@ import Settings from "./pages/Settings/Settings";
 import Profile from "./pages/profile/Profile";
 import NotFound from "./pages/NotFound/NotFound";
 import Commande from "./pages/commandes/Commande";
+import PropTypes from 'prop-types';
 
 function ProtectedRoute({ element, isAuthenticated }) {
   return isAuthenticated ? element : <Navigate to="/authentification" />;
 }
+
+ProtectedRoute.propTypes = {
+  element: PropTypes.element.isRequired,
+  isAuthenticated: PropTypes.bool.isRequired,
+};
 
 function Layout({ children, showHeaderAndSidebar }) {
   return (
@@ -32,6 +38,11 @@ function Layout({ children, showHeaderAndSidebar }) {
     </div>
   );
 }
+
+Layout.propTypes = {
+  children: PropTypes.node.isRequired,
+  showHeaderAndSidebar: PropTypes.bool.isRequired,
+};
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
