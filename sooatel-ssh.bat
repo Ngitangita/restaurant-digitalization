@@ -1,0 +1,6 @@
+@echo off
+echo Lancement du serveur Spring Boot...
+start cmd /k "cd /D F:\sooatel-web\sooatel-api && mvnw spring-boot:run"
+
+echo Lancement du front-end React avec Vite...
+start cmd /k "cd /D F:\sooatel-web\sooatel-ui && npm run dev"
