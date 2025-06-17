@@ -16,7 +16,7 @@ import CreatePaymentAfterOrder from "../../components/menus/menu-orders/CreatePa
 import Invoices from "../invoices/Invoices.jsx";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast.jsx";
 import UpdateStatusPayment from "../../components/status/UpdateStatusPayment.jsx";
-import { Checkbox, TextField } from "@mui/material";
+import { TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 function OrderSummary() {
   const [orders, setOrders] = useState([]);
@@ -29,10 +29,6 @@ function OrderSummary() {
   const navigate = useNavigate();
   const [statuses, setStatuses] = useState([]);
   const [statusesPayment, setStatusesPayment] = useState([]);
-  const [searchBoxNoDelivered, setSearchBoxNoDelivered] = useState(false);
-  const [searchBoxDelivered, setSearchBoxDelivered] = useState(false);
-  const [searchBoxPaid, setSearchBoxPaid] = useState(false);
-  const [searchBoxNoPaid, setSearchBoxNoPaid] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showEditModalPayment, setShowEditModalPayment] = useState(false);
   const [status, setStatus] = useState("");
@@ -41,6 +37,7 @@ function OrderSummary() {
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const { showError, showSuccess } = useToast();
+  const [selectedFilters, setSelectedFilters] = useState([]);
 
   useEffect(() => {
     void fetchApi();
@@ -89,34 +86,81 @@ function OrderSummary() {
   };
 
   function groupByPaymentId(data) {
-    const nullPayments = data.filter((item) => item.payment === null);
-    const nonNullPayments = data.filter((item) => item.payment !== null);
+  // Grouper par type + number (ex: table_5 ou room_101)
+  const groupedByKey = {};
 
-    const grouped = nonNullPayments.reduce((acc, item) => {
-      const key = `${item.type}_${item.number}`;
+  data.forEach((item) => {
+    const key = `${item.type}_${item.number}`;
+    if (!groupedByKey[key]) {
+      groupedByKey[key] = [];
+    }
+    groupedByKey[key].push(item);
+  });
 
-      if (!acc[key]) {
-        acc[key] = {
+  const finalGrouped = [];
+
+  for (const key in groupedByKey) {
+    const orders = groupedByKey[key];
+
+    const paidOrders = orders.filter((o) => o.payment !== null);
+    const unpaidOrders = orders.filter((o) => o.payment === null);
+
+    if (unpaidOrders.length === orders.length) {
+      // Toutes les commandes sont NON PAYÉES → on regroupe tout
+      const combined = unpaidOrders.reduce(
+        (acc, item) => {
+          acc.menus = [...new Set([...acc.menus, ...item.menus])];
+          acc.orderIds.push(...item.orderIds);
+          acc.totalAmount += 0; // Pas de paiement
+          acc.orderStatus = item.orderStatus; // dernière statut
+          return acc;
+        },
+        {
+          type: orders[0].type,
+          number: orders[0].number,
+          menus: [],
+          orderIds: [],
+          totalAmount: 0,
+          payment: null,
+          orderStatus: null,
+        }
+      );
+      finalGrouped.push(combined);
+    } else if (unpaidOrders.length > 0) {
+      // Certaines payées, certaines non → on prend uniquement les NON PAYÉES (séparément)
+      unpaidOrders.forEach((item) => {
+        finalGrouped.push({
           type: item.type,
           number: item.number,
-          totalAmount: 0,
-          menus: [],
-          orderStatus: item.orderStatus,
+          menus: item.menus,
           orderIds: item.orderIds,
-          payment: item.payment,
-        };
-      }
+          totalAmount: 0,
+          payment: null,
+          orderStatus: item.orderStatus,
+        });
+      });
+    } else {
+      // Toutes sont PAYÉES → on garde la plus récente
+      const mostRecent = paidOrders
+        .sort((a, b) => new Date(b.payment.updatedAt || b.payment.createdAt) - new Date(a.payment.updatedAt || a.payment.createdAt))[0];
 
-      acc[key].totalAmount += item.payment.amount;
-      acc[key].menus = [...new Set([...acc[key].menus, ...item.menus])];
-
-      return acc;
-    }, {});
-    const groupedArray = Object.values(grouped);
-    return [...nullPayments, ...groupedArray];
+      finalGrouped.push({
+        type: mostRecent.type,
+        number: mostRecent.number,
+        menus: mostRecent.menus,
+        orderIds: mostRecent.orderIds,
+        totalAmount: mostRecent.payment.amount,
+        payment: mostRecent.payment,
+        orderStatus: mostRecent.orderStatus,
+      });
+    }
   }
 
-  const handleEditStatus = (order) => {    
+  return finalGrouped;
+}
+
+
+  const handleEditStatus = (order) => {
     setSelectedOrderId(order.orderIds);
     setStatus(order.orderStatus);
     setShowEditModal(true);
@@ -180,21 +224,65 @@ function OrderSummary() {
     }
   };
 
+  const handleFilterChange = (event, ) => {
+    const value = event.target.value;
+    let updatedFilters = [...selectedFilters];
+
+    const toggle = (val) => {
+      if (updatedFilters.includes(val)) {
+        updatedFilters = updatedFilters.filter((f) => f !== val);
+      } else {
+        updatedFilters.push(val);
+      }
+    };
+
+    toggle(value); 
+
+    if (
+      updatedFilters.includes("delivered") &&
+      updatedFilters.includes("not_delivered")
+    ) {
+      updatedFilters = updatedFilters.filter(
+        (f) => f !== (value === "delivered" ? "not_delivered" : "delivered")
+      );
+    }
+
+    if (updatedFilters.includes("paid") && updatedFilters.includes("unpaid")) {
+      updatedFilters = updatedFilters.filter(
+        (f) => f !== (value === "paid" ? "unpaid" : "paid")
+      );
+    }
+
+    setSelectedFilters(updatedFilters);
+  };
 
   const filteredMenuOrders = orders.filter((order) => {
-    const matchNumber = searchTerm
+    const numberMatch = searchTerm
       ? String(order.number).includes(searchTerm)
       : true;
-    const matchStatus = searchBoxDelivered ? order.orderStatus.toLowerCase() !== "not_delivered" : true;
-    const matchStatusDelivered = searchBoxNoDelivered ? order.orderStatus.toLowerCase() !== "delivered" : true;
-    const matchStatusNoPaid = searchBoxNoPaid ? order.payment?.status.toLowerCase() !== "paid" : true;
-    const matchStatusPaid = searchBoxPaid ? order.payment?.status.toLowerCase() !== "unpaid" : true;
-    return matchNumber && matchStatus && matchStatusDelivered && matchStatusPaid && matchStatusNoPaid;
+
+    const deliveryMatch =
+      (selectedFilters.includes("delivered") &&
+        order.orderStatus?.toLowerCase() === "delivered") ||
+      (selectedFilters.includes("not_delivered") &&
+        order.orderStatus?.toLowerCase() !== "delivered") ||
+      (!selectedFilters.includes("delivered") &&
+        !selectedFilters.includes("not_delivered"));
+
+    const paymentMatch =
+      (selectedFilters.includes("paid") &&
+        order.payment?.status?.toLowerCase() === "paid") ||
+      (selectedFilters.includes("unpaid") &&
+        (!order.payment || order.payment?.status?.toLowerCase() !== "paid")) ||
+      (!selectedFilters.includes("paid") &&
+        !selectedFilters.includes("unpaid"));
+
+    return numberMatch && deliveryMatch && paymentMatch;
   });
 
   return (
     <div className="text-gray-700 p-4 rounded-lg">
-      <div className="flex flex-row justify-between pt-4 w-[950px] fixed bg-white z-50 pb-2 darkBody">
+      <div className="flex flex-row justify-between pt-4 w-[980px] fixed bg-white z-50 pb-2 darkBody">
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-blue-500 text-white px-4 rounded hover:bg-blue-600
@@ -202,42 +290,8 @@ function OrderSummary() {
         >
           <MdAddBox /> Ajouter une commande
         </button>
-        <div>
-          <h4>Afficher seulement les commandes:</h4>
-          <Checkbox
-            id="searchBoxNoDelivered"
-            checked={searchBoxNoDelivered}
-            onChange={(e) => setSearchBoxNoDelivered(e.target.checked)}
-          />
-          <label htmlFor="searchBoxNoDelivered">
-             non livré
-          </label>
-          <Checkbox
-            id="searchBoxDelivered"
-            checked={searchBoxDelivered}
-            onChange={(e) => setSearchBoxDelivered(e.target.checked)}
-          />
-          <label htmlFor="searchBoxDelivered">
-            livré
-          </label>
-          <Checkbox
-            id="searchBoxNoPaid"
-            checked={searchBoxNoPaid}
-            onChange={(e) => setSearchBoxNoPaid(e.target.checked)}
-          />
-          <label htmlFor="searchBoxNoPaid">
-             non payé
-          </label>
-          <Checkbox
-            id="searchBoxPaid"
-            checked={searchBoxPaid}
-            onChange={(e) => setSearchBoxPaid(e.target.checked)}
-          />
-          <label htmlFor="searchBoxPaid">
-            Payé
-          </label>
-        </div>
-        <div>
+        
+        <div className="flex flex-row gap-4 items-center">
           <TextField
             id="outlined-search"
             label="Rechercher chambre / table"
@@ -267,6 +321,21 @@ function OrderSummary() {
               ".MuiInputBase-root": { height: "40px" },
             }}
           />
+          <div>
+          <h4>Afficher seulement les commandes:</h4>
+          <ToggleButtonGroup
+            value={selectedFilters}
+            onChange={handleFilterChange}
+            aria-label="Filtres personnalisés"
+            size="small"
+            color="primary"
+          >
+            <ToggleButton value="delivered">Livré</ToggleButton>
+            <ToggleButton value="not_delivered">Non Livré</ToggleButton>
+            <ToggleButton value="paid">Payé</ToggleButton>
+            <ToggleButton value="unpaid">Non Payé</ToggleButton>
+          </ToggleButtonGroup>
+        </div>
         </div>
         <button
           className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600
@@ -277,7 +346,10 @@ function OrderSummary() {
         </button>
       </div>
 
-      <table className="min-w-full bg-white shadow-md rounded-lg text-center relative top-[80px] darkBody">
+      <table
+        className="w-[980px] bg-white shadow-md rounded-lg text-center 
+      relative top-[90px] sm:top-[90px] md:top-[60px] lg:top-[90px] darkBody"
+      >
         <thead className="bg-gray-200 text-gray-700">
           <tr>
             <th className="py-2 px-4">Status</th>
@@ -444,7 +516,7 @@ function OrderSummary() {
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-          <div className="mx-auto bg-white rounded w-full max-w-lg sm:max-w-md CreateModal" >
+          <div className="mx-auto bg-white rounded w-full max-w-lg sm:max-w-md CreateModal">
             <div className="flex flex-row justify-between items-center">
               <h2
                 className="text-center font-serif font-bold

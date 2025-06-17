@@ -31,44 +31,60 @@ const Invoices = ({ paymentId }) => {
 
   const currentDate = dayjs().format("DD/MM/YYYY HH:mm:ss");
 
-  const groupOrders = () => {
-    if (!invoices?.orders) return [];
+const groupOrders = () => {
+  if (!invoices?.orders) return [];
 
-    const groupedOrders = [];
-    let tempGroup = [invoices.orders[0]];
+  const groupedMap = {};
 
-    invoices.orders.slice(1).forEach((order) => {
-      const lastOrder = tempGroup[tempGroup.length - 1];
+  for (const order of invoices.orders) {
+    const key = `${order.type}_${order.table?.number || order.room?.roomNumber}`;
+    if (!groupedMap[key]) groupedMap[key] = [];
+    groupedMap[key].push(order);
+  }
 
-      const lastOrderIsUnpaid = lastOrder?.payment?.status === "UNPAID";
-      const currentOrderIsUnpaid = order?.payment?.status === "UNPAID";
+  const result = [];
 
-      const timeDiff = dayjs(order.orderDate).diff(
-        dayjs(lastOrder.orderDate),
-        "minute"
+  for (const key in groupedMap) {
+    const group = groupedMap[key];
+
+    const unpaidOrders = group.filter(
+      (item) => !item.payment || item.payment.status.toUpperCase() !== "PAID"
+    );
+
+    if (unpaidOrders.length > 0) {
+      // ✅ Cas 1 & 2 : on prend toutes les non payées
+      result.push(unpaidOrders);
+    } else {
+      // ✅ Cas 3 : toutes les commandes sont payées
+      const paidOrders = group.filter(
+        (item) => item.payment?.status.toUpperCase() === "PAID"
       );
-      if (
-        lastOrderIsUnpaid ||
-        (lastOrder?.payment?.status === "PAID" && currentOrderIsUnpaid) ||
-        timeDiff <= 1
-      ) {
-        tempGroup.push(order);
-      } else {
-        groupedOrders.push(tempGroup);
-        tempGroup = [order];
-      }
-    });
 
-    if (tempGroup.length > 0) {
-      groupedOrders.push(tempGroup);
+      // Trier par date décroissante
+      const sorted = paidOrders.sort(
+        (a, b) => new Date(b.orderDate) - new Date(a.orderDate)
+      );
+
+      // Obtenir le "batch" de la minute la plus récente
+      const lastMinute = dayjs(sorted[0].orderDate).format("YYYY-MM-DD HH:mm");
+
+      const latestBatch = sorted.filter(
+        (item) =>
+          dayjs(item.orderDate).format("YYYY-MM-DD HH:mm") === lastMinute
+      );
+
+      result.push(latestBatch);
     }
+  }
 
-    return groupedOrders;
-  };
+  return result;
+};
 
-  const lastGroup = groupOrders().slice(-1)[0];
-  const lastOrder = lastGroup ? lastGroup[lastGroup.length - 1] : null;
 
+  const grouped = groupOrders();
+  const lastGroup = grouped.length > 0 ? grouped[grouped.length - 1] : [];
+  const lastOrder =
+    lastGroup.length > 0 ? lastGroup[lastGroup.length - 1] : null;
   const roomNumbersString = [
     ...new Set(
       invoices?.orders

@@ -12,18 +12,31 @@ const History = () => {
   const [histories, setHistories] = useState([]);
   const { showError } = useToast();
   const navigate = useNavigate()
+    const [startDate, setStartDate] = useState("");
+    const [endDate, setEndDate] = useState("");
 
   useEffect(() => {
-    const url = `${apiUrl("/histories")}`;
-    fetchJson(url)
-      .then((data) => {
-        setHistories(data);
-      })
-      .catch((error) => {
-        console.error(error);
-        showError("Erreur lors de la récupération des détails de la cash.");
-      });
-  }, []);
+  const fetchHistories = async () => {
+    try {
+      let url = `${apiUrl("/histories")}`;
+      if (startDate && endDate) {
+        const encodedStart = encodeURIComponent(startDate);
+        const encodedEnd = encodeURIComponent(endDate);
+        url += `?startDate=${encodedStart}&endDate=${encodedEnd}`;
+      }
+
+      const data = await fetchJson(url);
+      setHistories(data);
+    } catch (error) {
+      console.error(error);
+      showError("Erreur lors de la récupération des détails de la caisse.");
+    }
+  };
+
+  fetchHistories();
+}, [startDate, endDate]);
+
+
 
   const handleClick= (id) =>{
     navigate(`/history/${id}`)
@@ -31,7 +44,7 @@ const History = () => {
 
   return (
     <div className="container mx-auto pr-14 pl-6 darkBody bg-white">
-     <div className="flex flex-row gap-4">
+     <div className="flex flex-row gap-4 p-4">
      <h1 className="text-2xl font-bold mb-4">Liste des historiques</h1>
       <button
         onClick={() => navigate("/cashs")}
@@ -39,6 +52,21 @@ const History = () => {
       >
        Retour vers caisse
       </button>
+      <div>
+            <input
+            type="date"
+            value={startDate}
+            onChange={(e) => setStartDate(e.target.value)}
+            className="w-full sm:w-auto border border-gray-300 p-2 rounded-md outline-none"
+          />
+          <span className="self-center">-</span>
+          <input
+            type="date"
+            value={endDate}
+            onChange={(e) => setEndDate(e.target.value)}
+            className="w-full sm:w-auto border border-gray-300 p-2 rounded-md outline-none"
+          />
+      </div>
      </div>
       <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden darkBody">
         <thead>

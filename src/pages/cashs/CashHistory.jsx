@@ -28,7 +28,7 @@ function CashHistory({ onClose }) {
   }
 
   return (
-    <div className="p-8 pt-0 sm:p-6 sm:pt-4 md:p-4 md:pt-2 lg:p-8 lg:pt-0">
+    <div className="p-8">
         {error && <div className="bg-red-300 text-red-700 p-2 rounded mb-4">{error}</div>}
         {!error && (
           <>

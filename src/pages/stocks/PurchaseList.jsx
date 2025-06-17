@@ -80,7 +80,7 @@ function PurchaseList() {
                 .toSorted((a, b) => b.id - a.id)
                 .map((purchase) => (
                   <tr
-                    key={purchase.purchaseId}
+                    key={purchase.id}
                     className="border-b border-gray-200"
                   >
                     <td className="py-2 px-4">{purchase.ingredientName}</td>
