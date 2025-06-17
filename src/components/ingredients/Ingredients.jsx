@@ -18,6 +18,7 @@ const IngredientList = () => {
   const [selectedIngredient, setSelectedIngredient] = useState(null);
   const [ingredientName, setIngredientName] = useState(null);
   const [unitId, setUnitId] = useState(null);
+  const [groupId, setGroupId] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const { showSuccess, showError } = useToast();
 
@@ -76,11 +77,12 @@ const IngredientList = () => {
     setSelectedIngredient(ingredient.id);
     setIngredientName(ingredient.name);
     setUnitId(ingredient.unitId);
+    setGroupId(ingredient.groupId);
     setShowEditModal(true);
   };
 
   const handleUpdateIngredient = async () => {
-    if (!ingredientName || !unitId) {
+    if (!ingredientName || !unitId ) {
       const errorMessage = "Veuillez fournir un nom et sélectionner une unité";
       showError(errorMessage);
       setError(errorMessage);
@@ -92,6 +94,7 @@ const IngredientList = () => {
         id: selectedIngredient,
         name: ingredientName,
         unitId: unitId,
+        groupId: groupId
       });
       setShowEditModal(false);
       setSelectedIngredient(null);

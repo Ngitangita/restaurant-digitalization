@@ -6,3 +6,11 @@ Currently, two official plugins are available:
 
 - [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
 - [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+
+
+@echo off
+echo Lancement du serveur Spring Boot...
+start cmd /k "cd /D F:\sooatel-web\sooatel-api && mvnw spring-boot:run"
+
+echo Lancement du front-end React avec Vite...
+start cmd /k "cd /D F:\sooatel-web\sooatel-ui && npm run dev"

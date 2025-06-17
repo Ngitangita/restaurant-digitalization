@@ -86,7 +86,6 @@ function OrderSummary() {
   };
 
   function groupByPaymentId(data) {
-  // Grouper par type + number (ex: table_5 ou room_101)
   const groupedByKey = {};
 
   data.forEach((item) => {
@@ -140,7 +139,6 @@ function OrderSummary() {
         });
       });
     } else {
-      // Toutes sont PAYÉES → on garde la plus récente
       const mostRecent = paidOrders
         .sort((a, b) => new Date(b.payment.updatedAt || b.payment.createdAt) - new Date(a.payment.updatedAt || a.payment.createdAt))[0];
 
@@ -282,7 +280,7 @@ function OrderSummary() {
 
   return (
     <div className="text-gray-700 p-4 rounded-lg">
-      <div className="flex flex-row justify-between pt-4 w-[980px] fixed bg-white z-50 pb-2 darkBody">
+      <div className="flex flex-row justify-between pt-4 w-[1000px] fixed bg-white z-50 pb-2 darkBody">
         <button
           onClick={() => setIsModalOpen(true)}
           className="bg-blue-500 text-white px-4 rounded hover:bg-blue-600
@@ -346,10 +344,7 @@ function OrderSummary() {
         </button>
       </div>
 
-      <table
-        className="w-[980px] bg-white shadow-md rounded-lg text-center 
-      relative top-[90px] sm:top-[90px] md:top-[60px] lg:top-[90px] darkBody"
-      >
+      <table className="w-[1000px] bg-white shadow-md rounded-lg text-center relative top-[80px] darkBody">
         <thead className="bg-gray-200 text-gray-700">
           <tr>
             <th className="py-2 px-4">Status</th>
