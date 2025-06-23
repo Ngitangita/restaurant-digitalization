@@ -17,6 +17,7 @@ import Invoices from "../invoices/Invoices.jsx";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast.jsx";
 import UpdateStatusPayment from "../../components/status/UpdateStatusPayment.jsx";
 import { TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import dayjs from "dayjs";
 
 function OrderSummary() {
   const [orders, setOrders] = useState([]);
@@ -88,75 +89,90 @@ function OrderSummary() {
   function groupByPaymentId(data) {
   const groupedByKey = {};
 
-  data.forEach((item) => {
+  data.forEach(item => {
     const key = `${item.type}_${item.number}`;
-    if (!groupedByKey[key]) {
-      groupedByKey[key] = [];
-    }
+    if (!groupedByKey[key]) groupedByKey[key] = [];
     groupedByKey[key].push(item);
   });
 
   const finalGrouped = [];
 
-  for (const key in groupedByKey) {
-    const orders = groupedByKey[key];
+  Object.values(groupedByKey).forEach(orders => {
+    const paidOrders = orders.filter(o => o.payment !== null);
+    const unpaidOrders = orders.filter(o => o.payment === null);
 
-    const paidOrders = orders.filter((o) => o.payment !== null);
-    const unpaidOrders = orders.filter((o) => o.payment === null);
-
-    if (unpaidOrders.length === orders.length) {
-      // Toutes les commandes sont NON PAYÉES → on regroupe tout
-      const combined = unpaidOrders.reduce(
-        (acc, item) => {
-          acc.menus = [...new Set([...acc.menus, ...item.menus])];
-          acc.orderIds.push(...item.orderIds);
-          acc.totalAmount += 0; // Pas de paiement
-          acc.orderStatus = item.orderStatus; // dernière statut
-          return acc;
-        },
-        {
-          type: orders[0].type,
-          number: orders[0].number,
-          menus: [],
-          orderIds: [],
-          totalAmount: 0,
-          payment: null,
-          orderStatus: null,
-        }
-      );
+    if (paidOrders.length === 0) {
+      // 📌 Cas 1 : tous non payés → on combine tout
+      const combined = unpaidOrders.reduce((acc, item) => {
+        acc.menus = [...new Set([...acc.menus, ...item.menus])];
+        acc.orderIds.push(...item.orderIds);
+        acc.orderStatus = item.orderStatus;
+        return acc;
+      }, {
+        type: orders[0].type,
+        number: orders[0].number,
+        menus: [],
+        orderIds: [],
+        totalAmount: 0,
+        payment: null,
+        orderStatus: null,
+      });
       finalGrouped.push(combined);
+
     } else if (unpaidOrders.length > 0) {
-      // Certaines payées, certaines non → on prend uniquement les NON PAYÉES (séparément)
-      unpaidOrders.forEach((item) => {
+      // 📌 Cas 2 : certains payés, certains non → garder les non payés individuellement,
+      // avec total = somme des menus de chaque commande (non payée)
+      unpaidOrders.forEach(item => {
+        const sum = item.menus.reduce((acc, menu) => acc + (menu.price || 0), 0);
         finalGrouped.push({
           type: item.type,
           number: item.number,
           menus: item.menus,
           orderIds: item.orderIds,
-          totalAmount: 0,
+          totalAmount: sum,
           payment: null,
           orderStatus: item.orderStatus,
         });
       });
-    } else {
-      const mostRecent = paidOrders
-        .sort((a, b) => new Date(b.payment.updatedAt || b.payment.createdAt) - new Date(a.payment.updatedAt || a.payment.createdAt))[0];
 
-      finalGrouped.push({
-        type: mostRecent.type,
-        number: mostRecent.number,
-        menus: mostRecent.menus,
-        orderIds: mostRecent.orderIds,
-        totalAmount: mostRecent.payment.amount,
-        payment: mostRecent.payment,
-        orderStatus: mostRecent.orderStatus,
-      });
-    }
-  }
+    } else {
+  // Cas 3 : tous payés → ne garder que les commandes du "dernier batch" (le plus récent)
+  const sortedPaid = [...paidOrders].sort((a, b) =>
+    new Date(b.payment.updatedAt || b.payment.createdAt) -
+    new Date(a.payment.updatedAt || a.payment.createdAt)
+  );
+
+  // Détermine la minute la plus récente
+  const latestTS = dayjs(sortedPaid[0].payment.updatedAt || sortedPaid[0].payment.createdAt)
+    .format("YYYY-MM-DD HH:mm");
+
+  // Filtre toutes les commandes payées dans cette même minute
+  const SumLatestOrder = sortedPaid.filter(o =>
+    dayjs(o.payment.updatedAt || o.payment.createdAt).format("YYYY-MM-DD HH:mm") === latestTS
+  );
+
+  // Somme des montants de ce batch
+  const total = SumLatestOrder.reduce((sum, o) => sum + (o.payment.amount || 0), 0);
+
+  finalGrouped.push({
+    type: SumLatestOrder[0].type,
+    number: SumLatestOrder[0].number,
+    menus: SumLatestOrder.flatMap(o => o.menus),
+    orderIds: SumLatestOrder.flatMap(o => o.orderIds),
+    totalAmount: total,
+    payment: {
+      ...SumLatestOrder[0].payment,
+      combined: true,
+      totalCombined: total
+    },
+    orderStatus: SumLatestOrder[0].orderStatus
+  });
+}
+
+  });
 
   return finalGrouped;
 }
-
 
   const handleEditStatus = (order) => {
     setSelectedOrderId(order.orderIds);
