@@ -1,17 +1,26 @@
-import  { useState } from 'react';
-import {FaAngleRight, FaRegListAlt} from "react-icons/fa";
-import {Link, useLocation, useNavigate} from "react-router-dom";
-import { RiReservedLine } from "react-icons/ri";
-import { AiOutlineStock } from "react-icons/ai";
-import { RiMenuUnfold4Line } from "react-icons/ri";
+import { useState } from 'react';
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import {
-  MdKeyboardCommandKey, MdOutlineCalendarMonth,
-  MdOutlineHome, MdMenuBook, MdOutlineSettings,
-  MdMenu, MdOutlineLogin, MdPayment
+  MdOutlineHome,
+  MdAttachMoney,
+  MdOutlinePointOfSale,
+  MdOutlineReceiptLong,
+  MdOutlineInventory2,
+  MdMenuBook,
+  MdOutlineCategory,
+  MdOutlineSettings,
+  MdOutlineTableBar,
+  MdOutlineMeetingRoom,
+  MdOutlineCalendarMonth,
+  MdOutlineLogin,
+  MdMenu,
 } from "react-icons/md";
+import { RiReservedLine, RiMenuUnfold4Line } from "react-icons/ri";
+import { FaRegListAlt, FaAngleRight } from "react-icons/fa";
+import { AiOutlineStock } from "react-icons/ai";
+import { Person2, Person2Outlined } from "@mui/icons-material";
 import { useTitleStore } from '../../stores/useTitleStore';
-import {useAuthStore} from "../../stores/useAuthStore.js";
-import {Person2, Person2Outlined} from '@mui/icons-material';
+import { useAuthStore } from "../../stores/useAuthStore";
 
 const menuItems = [
   {
@@ -22,58 +31,42 @@ const menuItems = [
   },
   {
     title: "Caisses",
-    icon: <MdKeyboardCommandKey />,
+    icon: <MdAttachMoney />,
     path: "/cashs",
     subItems: [],
   },
   {
     title: "Commandes",
-    icon: <MdKeyboardCommandKey />,
+    icon: <MdOutlinePointOfSale />,
     path: "/orders/summary",
     subItems: [],
   },
-
   {
-    title: "Payments",
-    path: "/payments",
-    icon: <MdPayment />,
+    title: "Factures",
+    icon: <MdOutlineReceiptLong />,
+    path: "/invoices",
     subItems: [],
   },
-  
   {
-    title: "stocks",
-    icon: <AiOutlineStock />,
+    title: "Stocks",
+    icon: <MdOutlineInventory2 />,
     path: "/stocks",
     subItems: [],
   },
   {
     title: "Menus",
-    icon: <MdMenuBook />, 
+    icon: <MdMenuBook />,
     subItems: [
-      {
-        title: "Liste des menus",
-        path: "/menuList",
-      },
-      {
-        title: "Liste des menus vendu",
-        path: "/menuSold",
-      },
+      { title: "Liste des menus", path: "/menuList" },
+      { title: "Liste des menus vendu", path: "/menuSold" },
     ],
   },
   {
     title: "Catégories",
-    icon: <RiReservedLine />,
+    icon: <MdOutlineCategory />,
     subItems: [
-      {
-        title: "Ingrédients",
-        path: "/categoriesIngredientList",
-        subItems: [],
-      },
-      {
-        title: "Menus",
-        path: "/categoriesListe",
-        subItems: [],
-      },
+      { title: "Ingrédients", path: "/categoriesIngredientList" },
+      { title: "Menus", path: "/categoriesListe" },
     ],
   },
   {
@@ -83,21 +76,20 @@ const menuItems = [
     subItems: [],
   },
   {
-    title: "Ingredients",
-    icon: <MdOutlineSettings />,
+    title: "Ingrédients",
+    icon: <AiOutlineStock />,
     path: "/ingredients",
     subItems: [],
   },
-  
   {
     title: "Tables",
-    icon: <MdOutlineCalendarMonth />,
+    icon: <MdOutlineTableBar />,
     path: "/tableList",
     subItems: [],
   },
   {
     title: "Chambres",
-    icon: <AiOutlineStock />,
+    icon: <MdOutlineMeetingRoom />,
     path: "/roomList",
     subItems: [],
   },
@@ -107,24 +99,21 @@ const menuItems = [
     path: "/floorList",
     subItems: [],
   },
-  
   {
     title: "Réservations",
     icon: <RiReservedLine />,
     path: "/reservations",
     subItems: [],
   },
-  
   {
     title: "Calendrier",
     icon: <MdOutlineCalendarMonth />,
     path: "/calendars",
     subItems: [],
   },
-
   {
     title: "Achat des stocks",
-    icon: <AiOutlineStock />,
+    icon: <MdOutlineInventory2 />,
     path: "/purchaseList",
     subItems: [],
   },
@@ -148,11 +137,10 @@ const menuItems = [
   },
 ];
 
-
 export const SidebarToggleButton = ({ handleSidebarToggle, openSidebar }) => (
   <button
     className="fixed top-4 left-20 z-50 rounded-full p-3 bg-slate-100 text-2xl flex 
-    items-center justify-center hover:bg-slate-200 lg:hidden"
+      items-center justify-center hover:bg-slate-200 lg:hidden"
     onClick={handleSidebarToggle}
   >
     {openSidebar ? <MdMenu className="text-gray-500 text-xl" /> : <RiMenuUnfold4Line className="text-gray-500 text-xl" />}
@@ -161,7 +149,7 @@ export const SidebarToggleButton = ({ handleSidebarToggle, openSidebar }) => (
 
 export default function Sidebar() {
   const location = useLocation();
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const removeAuth = useAuthStore((state) => state.logout);
   const [activeTab, setActiveTab] = useState(null);
   const [isToggleSubmenu, setIsToggleSubmenu] = useState({});
@@ -188,14 +176,11 @@ export default function Sidebar() {
     }
   };
 
-  const  logout = () => {
-    if (window.innerWidth < 1024) {
-      setOpenSidebar(false);
-    }
+  const logout = () => {
+    handleCloseSidebar();
     removeAuth();
-    navigate("/authentification")
-  }
-
+    navigate("/authentification");
+  };
 
   return (
     <>
@@ -203,7 +188,7 @@ export default function Sidebar() {
       <div
         className={`Sidebar fixed top-20 left-0 w-64 h-screen bg-white shadow-md flex flex-col
           overflow-y-scroll overflow-x-hidden max-h-[calc(100%-80px)] transition-transform duration-300 
-          ease-in-out ${openSidebar ? 'translate-x-0 z-10' : '-translate-x-full'} lg:translate-x-0 lg:block`}
+          ease-in-out ${openSidebar ? 'translate-x-0 z-0' : '-translate-x-full'} lg:translate-x-0 lg:block`}
         onMouseEnter={() => setShowScrollbar(true)}
         onMouseLeave={() => setShowScrollbar(false)}
         style={{
@@ -215,14 +200,14 @@ export default function Sidebar() {
           <span>Tableau de bord</span>
         </div>
 
-        <ul className="space-y-2 p-4 text-gray-500 ">
+        <ul className="space-y-2 p-4 text-gray-500">
           {menuItems.map((item, index) => (
-            <li key={index} className="space-y-2">
+            <li key={index} className="space-y-1">
               {item.subItems.length > 0 ? (
                 <>
                   <button
                     onClick={() => handleSubmenuToggle(index)}
-                    className={`button w-full flex items-center p-2 rounded-lg hover:bg-gray-100 ${activeTab === index && isToggleSubmenu[index] ? '' : ''}`}
+                    className="w-full flex items-center p-2 rounded-lg hover:bg-gray-100"
                   >
                     <div className="flex items-center gap-3">
                       {item.icon}
@@ -236,12 +221,9 @@ export default function Sidebar() {
                         <li key={subIndex} onClick={() => { handleChangeTitle(subItem.title); handleCloseSidebar(); }}>
                           <Link
                             to={subItem.path}
-                            className={`button flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === subItem.path ? 'bg-gray-200 dark:bg-gray-500' : ''}`}
+                            className={`flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === subItem.path ? 'bg-gray-200 dark:bg-gray-500' : ''}`}
                           >
-                            <div className="flex items-center gap-3">
-                              {subItem.icon}
-                              <span className="text-gray-700">{subItem.title}</span>
-                            </div>
+                            <span className="text-gray-700 ml-6">{subItem.title}</span>
                           </Link>
                         </li>
                       ))}
@@ -251,7 +233,7 @@ export default function Sidebar() {
               ) : (
                 <Link
                   to={item.path}
-                  className={`button flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === item.path ? 'bg-gray-200 dark:bg-gray-500' : ''}`}
+                  className={`flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === item.path ? 'bg-gray-200 dark:bg-gray-500' : ''}`}
                   onClick={() => { handleChangeTitle(item.title); handleCloseSidebar(); }}
                 >
                   <div className="flex items-center gap-3">
@@ -264,9 +246,9 @@ export default function Sidebar() {
           ))}
         </ul>
 
-        <div className="Authentification p-4 bg-white">
+        <div className="p-4 mt-auto">
           <button
-            className={`button flex items-center p-2 rounded-lg hover:bg-gray-100 ${location.pathname === '/authentification' ? '' : ''}`}
+            className="flex items-center p-2 rounded-lg hover:bg-gray-100 w-full"
             onClick={logout}
           >
             <MdOutlineLogin className="text-gray-500 text-xl" />
@@ -276,15 +258,12 @@ export default function Sidebar() {
       </div>
 
       <style jsx="true">{`
-        body {
-          overflow-y: hidden; /* Masquer la barre de défilement sur le corps */
-        }
         .Sidebar::-webkit-scrollbar {
-          width: ${showScrollbar ? '8px' : '0px'}; /* Largeur de la barre de défilement */
+          width: ${showScrollbar ? '8px' : '0px'};
         }
         .Sidebar::-webkit-scrollbar-thumb {
-          background-color: gray; /* Couleur de la barre de défilement */
-          border-radius: 10px; /* Coins arrondis */
+          background-color: gray;
+          border-radius: 10px;
         }
       `}</style>
     </>

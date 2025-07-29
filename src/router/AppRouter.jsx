@@ -27,10 +27,10 @@ import FloorList from "../components/floors/FloorList";
 import MenuOrdersList from "../components/menus/menu-orders/MenuOrdersList";
 import UnitsList from "../components/units/UnitsList.jsx";
 import { ToastContainer } from "react-toastify";
-import PaymentList from "../pages/payments/PaymentList.jsx";
 import OrderSummary from "../pages/orders/OrderSummary.jsx";
 import OrdersByRoom from "../pages/orders/OrdersByRoom.jsx";
 import OrdersByTable from "../pages/orders/OrdersByTable.jsx";
+import InvoiceList from "../pages/orders/InvoiceList.jsx";
 import CustomerList from "../components/customers/CustomerList.jsx";
 import CreateCustomer from "../components/customers/CreateCustomer.jsx";
 import ForgotPassword from "../components/settings/ForgotPassword.jsx";
@@ -79,6 +79,7 @@ function AppRouter() {
               <Route path="by-room/:roomNumber" element={<OrdersByRoom />} />
               <Route path="by-table/:tableNumber" element={<OrdersByTable />} />
             </Route>
+            <Route path="/invoices" element={<InvoiceList />} />
             <Route path="menuList" element={<MenuList />} />
             <Route path="menuSold" element={<MostSoldMenus/>} />
             <Route path="units" element={<UnitsList />} />
@@ -95,7 +96,6 @@ function AppRouter() {
             <Route path="floorList" element={<FloorList />} />
             <Route path="calendars" element={<TheCalendar />} />
             <Route path="commandes" element={<MenuOrdersList />} />
-            <Route path="payments" element={<PaymentList />} />
             <Route path="reservations" element={<ReservationList />} />
             <Route path="stocks" element={<Stocks />} />
             <Route path="PurchaseList" element={<PurchaseList />} />

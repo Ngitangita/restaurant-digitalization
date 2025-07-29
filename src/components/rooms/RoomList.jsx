@@ -1,43 +1,37 @@
 import { useEffect, useState } from "react";
 import { apiUrl } from "../../services/api";
-import { MdInfoOutline, MdDelete, MdEdit } from "react-icons/md";
+import { MdInfoOutline, MdDelete } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
 import CreateRoom from "./CreateRoom";
 import EditRoom from "./EditRoom";
 import TextField from "@mui/material/TextField";
-import { convertStatusToRoom } from "../../services/convertStatus.js";
-import UpdateStatusRoom from "../status/UpdateStatusRoom.jsx";
 import useToast from "../menus/menu-orders/(tantely)/hooks/useToast.jsx";
 
 const RoomList = () => {
   const [rooms, setRooms] = useState([]);
-  const [statuses, setStatuses] = useState([]);
   const [floors, setFloors] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalType, setModalType] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [status, setStatus] = useState("");
   const [selectedRoom, setSelectedRoom] = useState(null);
   const { showSuccess, showError } = useToast();
 
   const fetchRooms = async () => {
     setIsLoading(true);
     try {
-      const [roomsResponse, statusesResponse, floorsResponse] =
+      const [roomsResponse, floorsResponse] =
         await Promise.all([
           fetch(apiUrl("/rooms")),
-          fetch(apiUrl("/rooms/status")),
           fetch(apiUrl("/floors")),
         ]);
 
-      if (!roomsResponse.ok || !statusesResponse.ok || !floorsResponse.ok) {
+      if (!roomsResponse.ok || !floorsResponse.ok) {
         throw new Error("Erreur lors de la récupération des données.");
       }
 
       setRooms(await roomsResponse.json());
-      setStatuses(await statusesResponse.json());
       setFloors(await floorsResponse.json());
     } catch (err) {
       setError(err.message);
@@ -60,26 +54,6 @@ const RoomList = () => {
   const handleCreateRoom = (newRoom) => {
     setRooms((prevRooms) => [...prevRooms, newRoom]);
     toggleModal("");
-  };
-
-  const handleUpdateStatus = async () => {
-    try {
-      const url = apiUrl(`/rooms/${selectedRoom.id}/status`);
-      await fetch(url, {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(status),
-      });
-      toggleModal("");
-      showSuccess("Statut mis à jour avec succès.");
-      void fetchRooms();
-    } catch (error) {
-      console.error(
-        "Erreur lors de la mise à jour du statut de la salle:",
-        error
-      );
-      showError("Erreur lors de la mise à jour du statut.");
-    }
   };
 
   const handleUpdateRoom = async () => {
@@ -177,7 +151,6 @@ const RoomList = () => {
               <th className="py-2 px-4">Numéro de Salle</th>
               <th className="py-2 px-4">Capacité (en personnes)</th>
               <th className="py-2 px-4 hidden sm:table-cell">Prix (en Ar)</th>
-              <th className="py-2 px-4">Statut</th>
               <th className="py-2 px-4">Actions</th>
             </tr>
           </thead>
@@ -191,29 +164,9 @@ const RoomList = () => {
                     key={room.id}
                     className="hover:bg-gray-100 text-center border-y border-collapse sm:border-x md:text-left lg:border-t xl:text-right"
                   >
-                    <td className="p-2">{room.roomNumber}</td>
+                    <td className="p-2">{room.number}</td>
                     <td className="p-2 ">{room.capacity}</td>
                     <td className="p-2 ">{room.price}</td>
-                    <td
-                      className={`p-2 cursor-pointer ${
-                        room.status.toLowerCase() !== "available"
-                          ? "text-red-500 font-bold"
-                          : ""
-                      }`}
-                    >
-                      <button
-                        onClick={() => toggleModal("editStatus", room)}
-                        className="w-full flex flex-row gap-1 items-center"
-                      >
-                        <span className="flex flex-row gap-1 items-center ">
-                          {room.status.toLowerCase() !== "available" && (
-                            <span className="text-red-500 text-[10px]">⚠️</span>
-                          )}
-                          <MdEdit />{" "}
-                          {convertStatusToRoom(room.status.toLowerCase())}
-                        </span>
-                      </button>
-                    </td>
                     <td className="p-2 flex justify-center items-center">
                       <button
                         className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
@@ -262,35 +215,12 @@ const RoomList = () => {
             <CreateRoom
               onCreate={handleCreateRoom}
               closeModal={() => toggleModal("")}
-              statuses={statuses}
               floors={floors}
             />
           </div>
         </div>
       )}
-      {isModalOpen && modalType === "editStatus" && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
-          <div className="bg-white rounded-lg shadow-lg max-w-sm EditModal w-full sm:w-2/3 md:w-1/2 lg:w-1/3">
-            <div className="flex flex-row justify-between items-center">
-              <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statue</h2>
-              <span
-                className="hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
-                            relative bottom-4 text-[30px] hover:text-white cursor-pointer"
-                onClick={() => toggleModal("")}
-              >
-                x
-              </span>
-            </div>
-            <UpdateStatusRoom
-              onSave={handleUpdateStatus}
-              onCancel={() => toggleModal("")}
-              statuses={statuses}
-              setStatus={setStatus}
-              status={status}
-            />
-          </div>
-        </div>
-      )}
+     
       {isModalOpen && modalType === "editRoom" && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
           <div className="bg-white rounded-lg shadow-lg w-full sm:w-4/5 md:w-3/4 lg:w-1/2 max-w-md EditModal">
@@ -316,7 +246,7 @@ const RoomList = () => {
           <div className="bg-white p-8 rounded-lg shadow-lg max-w-sm sm:max-w-md md:max-w-lg lg:max-w-xl EditModal">
             <p>
               Êtes-vous sûr de vouloir supprimer cette salle n°
-              {selectedRoom?.roomNumber} ?
+              {selectedRoom?.number} ?
             </p>
             <div className="mt-4 flex justify-between">
               <button

@@ -1,11 +1,9 @@
 import { useState } from 'react';
 import { apiUrl } from '../../services/api';
-import {convertStatusToRoom} from "../../services/convertStatus.js";
 import useToast from "../menus/menu-orders/(tantely)/hooks/useToast.jsx";
 
-const CreateRoom = ({ onCreate, closeModal, statuses = [], floors = [] }) => {
-    const [price, setPrice] = useState('');
-    const [status, setStatus] = useState('');
+const CreateRoom = ({ onCreate, closeModal, floors = [] }) => {
+    const [price, setPrice] = useState('');;
     const [floorId, setFloorId] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const [roomNumber, setRoomNumber] = useState('');
@@ -14,7 +12,7 @@ const CreateRoom = ({ onCreate, closeModal, statuses = [], floors = [] }) => {
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!roomNumber || !price || !capacity || !status || !floorId) {
+        if (!roomNumber || !price || !capacity || !floorId) {
             setErrorMessage('Tous les champs doivent être remplis.');
             showError('Tous les champs doivent être remplis.');
             return;
@@ -27,11 +25,10 @@ const CreateRoom = ({ onCreate, closeModal, statuses = [], floors = [] }) => {
         }
 
         const nouveauRoom = {
-            roomNumber,
+            number: roomNumber,
             capacity,
             floorId,
             price: parseFloat(price),
-            status,
         };
 
         try {
@@ -48,7 +45,6 @@ const CreateRoom = ({ onCreate, closeModal, statuses = [], floors = [] }) => {
                 setRoomNumber('');
                 setCapacity('');
                 setPrice('');
-                setStatus('');
                 setFloorId('');
                 setErrorMessage('');
                 showSuccess('La salle a été créée avec succès.');
@@ -101,7 +97,6 @@ const CreateRoom = ({ onCreate, closeModal, statuses = [], floors = [] }) => {
                 />
             </div>
 
-            {/* Floor and Status selectors */}
             <div>
                 <label htmlFor="floorId">Etage:</label>
                 <select
@@ -115,24 +110,6 @@ const CreateRoom = ({ onCreate, closeModal, statuses = [], floors = [] }) => {
                     {floors.map(floor => (
                         <option key={floor.id} value={floor.id}>
                             {floor.floorNumber}
-                        </option>
-                    ))}
-                </select>
-            </div>
-
-            <div>
-                <label htmlFor="status">Statut:</label>
-                <select
-                    id="status"
-                    value={status}
-                    onChange={(e) => setStatus(e.target.value)}
-                    className="w-full px-3 py-2 border outline-none focus:border-blue-500 border-gray-300 rounded"
-                    required
-                >
-                    <option value="">Sélectionnez un statut</option>
-                    {statuses.map(status => (
-                        <option key={status} value={status}>
-                            {convertStatusToRoom(status.toLowerCase())}
                         </option>
                     ))}
                 </select>

@@ -15,6 +15,20 @@
     box-sizing: border-box;
 }
 
+.scrollbar-custom::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-custom::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-custom::-webkit-scrollbar-thumb {
+  background-color: #a0aec0;
+  border-radius: 4px;
+}
+
+
 @keyframes modalIn {
     0% {
         transform: scale(0.95);

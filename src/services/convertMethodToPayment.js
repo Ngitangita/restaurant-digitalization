@@ -1,9 +1,11 @@
 export const convertMethodToPayment = (method) => {
-    const paymentMethods = new Map([
-        ['cash', 'Espèces'],
-        ['mvola', 'MVola'],
-        ['orange_money', 'Orange Money'],
-    ]);
-    
-    return paymentMethods.get(method.toLowerCase()) || 'Méthode de paiement inconnue';
+  if (!method) return "Non spécifié"; 
+
+  const map = {
+    CASH: "Espèces",
+    MVOLA: "Mvola",
+    ORANGE_MONEY: "Orange Money",
+  };
+
+  return map[method.toUpperCase()] || method;
 };

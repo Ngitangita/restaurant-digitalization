@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast.jsx";
 import { apiUrl, fetchJson } from "../../services/api.js";
-import {convertStatusToOrder, convertStatusToTable} from "../../services/convertStatus.js";
+import {convertStatusToOrder} from "../../services/convertStatus.js";
 import dayjs from "dayjs";
 import {IoMdTrash} from "react-icons/io";
 import {formatPriceInAriary} from "../../services/formatePrice.js";
@@ -98,7 +98,6 @@ function OrdersByTable() {
                     </h1>
                     <p className=" text-lg text-gray-700 dark:text-gray-300">
                         Capacité de la table : {fetchState.data.table.capacity || "N/A"} <br/>
-                        Statut : {convertStatusToTable(fetchState.data.table.status || 'N/A') || "N/A"}
                     </p>
 
                     <button

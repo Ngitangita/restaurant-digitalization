@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { apiUrl, fetchJson } from "../../services/api";
 import { FaRegEdit } from "react-icons/fa";
-import { MdDelete, MdEdit, MdInfoOutline } from "react-icons/md";
+import { MdDelete, MdInfoOutline } from "react-icons/md";
 import EditTable from "./EditTable";
 import TextField from "@mui/material/TextField";
-import { convertStatusToTable } from "../../services/convertStatus.js";
 import useToast from "../menus/menu-orders/(tantely)/hooks/useToast.jsx";
 
 function TablesList() {
@@ -13,11 +12,8 @@ function TablesList() {
   const [tableNumber, setTableNumber] = useState("");
   const [tableCapacity, setTableCapacity] = useState("");
   const [tableStatus, setTableStatus] = useState("");
-  const [tableStatuses, setTableStatuses] = useState([]);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [tableToDelete, setTableToDelete] = useState(null);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [selectedTableId, setSelectedTableId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [showEditTableModal, setShowEditTableModal] = useState(false);
   const [tableToEdit, setTableToEdit] = useState(null);
@@ -33,22 +29,9 @@ function TablesList() {
     }
   };
 
-  const fetchTableStatuses = async () => {
-    try {
-      const data = await fetchJson(apiUrl("/tables/status"));
-      setTableStatuses(data);
-    } catch (error) {
-      console.error(
-        "Erreur lors de la récupération des statuts de table:",
-        error
-      );
-      showError("Erreur lors de la récupération des statuts de table.");
-    }
-  };
 
   useEffect(() => {
     void fetchTables();
-    void fetchTableStatuses();
   }, []);
 
   const handleCreateTable = async () => {
@@ -101,32 +84,6 @@ function TablesList() {
     setTableToDelete(null);
   };
 
-  const handleEditStatus = (table) => {
-    setSelectedTableId(table.id);
-    setTableStatus(table.status);
-    setShowEditModal(true);
-  };
-
-  const handleUpdateStatus = async () => {
-    try {
-      const updateData = {
-        id: selectedTableId,
-        status: tableStatus,
-      };
-
-      await fetchJson(apiUrl(`/tables/status`), "PUT", updateData);
-      setShowEditModal(false);
-      setSelectedTableId(null);
-      void fetchTables();
-      showSuccess("Statut de la table mis à jour avec succès.");
-    } catch (error) {
-      console.error(
-        "Erreur lors de la mise à jour du statut de la table:",
-        error
-      );
-      showError("Erreur lors de la mise à jour du statut de la table.");
-    }
-  };
 
   const filteredTables = tables.filter(
     (table) =>
@@ -225,7 +182,6 @@ function TablesList() {
           <tr className="bg-gray-200">
             <th className="py-2 px-4">Numéro</th>
             <th className="py-2 px-4">Capacité</th>
-            <th className="py-2 px-4">Statut</th>
             <th className="py-2 px-4">Action</th>
           </tr>
         </thead>
@@ -249,26 +205,6 @@ function TablesList() {
                 >
                   <td className="py-2 px-4">{table.number}</td>
                   <td className="py-2 px-4">{table.capacity}</td>
-                  <td
-                    className={`py-2 px-4 cursor-pointer ${
-                      table.status.toLowerCase() !== "available"
-                        ? "text-red-500 font-bold"
-                        : ""
-                    }`}
-                  >
-                    <button
-                      onClick={() => handleEditStatus(table)}
-                      className="w-full flex flex-col gap-1 items-center "
-                    >
-                      <span className="flex flex-row gap-1 items-center ">
-                        <MdEdit />{" "}
-                        {table.status.toLowerCase() !== "available" && (
-                          <span className="text-red-500 text-[10px]">⚠️ </span>
-                        )}
-                        {convertStatusToTable(table.status)}
-                      </span>
-                    </button>
-                  </td>
                   <td className="py-2 px-4 flex flex-row gap-4 justify-center">
                     <button
                       className="bg-blue-500 text-white rounded p-2 hover:bg-blue-600"
@@ -342,20 +278,7 @@ function TablesList() {
                 placeholder="Capacité de la table"
                 className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
               />
-              <select
-                value={tableStatus}
-                onChange={(e) => setTableStatus(e.target.value)}
-                className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
-              >
-                <option value="" disabled>
-                  Sélectionner le statut
-                </option>
-                {tableStatuses.map((status) => (
-                  <option key={status} value={status}>
-                    {convertStatusToTable(status)}
-                  </option>
-                ))}
-              </select>
+              
               <div className="flex justify-between">
                 <button
                   className="bg-red-300 text-gray-800 py-2 px-4 rounded-md hover:bg-re-400"
@@ -369,50 +292,6 @@ function TablesList() {
                   onClick={handleCreateTable}
                 >
                   Créer
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {showEditModal && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-lg w-[90%] sm:w-[400px] text-center EditModal">
-            <div className="flex flex-row justify-between items-center">
-              <h2 className="text-xl pl-8 pt-8 pb-4">Modifier le statut</h2>
-              <span
-                className="hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
-                            relative bottom-4 text-[30px] hover:text-white cursor-pointer"
-                onClick={() => setShowEditModal(false)}
-              >
-                x
-              </span>
-            </div>
-            <div className="p-6">
-              <select
-                value={tableStatus}
-                onChange={(e) => setTableStatus(e.target.value)}
-                className="border outline-none focus:border-blue-500 border-gray-300 p-2 mb-4 w-full"
-              >
-                {tableStatuses.map((status) => (
-                  <option key={status} value={status}>
-                    {convertStatusToTable(status)}
-                  </option>
-                ))}
-              </select>
-              <div className="flex justify-between">
-                <button
-                  className="bg-red-300 text-gray-800 px-4 py-2 rounded hover:bg-red-400"
-                  onClick={() => setShowEditModal(false)}
-                >
-                  Annuler
-                </button>
-                <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                  onClick={handleUpdateStatus}
-                >
-                  Mettre à jour
                 </button>
               </div>
             </div>

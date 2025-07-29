@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast.jsx";
 import {apiUrl, fetchJson} from "../../services/api.js";
 import dayjs from "dayjs";
-import {convertStatusToOrder, convertStatusToRoom} from "../../services/convertStatus.js";
+import {convertStatusToOrder} from "../../services/convertStatus.js";
 import {IoMdTrash} from "react-icons/io";
 import {formatPriceInAriary} from "../../services/formatePrice.js";
 
@@ -97,7 +97,6 @@ function OrdersByRoom() {
                     </h1>
                     <p className="text-lg text-gray-700 dark:text-gray-300">
                         Capacité : {fetchState.data.room.capacity || "N/A"} <br/>
-                        Statut : {convertStatusToRoom(fetchState.data.room.status || 'N/A') || "N/A"} <br/>
                         Prix par nuit : {fetchState.data.room.price || "N/A"} <br/>
                     </p>
                     <button

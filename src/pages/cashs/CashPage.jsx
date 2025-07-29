@@ -20,7 +20,6 @@ import { convertDepositWithdraw } from "../../services/convertStatus";
 import { convertMethodToPayment } from "../../services/convertMethodToPayment";
 import CountUp from "react-countup";
 import ProfitsList from "./ProfitsList";
-import CashHistory from "./CashHistory";
 import { useNavigate } from "react-router-dom";
 
 const schema = z.object({
@@ -41,7 +40,6 @@ const CashPage = () => {
   const { showError, showSuccess } = useToast();
   const [openModal, setOpenModal] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
-  const [, setCashDetails] = useState(null);
   const navigate = useNavigate()
 
   const {
@@ -96,10 +94,7 @@ const CashPage = () => {
     }
   };
 
-  const closeDetailsModal = () => {
-    setShowDetailsModal(false);
-    setCashDetails(null);
-  };
+ 
 
   const handleOpenModal = () => setOpenModal(true);
   const handleCloseModal = () => setOpenModal(false);
@@ -249,22 +244,7 @@ const CashPage = () => {
         </>
       )}
       <ProfitsList />
-      {showDetailsModal && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
-          <div className="bg-white rounded-lg w-1/2 DetailsModal">
-            <div className="flex flex-row justify-end items-center">
-              <span
-                className="hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
-                            relative text-[30px] hover:text-white cursor-pointer"
-                onClick={closeDetailsModal}
-              >
-                x
-              </span>
-            </div>
-            <CashHistory onClose={closeDetailsModal} />
-          </div>
-        </div>
-      )}
+     
     </div>
   );
 };
