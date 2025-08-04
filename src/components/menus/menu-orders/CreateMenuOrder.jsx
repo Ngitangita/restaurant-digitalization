@@ -252,7 +252,6 @@ function CreateMenuOrder({ onClose, onOrderCreated }) {
         />
       </div>
 
-      {/* Menu Items */}
       <div>
         <MenuItems onSave={handleSave} />
         {menuError && <p className="text-red-500 text-sm mt-2">{menuError}</p>}
@@ -289,7 +288,6 @@ function CreateMenuOrder({ onClose, onOrderCreated }) {
         )}
       </div>
 
-      {/* Actions */}
       <div className="flex justify-end gap-4 mt-4">
         <button
           type="button"

@@ -27,11 +27,11 @@ import { convertMethodToPayment } from "../../services/convertMethodToPayment";
 import { convertStatusToPayment } from "../../services/convertStatus";
 
 const fmtMoney = (value, currency = "MGA", locale = "fr-MG") =>
-  new Intl.NumberFormat(locale, { style: "currency", currency }).format(
-    Number(value || 0)
-  );
+  new Intl.NumberFormat(locale, { style: "currency", currency }).format(Number(value || 0));
 
 const formatToFourDigits = (n) => String(n ?? 0).padStart(4, "0");
+
+// -------------- Fonctions modifiées ------------
 
 const generateInvoicePDF = (invoice, menus) => {
   const doc = new jsPDF({ unit: "mm", format: [80, 140] });
@@ -57,12 +57,7 @@ const generateInvoicePDF = (invoice, menus) => {
       ).join("-");
 
   doc.setFontSize(10);
-  [
-    "UTOPIA",
-    "By Sooatel",
-    "Ankasina Antananarivo",
-    "Tel: 038 42 779 74",
-  ].forEach((line) => {
+  ["UTOPIA", "By Sooatel", "Ankasina Antananarivo", "Tel: 038 42 779 74"].forEach((line) => {
     doc.text(line, m, y);
     y += 6;
   });
@@ -73,20 +68,10 @@ const generateInvoicePDF = (invoice, menus) => {
 
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  [
-    `Date: ${currentDate}`,
-    `Facture: ${formatToFourDigits(invoice?.id || 0)}`,
-    `Méthode: ${
-      convertMethodToPayment(invoice?.paymentMethod) || "Non spécifié"
-    }`,
-    `Statut: ${
-      convertStatusToPayment(invoice?.paymentStatus) || "Non spécifié"
-    }`,
-  ].forEach((line) => {
+  [`Date: ${currentDate}`, `Facture: ${formatToFourDigits(invoice?.id)}`, `Méthode: ${convertMethodToPayment(invoice?.paymentMethod) || "Non spécifié"}`, `Statut: ${convertStatusToPayment(invoice?.paymentStatus) || "Non spécifié"}`].forEach((line) => {
     doc.text(line, m, (y += 6));
   });
 
-  doc.setFont("helvetica", "bold");
   if (tableNumbersString) {
     doc.setFontSize(14);
     y += 10;
@@ -101,7 +86,6 @@ const generateInvoicePDF = (invoice, menus) => {
 
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-
   y += 8;
   doc.line(m, y, 75, y);
 
@@ -125,8 +109,20 @@ const generateInvoicePDF = (invoice, menus) => {
   doc.setFontSize(10);
   doc.text("Merci et à bientôt !", m, (y += 10));
 
-  window.open(doc.output("bloburl"), "_blank");
+  // 🚀 Impression automatique
+  doc.autoPrint({ variant: "non-conform" }); // voir doc officiel jsPDF* :contentReference[oaicite:2]{index=2}
+  const blobUrl = doc.output("bloburl");
+  const newWindow = window.open(blobUrl, "_blank", "noopener,noreferrer");
+
+  if (newWindow) {
+    newWindow.focus();
+    setTimeout(() => newWindow.print(), 250);
+    // Optionnel : fermer après impression
+    setTimeout(() => newWindow.close(), 1500);
+  }
 };
+
+// -------------- Composant principal --------------
 
 export default function InvoiceList() {
   const [invoices, setInvoices] = useState([]);
@@ -147,9 +143,7 @@ export default function InvoiceList() {
   const [paymentStatus, setPaymentStatus] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [amountPaid, setAmountPaid] = useState("");
-  const [paymentDate, setPaymentDate] = useState(
-    dayjs().format("YYYY-MM-DDTHH:mm")
-  );
+  const [paymentDate, setPaymentDate] = useState(dayjs().format("YYYY-MM-DDTHH:mm"));
   const [description, setDescription] = useState("");
 
   const { showError, showSuccess } = useToast();
@@ -239,14 +233,13 @@ export default function InvoiceList() {
   }, [invoices, searchTerm, statusFilters, methodFilter]);
 
   const sorted = useMemo(
-    () =>
-      [...filtered].sort((a, b) => new Date(b.issuedAt) - new Date(a.issuedAt)),
+    () => [...filtered].sort((a, b) => new Date(b.issuedAt) - new Date(a.issuedAt)),
     [filtered]
   );
 
   return (
-    <div className="text-gray-700 p-4 rounded-lg">
-      <div className="fixed z-50 w-[1000px] bg-white darkBody px-4 py-2 flex items-center justify-between">
+    <div className="text-gray-700 p-4 pt-0 rounded-lg">
+      <div className="fixed z-50 w-[1000px] bg-white darkBody p-4 flex items-center justify-between">
         <div className="flex items-center gap-6">
           <TextField
             label="Rechercher facture / chambre / table"
@@ -314,17 +307,13 @@ export default function InvoiceList() {
                   <td className="p-2">{fmtMoney(inv.amountPaid)}</td>
                   <td className="p-2">
                     <span
-                      className={`flex text-sm flex-row  gap-1 items-center text-center ${
-                        convertStatusToPayment(
-                          inv.paymentStatus.toLowerCase()
-                        ) === "Payé"
+                      className={`flex text-sm flex-row gap-1 items-center text-center ${
+                        convertStatusToPayment(inv.paymentStatus.toLowerCase()) === "Payé"
                           ? "text-green-500"
                           : "text-red-500"
                       }`}
                     >
-                      {convertStatusToPayment(
-                        inv.paymentStatus.toLowerCase()
-                      ) === "non Payé" && (
+                      {convertStatusToPayment(inv.paymentStatus.toLowerCase()) === "non Payé" && (
                         <span className="text-red-500 text-[10px]">⚠️</span>
                       )}
                       {convertStatusToPayment(inv.paymentStatus.toLowerCase())}
@@ -342,7 +331,7 @@ export default function InvoiceList() {
                     <button
                       onClick={() => generateInvoicePDF(inv, menus)}
                       className="bg-green-600 text-white rounded p-2"
-                      title="Imprimer PDF"
+                      title="Imprimer facture"
                     >
                       <FaPrint />
                     </button>
@@ -369,14 +358,10 @@ export default function InvoiceList() {
 
       {detailOpen && selectedInvoice && (
         <div className="bg-black/50 fixed inset-0 z-50 flex justify-center items-center">
-          <div
-            className="relative top-6 bg-white rounded-lg shadow-lg w-full max-w-md 
-          EditModal p-4 "
-          >
+          <div className="relative top-6 bg-white rounded-lg shadow-lg w-full max-w-md EditModal p-4">
             <button
               onClick={closeDetails}
-              className="hover:bg-red-500 px-5 flex justify-center items-center w-[40px]
-                        relative left-[370px] text-[30px] hover:text-white cursor-pointer"
+              className="hover:bg-red-500 px-5 flex justify-center items-center w-[40px] relative left-[370px] text-[30px] hover:text-white cursor-pointer"
               aria-label="Fermer modale"
             >
               &times;
