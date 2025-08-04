@@ -111,8 +111,6 @@ const CreatePaymentAfterOrder = ({ type, number, onCancel, onSuccess }) => {
                             value={selectedTables}
                             getOptionLabel={(option) => `Table ${option.number}`}
                             onChange={(event, value) => {
-                                console.log(value);
-                                
                                 setSelectedTables(value);
                                 handleChange("tableNumbers", value.map((table) => table.number));
                             }}

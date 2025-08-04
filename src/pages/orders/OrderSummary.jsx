@@ -5,6 +5,7 @@ import { apiUrl, fetchJson } from "../../services/api";
 import { convertType } from "../../services/convertType";
 import { convertStatusToOrder } from "../../services/convertStatus";
 import CreateMenuOrder from "../../components/menus/menu-orders/CreateMenuOrder";
+import ExisteOrder from "../../components/menus/menu-orders/ExisteOrder";
 import UpdateStatusOrder from "../../components/status/UpdateStatusOrder.jsx";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast";
 import { generateInvoiceForOrder } from "../../services/invoiceService";
@@ -22,7 +23,7 @@ export default function OrderSummary() {
   const [status, setStatus] = useState("");
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [orderToDelete, setOrderToDelete] = useState(null);
-
+  const [existeOrder, setExisteOrder] = useState(false);
   const { showError, showSuccess } = useToast();
   const navigate = useNavigate();
 
@@ -39,6 +40,7 @@ export default function OrderSummary() {
       const unpaid = data.filter((o) =>
         o.orderLines?.some((line) => line.menu && !line.paid)
       );
+
       setOrders(unpaid);
     } catch (err) {
       console.error(err);
@@ -151,7 +153,13 @@ export default function OrderSummary() {
           onClick={() => setModalOpen(true)}
           className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-3"
         >
-          <MdAddBox /> Ajouter une commande
+          <MdAddBox /> Créer nouvelle commande
+        </button>
+        <button
+          onClick={() => setExisteOrder(true)}
+          className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-3"
+        >
+          <MdAddBox /> à un table / chambre existante
         </button>
         <div className="flex items-center gap-6">
           <TextField
@@ -192,9 +200,24 @@ export default function OrderSummary() {
             sorted.map((order) => {
               const isTable = !!order.table;
               const num = isTable ? order.table.number : order.room.number;
-              const menus = order.orderLines
-                ?.map((l) => l.menu?.name)
+
+              const groupedMenus = order.orderLines?.reduce((acc, line) => {
+                const name = line.menu?.name;
+                if (!name) return acc;
+
+                if (!acc[name]) {
+                  acc[name] = { quantity: 0, price: 0 };
+                }
+                acc[name].quantity += line.quantity ?? 0;
+                acc[name].price +=
+                  (line.menu?.price ?? 0) * (line.quantity ?? 0);
+                return acc;
+              }, {});
+
+              const menus = Object.entries(groupedMenus ?? {})
+                .map(([name]) => name)
                 .join(", ");
+
               const st = order.orderStatus?.toLowerCase() ?? "";
               const locked = st === "delivered";
               return (
@@ -263,6 +286,21 @@ export default function OrderSummary() {
               isOpen={modalOpen}
               onClose={() => setModalOpen(false)}
               onOrderCreated={fetchApi}
+            />
+          </div>
+        </div>
+      )}
+
+      {existeOrder && (
+        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+          <div className="bg-white rounded w-full max-w-lg sm:max-w-md CreateModal">
+            <ExisteOrder
+              isOpen={existeOrder}
+              onClose={() => setExisteOrder(false)}
+              onOrderCreated={() => {
+                setExisteOrder(false);
+                fetchApi();
+              }}
             />
           </div>
         </div>
