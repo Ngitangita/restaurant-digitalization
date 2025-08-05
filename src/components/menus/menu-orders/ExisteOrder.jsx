@@ -8,6 +8,7 @@ import { MdDelete } from "react-icons/md";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import useToast from "./(tantely)/hooks/useToast";
+import dayjs from "dayjs";
 
 const schema = z.object({
   orderId: z.preprocess(
@@ -140,13 +141,18 @@ function ExisteOrder({ onClose, onOrderCreated }) {
                 Choisir une commande
               </label>
               <Autocomplete
-                options={orders}
+                options={[...orders].sort(
+                  (a, b) => new Date(b.orderDate) - new Date(a.orderDate)
+                )}
                 getOptionLabel={(option) =>
                   option?.roomNumber
-                    ? `Chambre n° ${option.roomNumber}`
-                    : `Table n° ${option.tableNumber}`
+                    ? `Chambre n° ${option.roomNumber} --- dt: ${dayjs(
+                        option.orderDate
+                      ).format("YYYY-MM-DD HH:mm:ss")}`
+                    : `Table n° ${option.tableNumber} --- dt: ${dayjs(
+                        option.orderDate
+                      ).format("YYYY-MM-DD HH:mm:ss")}`
                 }
-                // value={orders.find((o) => o.orderId === field.value) || null}
                 onChange={(_, selected) =>
                   field.onChange(selected?.orderId || "")
                 }

@@ -148,7 +148,7 @@ export default function OrderSummary() {
 
   return (
     <div className="text-gray-700 pl-4 rounded-lg">
-      <div className="fixed z-50 w-[1000px] bg-white darkBody px-4 py-2 flex items-center gap-5">
+      <div className="fixed w-[1000px] bg-white darkBody px-4 py-2 flex items-center gap-5">
         <button
           onClick={() => setModalOpen(true)}
           className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-3"
@@ -280,7 +280,7 @@ export default function OrderSummary() {
       </table>
 
       {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center">
+       <div className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center">
           <div className="bg-white rounded w-full max-w-lg sm:max-w-md CreateModal">
             <CreateMenuOrder
               isOpen={modalOpen}

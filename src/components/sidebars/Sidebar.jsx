@@ -184,11 +184,11 @@ export default function Sidebar() {
 
   return (
     <>
-      <SidebarToggleButton handleSidebarToggle={handleSidebarToggle} openSidebar={openSidebar} />
+      <SidebarToggleButton handleSidebarToggle={handleSidebarToggle} openSidebar={openSidebar} className="z-30"/>
       <div
-        className={`Sidebar z-50 fixed top-20 left-0 w-64 h-screen bg-white shadow-md flex flex-col
+        className={`Sidebar fixed top-20 left-0 w-64 h-screen bg-white shadow-md flex flex-col
           overflow-y-scroll overflow-x-hidden max-h-[calc(100%-80px)] transition-transform duration-300 
-          ease-in-out ${openSidebar ? 'translate-x-0 z-0' : '-translate-x-full'} lg:translate-x-0 lg:block`}
+          ease-in-out ${openSidebar ? 'translate-x-0 z-0' : '-translate-x-full z-0'} lg:translate-x-0 lg:block`}
         onMouseEnter={() => setShowScrollbar(true)}
         onMouseLeave={() => setShowScrollbar(false)}
         style={{

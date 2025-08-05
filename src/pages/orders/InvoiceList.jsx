@@ -34,7 +34,15 @@ const formatToFourDigits = (n) => String(n ?? 0).padStart(4, "0");
 // -------------- Fonctions modifiées ------------
 
 const generateInvoicePDF = (invoice, menus) => {
-  const doc = new jsPDF({ unit: "mm", format: [80, 140] });
+  const baseHeight = 100; 
+  const lineCount = invoice?.lines?.length || 0;
+
+  const heightPerLine = 22;
+  const extraHeight = lineCount * heightPerLine;
+
+  const finalHeight = Math.max(baseHeight + extraHeight, 140); 
+  const doc = new jsPDF({ unit: "mm", format: [80, finalHeight] });
+
   let y = 10;
   const m = 5;
 
@@ -64,30 +72,35 @@ const generateInvoicePDF = (invoice, menus) => {
 
   doc.setFontSize(14);
   doc.setFont("helvetica", "bold");
-  doc.text("FACTURE", 40, (y += 8), { align: "center" });
+  doc.text("FACTURE", 20, (y += 8), { align: "center" });
 
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
-  [`Date: ${currentDate}`, `Facture: ${formatToFourDigits(invoice?.id)}`, `Méthode: ${convertMethodToPayment(invoice?.paymentMethod) || "Non spécifié"}`, `Statut: ${convertStatusToPayment(invoice?.paymentStatus) || "Non spécifié"}`].forEach((line) => {
+  [
+    `Date: ${currentDate}`,
+    `Facture: ${formatToFourDigits(invoice?.id)}`,
+    `Méthode: ${convertMethodToPayment(invoice?.paymentMethod) || "Non spécifié"}`,
+    `Statut: ${convertStatusToPayment(invoice?.paymentStatus) || "Non spécifié"}`
+  ].forEach((line) => {
     doc.text(line, m, (y += 6));
   });
 
   if (tableNumbersString) {
     doc.setFontSize(14);
     y += 10;
-    doc.text(`TABLE : ${tableNumbersString}`, 40, y, { align: "center" });
+    doc.text(`TABLE : ${tableNumbersString}`, 23, y, { align: "center" });
   }
 
   if (roomNumbersString) {
     doc.setFontSize(14);
     y += 14;
-    doc.text(`CHAMBRE : ${roomNumbersString}`, 40, y, { align: "center" });
+    doc.text(`CHAMBRE : ${roomNumbersString}`, 23, y, { align: "center" });
   }
 
   doc.setFontSize(10);
   doc.setFont("helvetica", "normal");
   y += 8;
-  doc.line(m, y, 75, y);
+  doc.line(m, y, 60, y);
 
   (invoice?.lines || []).forEach((line) => {
     const menu = menus.find((m) => m.id === line.menuId);
@@ -98,26 +111,24 @@ const generateInvoicePDF = (invoice, menus) => {
     doc.text(`Prix : ${line.totalPrice.toFixed(2)} MGA`, m, (y += 6));
 
     y += 4;
-    doc.line(m, y, 75, y);
+    doc.line(m, y, 60, y);
   });
 
   doc.setFont("helvetica", "bold");
   doc.setFontSize(10);
-  doc.text(`Mt. Total: ${fmtMoney(invoice.totalAmount)}`, m, (y += 8));
+  doc.text(`Mt.Total: ${fmtMoney(invoice.totalAmount)}`, m, (y += 8));
 
   doc.setFont("helvetica", "normal");
   doc.setFontSize(10);
-  doc.text("Merci et à bientôt !", m, (y += 10));
+  doc.text("Merci et à bientôt !", m, (y += 8));
 
-  // 🚀 Impression automatique
-  doc.autoPrint({ variant: "non-conform" }); // voir doc officiel jsPDF* :contentReference[oaicite:2]{index=2}
+  doc.autoPrint({ variant: "non-conform" });
   const blobUrl = doc.output("bloburl");
   const newWindow = window.open(blobUrl, "_blank", "noopener,noreferrer");
 
   if (newWindow) {
     newWindow.focus();
     setTimeout(() => newWindow.print(), 250);
-    // Optionnel : fermer après impression
     setTimeout(() => newWindow.close(), 1500);
   }
 };
