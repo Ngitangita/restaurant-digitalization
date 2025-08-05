@@ -186,7 +186,7 @@ export default function Sidebar() {
     <>
       <SidebarToggleButton handleSidebarToggle={handleSidebarToggle} openSidebar={openSidebar} />
       <div
-        className={`Sidebar fixed top-20 left-0 w-64 h-screen bg-white shadow-md flex flex-col
+        className={`Sidebar z-50 fixed top-20 left-0 w-64 h-screen bg-white shadow-md flex flex-col
           overflow-y-scroll overflow-x-hidden max-h-[calc(100%-80px)] transition-transform duration-300 
           ease-in-out ${openSidebar ? 'translate-x-0 z-0' : '-translate-x-full'} lg:translate-x-0 lg:block`}
         onMouseEnter={() => setShowScrollbar(true)}
