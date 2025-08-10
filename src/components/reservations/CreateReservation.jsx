@@ -196,7 +196,7 @@ function CreateReservation({
             id="roomIds"
             className="w-full rounded"
             options={rooms}
-            getOptionLabel={(room) => `Chambre ${room.roomNumber}`}
+            getOptionLabel={(room) => `Chambre ${room.number}`}
             onChange={(event, value) =>
               handleAutocompleteChange("roomIds", value)
             }

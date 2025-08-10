@@ -164,7 +164,7 @@ function CreateMenuOrder({ onClose, onOrderCreated }) {
                 getOptionKey={(option, index) =>
                   option?.id ?? `default-key-${index}`
                 }
-                getOptionLabel={(option) => option?.lastName || "Inconnu"}
+                getOptionLabel={(option) => option?.name || "Inconnu"}
                 onChange={(event, value) => field.onChange(value?.id || "")}
                 renderInput={(params) => (
                   <TextField
