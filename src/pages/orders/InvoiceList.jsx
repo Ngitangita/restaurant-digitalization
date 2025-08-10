@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   TextField,
   ToggleButton,
@@ -248,6 +248,22 @@ export default function InvoiceList() {
     [filtered]
   );
 
+  const groupedByDate = useMemo(() => {
+    return sorted.reduce((acc, inv) => {
+      const dateKey = dayjs(inv.issuedAt).format("YYYY-MM-DD");
+      const label = dayjs(inv.issuedAt).format("DD/MM/YYYY");
+
+      if (!acc[label]) {
+        acc[label] = { total: 0, invoices: [] };
+      }
+
+      acc[label].total += inv.totalAmount || 0;
+      acc[label].invoices.push(inv);
+
+      return acc;
+    }, {});
+  }, [sorted]);
+
   return (
     <div className="text-gray-700 p-4 pt-0 rounded-lg">
       <div className="fixed z-50 w-[1000px] bg-white darkBody p-4 flex items-center justify-between">
@@ -304,52 +320,63 @@ export default function InvoiceList() {
           </tr>
         </thead>
         <tbody>
-          {!loading && sorted.length > 0 ? (
-            sorted.map((inv) => {
-              const isTable = !!inv.table;
-              const number = isTable ? inv.table.number : inv.room?.number;
-              return (
-                <tr key={inv.id} className="border-b">
-                  <td className="p-2">{inv.id}</td>
-                  <td className="p-2">{dayjs(inv.issuedAt).format("DD/MM/YYYY HH:mm")}</td>
-                  <td className="p-2">{isTable ? "Table" : "Chambre"}</td>
-                  <td className="p-2">{number ?? "-"}</td>
-                  <td className="p-2">{fmtMoney(inv.totalAmount)}</td>
-                  <td className="p-2">{fmtMoney(inv.amountPaid)}</td>
-                  <td className="p-2">
-                    <span
-                      className={`flex text-sm flex-row gap-1 items-center text-center ${
-                        convertStatusToPayment(inv.paymentStatus.toLowerCase()) === "Payé"
-                          ? "text-green-500"
-                          : "text-red-500"
-                      }`}
-                    >
-                      {convertStatusToPayment(inv.paymentStatus.toLowerCase()) === "non Payé" && (
-                        <span className="text-red-500 text-[10px]">⚠️</span>
-                      )}
-                      {convertStatusToPayment(inv.paymentStatus.toLowerCase())}
-                    </span>
-                  </td>
-                  <td className="p-2">{convertMethodToPayment(inv.paymentMethod)}</td>
-                  <td className="flex justify-center gap-2 p-2">
-                    <button
-                      onClick={() => openDetails(inv.id)}
-                      className="bg-blue-500 text-white rounded p-2"
-                      title="Voir détails"
-                    >
-                      <BiSolidShow />
-                    </button>
-                    <button
-                      onClick={() => generateInvoicePDF(inv, menus)}
-                      className="bg-green-600 text-white rounded p-2"
-                      title="Imprimer facture"
-                    >
-                      <FaPrint />
-                    </button>
+          {!loading && Object.keys(groupedByDate).length > 0 ? (
+            Object.entries(groupedByDate).map(([label, group]) => (
+              <React.Fragment key={label}>
+                <tr className="bg-gray-100 font-bold">
+                  <td colSpan={9} className="text-left p-2">
+                    {label} — Total : {fmtMoney(group.total)}
                   </td>
                 </tr>
-              );
-            })
+                {group.invoices.map((inv) => {
+                  const isTable = !!inv.table;
+                  const number = isTable ? inv.table.number : inv.room?.number;
+                  return (
+                    <tr key={inv.id} className="border-b">
+                      <td className="p-2">{inv.id}</td>
+                      <td className="p-2">
+                        {dayjs(inv.issuedAt).format("DD/MM/YYYY HH:mm")}
+                      </td>
+                      <td className="p-2">{isTable ? "Table" : "Chambre"}</td>
+                      <td className="p-2">{number ?? "-"}</td>
+                      <td className="p-2">{fmtMoney(inv.totalAmount)}</td>
+                      <td className="p-2">{fmtMoney(inv.amountPaid)}</td>
+                      <td className="p-2">
+                        <span
+                          className={`flex text-sm flex-row gap-1 items-center text-center ${
+                            convertStatusToPayment(inv.paymentStatus.toLowerCase()) === "Payé"
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }`}
+                        >
+                          {convertStatusToPayment(inv.paymentStatus.toLowerCase()) === "non Payé" && (
+                            <span className="text-red-500 text-[10px]">⚠️</span>
+                          )}
+                          {convertStatusToPayment(inv.paymentStatus.toLowerCase())}
+                        </span>
+                      </td>
+                      <td className="p-2">{convertMethodToPayment(inv.paymentMethod)}</td>
+                      <td className="flex justify-center gap-2 p-2">
+                        <button
+                          onClick={() => openDetails(inv.id)}
+                          className="bg-blue-500 text-white rounded p-2"
+                          title="Voir détails"
+                        >
+                          <BiSolidShow />
+                        </button>
+                        <button
+                          onClick={() => generateInvoicePDF(inv, menus)}
+                          className="bg-green-600 text-white rounded p-2"
+                          title="Imprimer facture"
+                        >
+                          <FaPrint />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </React.Fragment>
+            ))
           ) : (
             <tr>
               <td colSpan={9}>
@@ -458,3 +485,4 @@ export default function InvoiceList() {
     </div>
   );
 }
+
