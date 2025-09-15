@@ -134,7 +134,7 @@ function StockList() {
         </div>
         {error && <p className="text-red-500">{error}</p>}
 
-        <div className="w-auto flex-wrap flex flex-col sm:flex-row sm:space-x-2 mb-4 p-2">
+        <div className="w-auto flex-wrap flex items-center flex-col sm:flex-row sm:space-x-2 mb-4 p-2">
           <TextField
             id="outlined-search"
             label="Rechercher par nom de l'ingredient"
@@ -160,10 +160,10 @@ function StockList() {
             }}
             sx={{
               width: {
-                xs: "100%",
-                sm: "250px",
-                md: "300px",
-                lg: "350px",
+                xs: "80%",
+                sm: "200px",
+                md: "250px",
+                lg: "300px",
               },
               height: "50px",
               zIndex: "0",
@@ -171,13 +171,13 @@ function StockList() {
             }}
           />
 
-          <div className="flex flex-col sm:flex-row gap-2 mt-2 sm:mt-0 w-full">
+          <div className="flex flex-col sm:flex-row gap-2 w-50">
             <input
               type="number"
               placeholder="Quantité Min"
               value={quantityMin}
               onChange={(e) => setQuantityMin(e.target.value)}
-              className="w-full sm:w-36 border border-gray-300 p-2 rounded-md outline-none"
+              className="w-full sm:w-28 border border-gray-300 p-2 rounded-md outline-none"
             />
 
             <input
@@ -185,7 +185,7 @@ function StockList() {
               placeholder="Quantité Max"
               value={quantityMax}
               onChange={(e) => setQuantityMax(e.target.value)}
-              className="w-full sm:w-36 border border-gray-300 p-2 rounded-md outline-none"
+              className="w-full sm:w-28 border border-gray-300 p-2 rounded-md outline-none"
             />
 
             <input
@@ -207,7 +207,7 @@ function StockList() {
         </div>
       </div>
 
-      <div className="flex-grow overflow-auto sm:overflow-x-scroll lg:overflow-auto relative top-[330px] sm:top-[170px] md:top-[150px] lg:top-[175px]">
+      <div className="flex-grow overflow-auto sm:overflow-x-scroll lg:overflow-auto relative sm:top-[170px] md:top-[150px] lg:top-[175px]">
         <table className="min-w-full table-auto">
           <thead>
             <tr className="bg-gray-200">

@@ -27,20 +27,22 @@ import { convertMethodToPayment } from "../../services/convertMethodToPayment";
 import { convertStatusToPayment } from "../../services/convertStatus";
 
 const fmtMoney = (value, currency = "MGA", locale = "fr-MG") =>
-  new Intl.NumberFormat(locale, { style: "currency", currency }).format(Number(value || 0));
+  new Intl.NumberFormat(locale, { style: "currency", currency }).format(
+    Number(value || 0)
+  );
 
 const formatToFourDigits = (n) => String(n ?? 0).padStart(4, "0");
 
 // -------------- Fonctions modifiées ------------
 
 const generateInvoicePDF = (invoice, menus) => {
-  const baseHeight = 100; 
+  const baseHeight = 100;
   const lineCount = invoice?.lines?.length || 0;
 
   const heightPerLine = 22;
   const extraHeight = lineCount * heightPerLine;
 
-  const finalHeight = Math.max(baseHeight + extraHeight, 140); 
+  const finalHeight = Math.max(baseHeight + extraHeight, 140);
   const doc = new jsPDF({ unit: "mm", format: [80, finalHeight] });
 
   let y = 10;
@@ -65,7 +67,12 @@ const generateInvoicePDF = (invoice, menus) => {
       ).join("-");
 
   doc.setFontSize(10);
-  ["UTOPIA", "By Sooatel", "Ankasina Antananarivo", "Tel: 038 42 779 74"].forEach((line) => {
+  [
+    "UTOPIA",
+    "By Sooatel",
+    "Ankasina Antananarivo",
+    "Tel: 038 42 779 74",
+  ].forEach((line) => {
     doc.text(line, m, y);
     y += 6;
   });
@@ -79,8 +86,12 @@ const generateInvoicePDF = (invoice, menus) => {
   [
     `Date: ${currentDate}`,
     `Facture: ${formatToFourDigits(invoice?.id)}`,
-    `Méthode: ${convertMethodToPayment(invoice?.paymentMethod) || "Non spécifié"}`,
-    `Statut: ${convertStatusToPayment(invoice?.paymentStatus) || "Non spécifié"}`
+    `Méthode: ${
+      convertMethodToPayment(invoice?.paymentMethod) || "Non spécifié"
+    }`,
+    `Statut: ${
+      convertStatusToPayment(invoice?.paymentStatus) || "Non spécifié"
+    }`,
   ].forEach((line) => {
     doc.text(line, m, (y += 6));
   });
@@ -154,7 +165,9 @@ export default function InvoiceList() {
   const [paymentStatus, setPaymentStatus] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [amountPaid, setAmountPaid] = useState("");
-  const [paymentDate, setPaymentDate] = useState(dayjs().format("YYYY-MM-DDTHH:mm"));
+  const [paymentDate, setPaymentDate] = useState(
+    dayjs().format("YYYY-MM-DDTHH:mm")
+  );
   const [description, setDescription] = useState("");
 
   const { showError, showSuccess } = useToast();
@@ -244,13 +257,13 @@ export default function InvoiceList() {
   }, [invoices, searchTerm, statusFilters, methodFilter]);
 
   const sorted = useMemo(
-    () => [...filtered].sort((a, b) => new Date(b.issuedAt) - new Date(a.issuedAt)),
+    () =>
+      [...filtered].sort((a, b) => new Date(b.issuedAt) - new Date(a.issuedAt)),
     [filtered]
   );
 
   const groupedByDate = useMemo(() => {
     return sorted.reduce((acc, inv) => {
-      const dateKey = dayjs(inv.issuedAt).format("YYYY-MM-DD");
       const label = dayjs(inv.issuedAt).format("DD/MM/YYYY");
 
       if (!acc[label]) {
@@ -324,7 +337,7 @@ export default function InvoiceList() {
             Object.entries(groupedByDate).map(([label, group]) => (
               <React.Fragment key={label}>
                 <tr className="bg-gray-100 font-bold">
-                  <td colSpan={9} className="text-left p-2">
+                  <td colSpan={10} className="text-left p-2">
                     {label} — Total : {fmtMoney(group.total)}
                   </td>
                 </tr>
@@ -344,18 +357,26 @@ export default function InvoiceList() {
                       <td className="p-2">
                         <span
                           className={`flex text-sm flex-row gap-1 items-center text-center ${
-                            convertStatusToPayment(inv.paymentStatus.toLowerCase()) === "Payé"
+                            convertStatusToPayment(
+                              inv.paymentStatus.toLowerCase()
+                            ) === "Payé"
                               ? "text-green-500"
                               : "text-red-500"
                           }`}
                         >
-                          {convertStatusToPayment(inv.paymentStatus.toLowerCase()) === "non Payé" && (
+                          {convertStatusToPayment(
+                            inv.paymentStatus.toLowerCase()
+                          ) === "non Payé" && (
                             <span className="text-red-500 text-[10px]">⚠️</span>
                           )}
-                          {convertStatusToPayment(inv.paymentStatus.toLowerCase())}
+                          {convertStatusToPayment(
+                            inv.paymentStatus.toLowerCase()
+                          )}
                         </span>
                       </td>
-                      <td className="p-2">{convertMethodToPayment(inv.paymentMethod)}</td>
+                      <td className="p-2">
+                        {convertMethodToPayment(inv.paymentMethod)}
+                      </td>
                       <td className="flex justify-center gap-2 p-2">
                         <button
                           onClick={() => openDetails(inv.id)}
@@ -379,7 +400,7 @@ export default function InvoiceList() {
             ))
           ) : (
             <tr>
-              <td colSpan={9}>
+              <td colSpan={10}>
                 {loading ? (
                   "Chargement..."
                 ) : (
@@ -485,4 +506,3 @@ export default function InvoiceList() {
     </div>
   );
 }
-

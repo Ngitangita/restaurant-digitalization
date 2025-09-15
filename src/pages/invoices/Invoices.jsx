@@ -161,7 +161,6 @@ const Invoices = ({ paymentId }) => {
 
         {lastOrder && !isLoading && !error && (
           <>
-            {/* Header entreprise */}
             <div className="flex items-center gap-3 mb-4">
               <img src="/UTOPIA-B.png" alt="UTOPIA" className="w-16 h-16 rounded-full" />
               <div>

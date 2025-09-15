@@ -145,9 +145,7 @@ function CreateMenuOrder({ onClose, onOrderCreated }) {
       onSubmit={handleSubmit(handleConfirm)}
       className="space-y-6 p-6 bg-white dark:bg-gray-900 rounded-lg shadow-md max-w-4xl mx-auto"
     >
-      {/* Section sélection client, chambre, table */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        {/* Client */}
         <Controller
           name="customerId"
           control={control}
@@ -179,7 +177,6 @@ function CreateMenuOrder({ onClose, onOrderCreated }) {
           )}
         />
 
-        {/* Chambre */}
         <Controller
           name="roomId"
           control={control}
@@ -215,7 +212,6 @@ function CreateMenuOrder({ onClose, onOrderCreated }) {
           )}
         />
 
-        {/* Table */}
         <Controller
           name="tableId"
           control={control}
