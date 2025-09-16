@@ -1,5 +1,5 @@
 import {useParams} from "react-router-dom";
-import {useEffect, useState} from "react";
+import {useEffect, useState, Fragment} from "react";
 import useToast from "../../components/menus/menu-orders/(tantely)/hooks/useToast.jsx";
 import {apiUrl, fetchJson} from "../../services/api.js";
 import dayjs from "dayjs";
@@ -23,13 +23,12 @@ function OrdersByRoom() {
     });
 
     const fetchApi = async () => {
-        setFetchState((prev) => ({...prev, isLoading: true}));
+        setFetchState(prev => ({...prev, isLoading: true}));
         const url = apiUrl(`/menu-orders/all/room/${roomNumber}`);
         try {
             const rawData = await fetchJson(url);
             if (rawData.length > 0) {
                 const room = rawData[0].room;
-                // eslint-disable-next-line no-unused-vars
                 const orders = rawData.map(({room, ...order}) => order);
                 setFetchState({
                     isLoading: false,
@@ -52,12 +51,11 @@ function OrdersByRoom() {
             });
             showError("Échec de la récupération des commandes. Veuillez réessayer.");
         }
-    }
+    };
 
     useEffect(() => {
-        void fetchApi()
+        void fetchApi();
     }, [roomNumber]);
-
 
     const handleClick = (order) => {
         setSelectedOrderId(order.id);
@@ -66,9 +64,7 @@ function OrdersByRoom() {
 
     const handleDelete = async () => {
         try {
-            await fetch(apiUrl(`/menu-orders/${selectedOrderId}`), {
-                method: 'DELETE',
-            });
+            await fetch(apiUrl(`/menu-orders/${selectedOrderId}`), { method: 'DELETE' });
             setIsOpenModal(false);
             void fetchApi();
             showSuccess("Commande supprimée avec succès.");
@@ -77,22 +73,23 @@ function OrdersByRoom() {
         }
     };
 
-    const totalPrice = fetchState.data.orders.reduce((total, order) => {
-        return total + order.cost;
-    }, 0);
+    // 🔹 Regrouper par date
+    const groupedByDate = fetchState.data.orders.reduce((groups, order) => {
+        const date = dayjs(order.orderDate).format('YYYY-MM-DD');
+        if (!groups[date]) groups[date] = {orders: [], total: 0};
+        groups[date].orders.push(order);
+        groups[date].total += order.cost;
+        return groups;
+    }, {});
 
     return (
-        <div className="container mx-auto bg-white  text-black darkBody p-10 pb-14">
-            {fetchState.isLoading && (
-                <p className="text-center text-lg font-semibold text-gray-500">Chargement en cours...</p>
-            )}
-            {fetchState.hasError && (
-                <p className="text-center text-lg font-semibold text-red-600">Erreur lors de la récupération des
-                    données.</p>
-            )}
+        <div className="container mx-auto bg-white text-black darkBody p-10 pb-14">
+            {fetchState.isLoading && <p className="text-center text-lg font-semibold text-gray-500">Chargement en cours...</p>}
+            {fetchState.hasError && <p className="text-center text-lg font-semibold text-red-600">Erreur lors de la récupération des données.</p>}
+
             {!fetchState.isLoading && !fetchState.hasError && (
                 <div className="space-y-6">
-                    <h1 className="text-2xl font-bold  text-gray-800 dark:text-white">
+                    <h1 className="text-2xl font-bold text-gray-800 dark:text-white">
                         Commandes pour la chambre {fetchState.data.room.roomNumber || roomNumber}
                     </h1>
                     <p className="text-lg text-gray-700 dark:text-gray-300">
@@ -109,45 +106,42 @@ function OrdersByRoom() {
                     <div className="overflow-x-auto">
                         <table className="min-w-full table-auto text-sm text-left text-gray-800 dark:text-white">
                             <thead className="bg-gray-100 dark:bg-gray-700">
-                            <tr>
-                                <th className="px-4 py-2 border-b">Commande #</th>
-                                <th className="px-4 py-2 border-b">Plat</th>
-                                <th className="px-4 py-2 border-b">Quantité</th>
-                                <th className="px-4 py-2 border-b">Coût</th>
-                                <th className="px-4 py-2 border-b">Statut</th>
-                                <th className="px-4 py-2 border-b">Date de commande</th>
-                                <th className="px-4 py-2 border-b">Actions</th>
-                            </tr>
+                                <tr>
+                                    <th className="px-4 py-2 border-b">Commande #</th>
+                                    <th className="px-4 py-2 border-b">Plat</th>
+                                    <th className="px-4 py-2 border-b">Quantité</th>
+                                    <th className="px-4 py-2 border-b">Coût</th>
+                                    <th className="px-4 py-2 border-b">Statut</th>
+                                    <th className="px-4 py-2 border-b">Date de commande</th>
+                                    <th className="px-4 py-2 border-b">Actions</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            {fetchState.data.orders.map((order, i) => (
-                                <tr key={i} className="hover:bg-gray-200 dark:hover:bg-gray-600">
-                                    <td className="px-4 py-2 border-b">{order?.id}</td>
-                                    <td className="px-4 py-2 border-b">{order.menu?.name}</td>
-                                    <td className="px-4 py-2 border-b">{order.quantity}</td>
-                                    <td className="px-4 py-2 border-b">{formatPriceInAriary(order.cost, false)}</td>
-                                    <td className="px-4 py-2 border-b">{convertStatusToOrder(order.orderStatus)}</td>
-                                    <td className="px-4 py-2 border-b">{dayjs(order.orderDate).format('YYYY-MM-DD HH:mm:ss')}</td>
-                                    <td className="px-4 py-2 border-b">
-                                        <button
-                                            className="bg-red-500 text-white rounded p-2 hover:bg-red-600"
-                                            onClick={() => handleClick(order)}
-                                        >
-                                            <IoMdTrash/>
-                                        </button>
-                                    </td>
-                                </tr>
-                            ))}
+                                {Object.entries(groupedByDate).map(([date, group]) => (
+                                    <Fragment key={date}>
+                                        <tr className="bg-gray-100 font-bold">
+                                            <td colSpan={7} className="p-2 text-left">
+                                                {dayjs(date).format('DD/MM/YYYY')} — Total : {formatPriceInAriary(group.total, false)}
+                                            </td>
+                                        </tr>
+                                        {group.orders.map(order => (
+                                            <tr key={order.id} className="hover:bg-gray-200 dark:hover:bg-gray-600">
+                                                <td className="px-4 py-2 border-b">{order.id}</td>
+                                                <td className="px-4 py-2 border-b">{order.menu?.name}</td>
+                                                <td className="px-4 py-2 border-b">{order.quantity}</td>
+                                                <td className="px-4 py-2 border-b">{formatPriceInAriary(order.cost, false)}</td>
+                                                <td className="px-4 py-2 border-b">{convertStatusToOrder(order.orderStatus)}</td>
+                                                <td className="px-4 py-2 border-b">{dayjs(order.orderDate).format('YYYY-MM-DD HH:mm:ss')}</td>
+                                                <td className="px-4 py-2 border-b">
+                                                    <button className="bg-red-500 text-white rounded p-2 hover:bg-red-600" onClick={() => handleClick(order)}>
+                                                        <IoMdTrash/>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </Fragment>
+                                ))}
                             </tbody>
-                            <tfoot>
-                                <tr>
-                                    <td colSpan="3" className="px-4 py-2 text-right font-bold">Total :</td>
-                                    <td className="px-4 py-2">
-                                        {formatPriceInAriary(totalPrice, false)} Ar
-                                    </td>
-                                    <td colSpan="3"></td>
-                                </tr>
-                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -157,19 +151,9 @@ function OrdersByRoom() {
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
                     <div className="bg-white p-6 rounded-lg shadow-lg w-96 DeleteModal">
                         <p className="mt-2">Êtes-vous sûr de vouloir supprimer cette commande ?</p>
-                        <div className="mt-4 flex justify-between ">
-                            <button
-                                onClick={() => setIsOpenModal(false)}
-                                className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg"
-                            >
-                                Annuler
-                            </button>
-                            <button
-                                onClick={handleDelete}
-                                className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg"
-                            >
-                                Supprimer
-                            </button>
+                        <div className="mt-4 flex justify-between">
+                            <button onClick={() => setIsOpenModal(false)} className="bg-gray-500 hover:bg-gray-600 text-white py-2 px-4 rounded-lg">Annuler</button>
+                            <button onClick={handleDelete} className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg">Supprimer</button>
                         </div>
                     </div>
                 </div>
