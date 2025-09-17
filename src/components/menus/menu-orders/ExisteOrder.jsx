@@ -9,6 +9,8 @@ import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import useToast from "./(tantely)/hooks/useToast";
 import dayjs from "dayjs";
+import "dayjs/locale/fr";
+
 
 const schema = z.object({
   orderId: z.preprocess(
@@ -16,6 +18,7 @@ const schema = z.object({
     z.union([z.string(), z.number()])
   ),
 });
+dayjs.locale("fr");
 
 function ExisteOrder({ onClose, onOrderCreated }) {
   const [menuRequest, setMenuRequest] = useState([]);
@@ -148,10 +151,10 @@ function ExisteOrder({ onClose, onOrderCreated }) {
                   option?.roomNumber
                     ? `Chambre n° ${option.roomNumber} --- dt: ${dayjs(
                         option.orderDate
-                      ).format("YYYY-MM-DD HH:mm:ss")}`
+                      ).format("DD-MMM-YYYY HH:mm:ss")}`
                     : `Table n° ${option.tableNumber} --- dt: ${dayjs(
                         option.orderDate
-                      ).format("YYYY-MM-DD HH:mm:ss")}`
+                      ).format("DD-MMM-YYYY HH:mm:ss")}`
                 }
                 onChange={(_, selected) =>
                   field.onChange(selected?.orderId || "")

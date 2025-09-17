@@ -141,9 +141,8 @@ export default function OrderSummary() {
   };
 
   const handleClick = (order) => {
-    const isTable = !!order.table;
-    const number = isTable ? order.table.number : order.room.number;
-    navigate(`/orders/by-${isTable ? "table" : "room"}/${number}`);
+    const number = order.id;
+    navigate(`/orders/by-room/${number}`);
   };
 
   return (
